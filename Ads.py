@@ -209,4 +209,31 @@ class Ads:
             driver_executable_path=dest_driver_file
         )
         
+        # Maximize browser window
+        try:
+            self.driver.maximize_window()
+        except Exception as e:
+            logger.warning(f"Failed to maximize browser window: {e}")
+        
         return self.driver
+    
+    def close_browser(self, ads_key_id):
+        try:
+            params = {
+                    "user_id" : ads_key_id,
+                }
+            open_url = f"http://{self.ads_host}/api/v1/browser/stop"
+            resp = ads_get(open_url, params=params, timeout=(5, 15)).json()
+            if resp["code"] != 0:
+                if "User_id is not open" == resp["msg"] or 'user account does not exist' == resp["msg"]:
+                    return True
+                else:
+                    logger.error(f'ads_close user_id={ads_key_id}  error={resp["msg"]}')
+                    return False
+            else:
+                # time.sleep(0.2)
+                return True
+        except Exception as e:
+            logger.error(e, f"ads_close user_id={ads_key_id}")
+            
+        return False
