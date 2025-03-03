@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import Optional
+from typing import Optional, Any
 from utils.logger import get_logger
 import threading
 import requests
@@ -10,7 +10,6 @@ import os
 import shutil
 import time
 import re
-from selenium.webdriver.chrome.webdriver import WebDriver
 
 logger = get_logger(__name__)
 
@@ -109,7 +108,7 @@ class Ads:
         self.ads_id: str = ''
         self.ads_key_id: str = ''  # 添加缺失的属性
         self.account_info: WalmartAccount = None
-        self.driver: Optional[WebDriver] = None
+        self.driver: Optional[Any] = None
         self.cache_driver_file: str = ''
         self.last_error_status: int = 0
 
@@ -139,7 +138,7 @@ class Ads:
             logger.error(f'start_browser initialization failed: {str(e)}')
             raise
 
-    def _api_start_browser(self) -> Optional[WebDriver]:
+    def _api_start_browser(self) -> Optional[Any]:
         """
         Start the ADS browser instance
         
@@ -168,7 +167,7 @@ class Ads:
         
         return self._setup_chrome_driver(driver_path, selenium_debugger_address)
 
-    def _setup_chrome_driver(self, driver_path: str, debugger_address: str) -> WebDriver:
+    def _setup_chrome_driver(self, driver_path: str, debugger_address: str) -> Any:
         """
         Setup and configure Chrome WebDriver
         
