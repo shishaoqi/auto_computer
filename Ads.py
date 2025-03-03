@@ -149,6 +149,7 @@ class Ads:
         params = {
             "user_id": self.ads_key_id,
             # "headless": 1,  # 无头模式配置
+            "open_tabs": 1,
         }
         
         ads_api_start_url = f"http://{self.ads_host}/api/v1/browser/start"
