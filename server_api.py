@@ -81,39 +81,81 @@ def capture_screen():
         screenshot_filename = f'screenshots/screenshot_{timestamp}.png'
         detecting_filename = f'detecting/detected_{timestamp}.png'
         
-        # 捕获整个屏幕
-        screenshot = ImageGrab.grab()
+        try:
+            # 捕获整个屏幕
+            screenshot = ImageGrab.grab()
+        except Exception as e:
+            return jsonify({
+                'status': 'error',
+                'message': f'截图失败: {str(e)}'
+            }), 500
         
-        # 保存截图
-        screenshot.save(screenshot_filename)
+        try:
+            # 保存截图
+            screenshot.save(screenshot_filename)
+        except Exception as e:
+            return jsonify({
+                'status': 'error',
+                'message': f'保存截图失败: {str(e)}'
+            }), 500
 
         # 上传图片到处理服务器
-        with open(screenshot_filename, 'rb') as image_file:
-            files = {'file': image_file}
-            response = requests.post(
-                'http://192.168.11.250:8003/process_image',
-                files=files,
-                stream=True
-            )
-            
-            if response.status_code == 200:
-                # 保存处理后的图片
-                with open(detecting_filename, 'wb') as f:
-                    for chunk in response.iter_content(chunk_size=8192):
-                        if chunk:
-                            f.write(chunk)
+        try:
+            with open(screenshot_filename, 'rb') as image_file:
+                files = {'file': image_file}
+                response = requests.post(
+                    'http://192.168.11.250:8003/process_image',
+                    files=files,
+                    stream=True,
+                    timeout=(30, 300)  # (连接超时, 读取超时) 单位：秒
+                )
                 
-                return jsonify({
-                    'status': 'success',
-                    'message': '截图已保存并处理',
-                    'original_image': screenshot_filename,
-                    'processed_image': detecting_filename
-                }), 200
-            else:
-                return jsonify({
-                    'status': 'error',
-                    'message': f'图片处理失败: {response.status_code}'
-                }), 500
+                # 获取详细的错误信息
+                if response.status_code != 200:
+                    error_detail = ''
+                    try:
+                        error_detail = response.json()
+                    except:
+                        try:
+                            error_detail = response.text
+                        except:
+                            error_detail = '无法获取详细错误信息'
+                            
+                    return jsonify({
+                        'status': 'error',
+                        'message': f'图片处理失败: HTTP {response.status_code}',
+                        'detail': error_detail
+                    }), 500
+
+        except requests.exceptions.Timeout:
+            return jsonify({
+                'status': 'error',
+                'message': '图片处理超时，请稍后重试'
+            }), 504  # Gateway Timeout
+        except requests.exceptions.RequestException as e:
+            return jsonify({
+                'status': 'error',
+                'message': f'上传图片失败: {str(e)}'
+            }), 500
+            
+        if response.status_code == 200:
+            # 保存处理后的图片
+            with open(detecting_filename, 'wb') as f:
+                for chunk in response.iter_content(chunk_size=8192):
+                    if chunk:
+                        f.write(chunk)
+            
+            return jsonify({
+                'status': 'success',
+                'message': '截图已保存并处理',
+                'original_image': screenshot_filename,
+                'processed_image': detecting_filename
+            }), 200
+        else:
+            return jsonify({
+                'status': 'error',
+                'message': f'图片处理失败: {response.status_code}'
+            }), 500
         
     except Exception as e:
         return jsonify({
