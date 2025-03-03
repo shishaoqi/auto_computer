@@ -1,6 +1,7 @@
 from flask import Flask, jsonify
 from PIL import ImageGrab
 import os
+import time
 from datetime import datetime
 from Ads import Ads  # 添加Ads导入
 
@@ -31,7 +32,33 @@ def start_browser():
                 'message': '浏览器启动失败: driver is None'
             }), 500
             
-        ads.driver.execute("newWindow", {'url': 'https://www.google.com/search?p=walmart'})
+        YAHOO_WALMART_SEARCH = 'https://www.google.com/search?p=walmart'
+        #ads.driver.execute("newWindow", {'url': 'https://www.google.com/search?p=walmart'})
+        # 记录当前窗口句柄
+        original_handles = ads.driver.window_handles
+        
+        # 打开新窗口
+        ads.driver.execute("newWindow", {'url': YAHOO_WALMART_SEARCH})
+        
+        # 等待新窗口出现并获取新窗口句柄
+        timeout = 10
+        new_handle = None
+        start_time = time.time()
+        while time.time() - start_time < timeout:
+            current_handles = ads.driver.window_handles
+            if len(current_handles) > len(original_handles):
+                new_handle = [h for h in current_handles if h not in original_handles][0]
+                break
+            time.sleep(0.5)
+            
+        if not new_handle:
+            raise Exception("新窗口未能成功打开")
+            
+        # 切换到新窗口
+        ads.driver.switch_to.window(new_handle)
+        
+        # 确保页面加载完成
+        ads.driver.get(YAHOO_WALMART_SEARCH)
         
         return jsonify({
             'status': 'success',
