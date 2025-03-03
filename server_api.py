@@ -2,6 +2,7 @@ from flask import Flask, jsonify
 from PIL import ImageGrab
 import os
 import time
+import requests
 from datetime import datetime
 from Ads import Ads  # 添加Ads导入
 
@@ -10,9 +11,10 @@ app = Flask(__name__)
 # 初始化Ads实例
 ads = Ads()
 
-# 确保screenshots文件夹存在
-if not os.path.exists('screenshots'):
-    os.makedirs('screenshots')
+# 确保screenshots和detecting文件夹存在
+for folder in ['screenshots', 'detecting']:
+    if not os.path.exists(folder):
+        os.makedirs(folder)
 
 @app.route('/start', methods=['POST'])
 def start_browser():
@@ -76,24 +78,47 @@ def capture_screen():
     try:
         # 获取当前时间戳作为文件名
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-        filename = f'screenshots/screenshot_{timestamp}.png'
+        screenshot_filename = f'screenshots/screenshot_{timestamp}.png'
+        detecting_filename = f'detecting/detected_{timestamp}.png'
         
         # 捕获整个屏幕
         screenshot = ImageGrab.grab()
         
         # 保存截图
-        screenshot.save(filename)
-        
-        return jsonify({
-            'status': 'success',
-            'message': '截图已保存',
-            'filename': filename
-        }), 200
+        screenshot.save(screenshot_filename)
+
+        # 上传图片到处理服务器
+        with open(screenshot_filename, 'rb') as image_file:
+            files = {'file': image_file}
+            response = requests.post(
+                'http://192.168.11.250:8003/process_image',
+                files=files,
+                stream=True
+            )
+            
+            if response.status_code == 200:
+                # 保存处理后的图片
+                with open(detecting_filename, 'wb') as f:
+                    for chunk in response.iter_content(chunk_size=8192):
+                        if chunk:
+                            f.write(chunk)
+                
+                return jsonify({
+                    'status': 'success',
+                    'message': '截图已保存并处理',
+                    'original_image': screenshot_filename,
+                    'processed_image': detecting_filename
+                }), 200
+            else:
+                return jsonify({
+                    'status': 'error',
+                    'message': f'图片处理失败: {response.status_code}'
+                }), 500
         
     except Exception as e:
         return jsonify({
             'status': 'error',
-            'message': f'截图失败: {str(e)}'
+            'message': f'截图或处理失败: {str(e)}'
         }), 500
 
 if __name__ == '__main__':
