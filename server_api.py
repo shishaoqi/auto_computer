@@ -143,7 +143,8 @@ def capture_screen():
                             'status': 'success',
                             'message': '截图已保存并处理',
                             'original_image': screenshot_filename,
-                            'processed_image': detecting_filename
+                            'processed_image': detecting_filename,
+                            'parsed_content': result['parsed_content']
                         }), 200
                     else:
                         print(f"请求失败，状态码：{response.status_code}")
