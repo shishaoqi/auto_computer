@@ -1,5 +1,8 @@
+import base64
+import io
 from flask import Flask, jsonify
 from PIL import ImageGrab
+from PIL import Image
 import os
 import time
 import requests
@@ -110,8 +113,42 @@ def capture_screen():
                     timeout=(30, 300)  # (连接超时, 读取超时) 单位：秒
                 )
                 
-                # 获取详细的错误信息
-                if response.status_code != 200:
+                if response.status_code == 200:
+                    result = response.json()
+            
+                    if result['status'] == 'success':
+                        # 处理图片
+                        image_data = base64.b64decode(result['image'])
+                        image = Image.open(io.BytesIO(image_data))
+                        
+                        # 保存处理后的图片
+                        image.save(detecting_filename)
+                        print(f"处理后的图片已保存到：{detecting_filename}")
+                        
+                        # 打印解析内容
+                        print("\n解析内容：")
+                        for item in result['parsed_content']:
+                            print(item)
+                            
+
+                        # 保存处理后的图片
+                        # with open(detecting_filename, 'wb') as f:
+                        #     for chunk in response.iter_content(chunk_size=8192):
+                        #         if chunk:
+                        #             f.write(chunk)
+                        
+                        # 
+
+                        return jsonify({
+                            'status': 'success',
+                            'message': '截图已保存并处理',
+                            'original_image': screenshot_filename,
+                            'processed_image': detecting_filename
+                        }), 200
+                    else:
+                        print(f"请求失败，状态码：{response.status_code}")
+                        return False
+                else:
                     error_detail = ''
                     try:
                         error_detail = response.json()
@@ -136,25 +173,6 @@ def capture_screen():
             return jsonify({
                 'status': 'error',
                 'message': f'上传图片失败: {str(e)}'
-            }), 500
-            
-        if response.status_code == 200:
-            # 保存处理后的图片
-            with open(detecting_filename, 'wb') as f:
-                for chunk in response.iter_content(chunk_size=8192):
-                    if chunk:
-                        f.write(chunk)
-            
-            return jsonify({
-                'status': 'success',
-                'message': '截图已保存并处理',
-                'original_image': screenshot_filename,
-                'processed_image': detecting_filename
-            }), 200
-        else:
-            return jsonify({
-                'status': 'error',
-                'message': f'图片处理失败: {response.status_code}'
             }), 500
         
     except Exception as e:
