@@ -25,39 +25,66 @@ class Action:
     def login():
         pass
 
-    # 查找 walmart
+    def process_image_with_prompt(self, prompt: str, result: dict, expected_key: str):
+        """
+        处理图片并获取AI响应
+        
+        Args:
+            prompt (str): 发送给AI的提示词
+            result (dict): 包含原始和处理后图片路径的字典
+            expected_key (str): 期望从AI响应中获取的键名
+            
+        Returns:
+            Any: AI响应中指定键的值，如果处理失败则返回None
+        """
+        try:
+            res = upload_images(result['original_image'], result['processed_image'], prompt)
+            if not res:
+                return None
+            json_str = res['result']
+            response_data = json.loads(json_str)
+            return response_data.get(expected_key)
+        except Exception as e:
+            logger.error(f'处理图片失败: {str(e)}')
+            return None
+
+    def _click_element_by_number(self, number: int, parsed_content: list) -> bool:
+        """
+        根据序号点击元素的通用方法
+        
+        Args:
+            number (int): 要点击元素的序号
+            parsed_content (list): 解析后的内容列表
+            
+        Returns:
+            bool: 点击是否成功
+        """
+        if number is None or not parsed_content:
+            return False
+            
+        if 0 <= number < len(parsed_content):
+            entry = parsed_content[number]
+            if 'bbox' in entry:
+                # bbox格式: [x1, y1, x2, y2]，取中点的相对坐标
+                rel_x = (entry['bbox'][0] + entry['bbox'][2]) / 2
+                rel_y = (entry['bbox'][1] + entry['bbox'][3]) / 2
+                self.mouse_controller.click(rel_x, rel_y)
+                return True
+        return False
+
     def find_walmart(self):
         # 处理截图
         success, result, status_code = self.screenshot_processor.process_screenshot()
         if status_code == 200:
-            # 询问 qwen2.5-vl 哪个是 walmart, 获取 id ，取出
-            # print(result['parsed_content'])
             prompt = '''我将为您提供两张图片：第一张是原始图片，第二张是在原图基础上添加了序号标注的图片。
                         请找出被标注的蓝色 Walmart 官网链接的序号。这些序号都被彩色方框包围，方框外就不是数字所属的部分。
                         注意：您的响应应遵循以下格式：{"walmart": 3}，3 是序号。请勿包含任何其他信息。'''
-            res = upload_images(result['original_image'], result['processed_image'], prompt)
-            # 使用两张图片（原来的用法）
-            # res = upload_multiple_images(
-            #     [result['original_image'], result['processed_image']],
-            #     prompt
-            # )
-            print(res)
-            json_str = res['result']
-            walmart_data = json.loads(json_str)
-            walmart_number = walmart_data.get("walmart")
+            
+            walmart_number = self.process_image_with_prompt(prompt, result, "walmart")
+            
             # 从 result['parsed_content'] 中遍历找出第 walmart_number 个的数据
-            # 通过索引位置找到对应的数据
-            if walmart_number and result['parsed_content']:
-                # walmart_number 从1开始，需要减1来匹配0基数的列表索引
-                if 0 <= walmart_number < len(result['parsed_content']):
-                    walmart_entry = result['parsed_content'][walmart_number]
-                    # 获取点击坐标并执行点击
-                    if 'bbox' in walmart_entry:
-                        # bbox格式: [x1, y1, x2, y2]，取中点的相对坐标
-                        rel_x = (walmart_entry['bbox'][0] + walmart_entry['bbox'][2]) / 2
-                        rel_y = (walmart_entry['bbox'][1] + walmart_entry['bbox'][3]) / 2
-                        self.mouse_controller.click(rel_x, rel_y)
-                    return walmart_entry
+            if self._click_element_by_number(walmart_number, result['parsed_content']):
+                return result['parsed_content'][walmart_number]
             
             logger.warning(f'Walmart entry with number {walmart_number} not found')
             return None
@@ -66,15 +93,28 @@ class Action:
             logger.error('find_walmart error')
 
     def is_walmart_page(self):
-        # 使用多张图片
         img = self.screenshot_processor.screenshot()
         image_paths = [img]
         prompt = '''请识别这张截图是不是 walmart 网站的首页。提示：walmart 网站首页是什么样的呢？首先，浏览器 URL 中能看到 walmart.com; 其次，页面顶栏最左边有 walmart logo，顶栏中间部分是搜索框。注意：您的响应应遵循以下格式：{"is_walmart_page": 1}。是 walmart 网站的首页，is_walmart_page 置为 1，不是置为 0。请勿包含任何其他信息。'''
+        
         res = upload_multiple_images(image_paths, prompt)
+        if not res:
+            return None
         json_str = res['result']
         walmart_data = json.loads(json_str)
-        is_walmart_page = walmart_data.get("is_walmart_page")
-        return is_walmart_page
+        return walmart_data.get("is_walmart_page")
+    
+    def click_account_btn(self):
+        success, result, status_code = self.screenshot_processor.process_screenshot()
+        if status_code == 200:
+            prompt = '''我将为您提供两张图片：第一张是原始图片，第二张是在原图基础上添加了序号标注的图片。
+                        请找出右上角的 Account 按钮。这些序号都被彩色方框包围，方框外就不是数字所属的部分。
+                        注意：您的响应应遵循以下格式：{"account": 3}，3 是序号。请勿包含任何其他信息。'''
+            
+            number = self.process_image_with_prompt(prompt, result, "account")
+            self._click_element_by_number(number, result['parsed_content'])
+
+        # 再次截图，--- 1. 寻找 Account  2. 寻找 Walmart+
 
 def upload_images(original_image_path, processed_image_path, prompt, api_url="http://192.168.11.250:8004/analyze"):
     """

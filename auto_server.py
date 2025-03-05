@@ -63,7 +63,7 @@ def call_capture_api(action=""):
 
 # is_walmart_page
 # 第三步：检测是否进入到 walmart 首页
-
+# done
 
 # 找到 Account 按钮，点击后，截图，1. 寻找 Account  2. 寻找 Walmart+
 
@@ -88,13 +88,21 @@ def call_capture_api(action=""):
 ### 如果你不知道要如何做 或 没有可以参考的指令，那么你发起钉钉通知
 
 if __name__ == '__main__':
+    start_time = time.time()  # Start timing
+    
     logger.info('auto_server')
     result = call_start_api()
-    print(result)
+    logger.info(result)
 
-    time.sleep(5)
+    time.sleep(1.5)
     res = call_capture_api(action="find_walmart")
-    print(res)
 
-    time.sleep(5)
-    res = call_capture_api(action="is_walmart_page")
+    time.sleep(1.5)
+    re = call_capture_api(action="is_walmart_page")
+    
+    # Calculate and log total execution time
+    execution_time = time.time() - start_time
+    logger.info(f"Total execution time: {execution_time:.2f} seconds")
+    
+    if re['res'] == 1:
+        res = call_capture_api(action="click_account_btn")

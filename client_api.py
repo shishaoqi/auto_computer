@@ -105,7 +105,9 @@ def capture_screen():
         action = request.args.get('action')
 
         # 根据 action 做不同的逻辑处理
-        if action == 'bind_address':
+        if action == 'click_account_btn':
+            re = action_handler.click_account_btn()
+        elif action == 'bind_address':
             re = action_handler.bind_address()
         elif action == 'create_bankCard':
             re = action_handler.create_bankCard()
