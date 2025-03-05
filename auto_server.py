@@ -106,3 +106,5 @@ if __name__ == '__main__':
     
     if re['res'] == 1:
         res = call_capture_api(action="click_account_btn")
+
+        res = call_capture_api(action='enter_account')

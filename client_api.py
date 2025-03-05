@@ -27,6 +27,17 @@ for folder in ['screenshots', 'detecting']:
     if not os.path.exists(folder):
         os.makedirs(folder)
 
+# 在文件开头添加 action 映射字典
+ACTION_HANDLERS = {
+    'click_account_btn': lambda handler: handler.click_account_btn(),
+    'bind_address': lambda handler: handler.bind_address(),
+    'create_bankCard': lambda handler: handler.create_bankCard(),
+    'login': lambda handler: handler.login(),
+    'find_walmart': lambda handler: handler.find_walmart(),
+    'is_walmart_page': lambda handler: handler.is_walmart_page(),
+    'enter_account': lambda handler: handler.enter_account(),
+}
+
 @app.route('/start', methods=['POST'])
 def start_browser():
     try:
@@ -101,27 +112,16 @@ def start_browser():
 @app.route('/capture', methods=['GET'])
 def capture_screen():
     try:
-        # 获取 action 参数，默认为 None
         action = request.args.get('action')
-
-        # 根据 action 做不同的逻辑处理
-        if action == 'click_account_btn':
-            re = action_handler.click_account_btn()
-        elif action == 'bind_address':
-            re = action_handler.bind_address()
-        elif action == 'create_bankCard':
-            re = action_handler.create_bankCard()
-        elif action == 'login':
-            re = action_handler.login()
-        elif action == 'find_walmart':
-            re = action_handler.find_walmart()
-        elif action == 'is_walmart_page':
-            re = action_handler.is_walmart_page()
+        
+        # 使用字典获取对应的处理函数
+        handler = ACTION_HANDLERS.get(action)
+        if handler:
+            re = handler(action_handler)
         else:
             print(f"未知的action类型: {action}")
+            re = {'success': False, 'message': f'未知的action类型: {action}'}
 
-        # 处理截图
-        # success, result, status_code = screenshot_processor.process_screenshot()
         return jsonify({
             'status': 'success',
             'res': re
