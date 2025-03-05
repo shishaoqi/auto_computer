@@ -33,8 +33,8 @@ class Action:
             # 询问 qwen2.5-vl 哪个是 walmart, 获取 id ，取出
             # print(result['parsed_content'])
             prompt = '''我将为您提供两张图片：第一张是原始图片，第二张是在原图基础上添加了序号标注的图片。
-                        请找出标注了 "Walmart Official Site" 的序号。这些序号都被彩色方框包围，方框外就不是数字所属的部分。
-                        注意：您的响应应遵循以下格式：{"Walmart Official Site": 序号}。请勿包含任何其他信息。'''
+                        请找出标注了 "Walmart Official Site" 或 "Walmart | Save Mony. Live better" 的序号。这些序号都被彩色方框包围，方框外就不是数字所属的部分。
+                        注意：您的响应应遵循以下格式：{"walmart": 序号}。请勿包含任何其他信息。'''
             res = upload_images(result['original_image'], result['processed_image'], prompt)
             # 使用两张图片（原来的用法）
             res = upload_multiple_images(
@@ -44,7 +44,7 @@ class Action:
             print(res)
             json_str = res['result']
             walmart_data = json.loads(json_str)
-            walmart_number = walmart_data.get("Walmart Official Site")
+            walmart_number = walmart_data.get("walmart")
             # 从 result['parsed_content'] 中遍历找出第 walmart_number 个的数据
             # 通过索引位置找到对应的数据
             if walmart_number and result['parsed_content']:
