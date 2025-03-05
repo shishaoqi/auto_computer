@@ -29,7 +29,10 @@ class Action:
         if status_code == 200:
             # 询问 qwen2.5-vl 哪个是 walmart, 获取 id ，取出
             # print(result['parsed_content'])
-            prompt = '''有两张图片，第一张是原图，第二张是原图经过标注的生成的图片. 请找出 Walmart Official Site(Walmart 官网) 标注数据的序号。提示：序号都被彩色方框包围着，方框之外显示不是数字的部分。您的响应应遵循以下格式：{'查找事物的名称1': 序号1, '查找事物的名称2': 序号2, ...}。请勿包含任何其他信息。'''
+            prompt = '''我将为您提供两张图片：第一张是原始图片，第二张是在原图基础上添加了序号标注的图片。
+请找出标注了 "Walmart Official Site" 的序号。这些序号都被彩色方框包围，方框外就不是数字所属的部分。
+请按以下JSON格式返回结果：{"Walmart Official Site": 序号}
+注意：仅返回JSON格式数据，无需其他说明。'''
             res = upload_images(result['original_image'], result['processed_image'], prompt)
             print(res)
             pass
