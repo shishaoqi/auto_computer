@@ -9,7 +9,28 @@ class MouseController:
         pyautogui.FAILSAFE = True
         pyautogui.PAUSE = 0.5  # 每个操作之间的延迟
         self.logger = logging.getLogger(__name__)
-    
+
+    def click(self, rel_x, rel_y):
+        """
+        执行点击操作，将相对坐标转换为实际屏幕坐标
+        :param rel_x: x轴相对坐标(0-1范围)
+        :param rel_y: y轴相对坐标(0-1范围)
+        """
+        try:
+            # 获取屏幕尺寸
+            screen_width, screen_height = pyautogui.size()
+            
+            # 将相对坐标转换为实际屏幕坐标
+            actual_x = int(rel_x * screen_width)
+            actual_y = int(rel_y * screen_height)
+            
+            # 执行点击
+            self._click_element(actual_x, actual_y)
+            
+            return True
+        except Exception as e:
+            self.logger.error(f"点击操作失败: {str(e)}")
+            return False
 
     def process_clicks(self, image_path, parsed_content):
         """

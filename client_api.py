@@ -20,7 +20,7 @@ ads = Ads()
 mouse_controller = MouseController()
 api_client = APIClient()
 screenshot_processor = ScreenshotProcessor()
-action_handler = Action(screenshot_processor)
+action_handler = Action(screenshot_processor, mouse_controller)
 
 # 确保screenshots和detecting文件夹存在
 for folder in ['screenshots', 'detecting']:

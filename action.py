@@ -1,6 +1,7 @@
 # 处理事件类别
 
 from screenshot_processor import ScreenshotProcessor
+from mouse_controller import MouseController  
 from utils.logger import get_logger
 import requests
 import json 
@@ -8,8 +9,9 @@ import json
 logger = get_logger(__name__)
 
 class Action:
-    def __init__(self, screenshot_processor: ScreenshotProcessor) -> None:
+    def __init__(self, screenshot_processor: ScreenshotProcessor, mouse_controller: MouseController) -> None:
         self.screenshot_processor = screenshot_processor
+        self.mouse_controller = mouse_controller
 
     # 绑定收货地址
     def bind_address():
@@ -43,12 +45,18 @@ class Action:
             if walmart_number and result['parsed_content']:
                 # walmart_number 从1开始，需要减1来匹配0基数的列表索引
                 if 0 <= walmart_number < len(result['parsed_content']):
-                    print(result['parsed_content'][walmart_number])
-                    return result['parsed_content'][walmart_number]
+                    walmart_entry = result['parsed_content'][walmart_number]
+                    # 获取点击坐标并执行点击
+                    if 'bbox' in walmart_entry:
+                        # bbox格式: [x1, y1, x2, y2]，取中点的相对坐标
+                        rel_x = (walmart_entry['bbox'][0] + walmart_entry['bbox'][2]) / 2
+                        rel_y = (walmart_entry['bbox'][1] + walmart_entry['bbox'][3]) / 2
+                        self.mouse_controller.click(rel_x, rel_y)
+                    return walmart_entry
             
             logger.warning(f'Walmart entry with number {walmart_number} not found')
             return None
-            pass
+            
         else:
             logger.error('find_walmart error')
 
