@@ -10,7 +10,7 @@ logger = get_logger(__name__)
 
 # 第一步：打开浏览器（已进入到搜索 walmart 结果的页）
 def call_start_api():
-    url = os.getenv('START_API_URL', 'http://localhost:5000/start')  # Default fallback if not set in .env
+    url = os.getenv('START_API_URL', 'http://localhost:5000') + '/start'  # Default fallback if not set in .env
     
     try:
         response = requests.post(url)
@@ -36,7 +36,7 @@ def call_capture_api(action=""):
     """
     Call the capture API with specified action
     """
-    url = os.getenv('CAPTURE_API_URL', 'http://localhost:5000/capture')  # Default fallback if not set in .env
+    url = os.getenv('CAPTURE_API_URL', 'http://localhost:5000/capture') + '/capture'  # Default fallback if not set in .env
     
     # Prepare the payload
     payload = {
