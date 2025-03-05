@@ -50,11 +50,11 @@ def call_capture_api(action=""):
         # Check if request was successful
         if response.status_code == 200:
             result = response.json()
-            logger.info("Capture API Success for action '%s': %s", action, result['message'])
+            logger.info("Capture API Success for action '%s': %s", action, result)
             return result
         else:
             logger.info("Error: %d", response.status_code)
-            logger.info("Error message: %s", response.json()['message'])
+            logger.info("Error message: %s", response.json())
             return None
             
     except requests.exceptions.RequestException as e:
