@@ -36,6 +36,11 @@ class Action:
                         请找出标注了 "Walmart Official Site" 的序号。这些序号都被彩色方框包围，方框外就不是数字所属的部分。
                         注意：您的响应应遵循以下格式：{"Walmart Official Site": 序号}。请勿包含任何其他信息。'''
             res = upload_images(result['original_image'], result['processed_image'], prompt)
+            # 使用两张图片（原来的用法）
+            res = upload_multiple_images(
+                [result['original_image'], result['processed_image']],
+                prompt
+            )
             print(res)
             json_str = res['result']
             walmart_data = json.loads(json_str)
@@ -59,6 +64,17 @@ class Action:
             
         else:
             logger.error('find_walmart error')
+
+    def is_walmart_page(self):
+        # 使用多张图片
+        img = self.screenshot_processor.screenshot()
+        image_paths = [img]
+        prompt = '''请识别这张截图是不是 walmart 网站的首页。提示：walmart 网站首页是什么样的呢？首先，浏览器 URL 中能看到 walmart.com; 其次，页面顶栏最左边有 walmart logo，顶栏中间部分是搜索框。注意：您的响应应遵循以下格式：{"is_walmart_page": 1}。是 walmart 网站的首页，is_walmart_page 置为 1，不是置为 0。请勿包含任何其他信息。'''
+        res = upload_multiple_images(image_paths, prompt)
+        json_str = res['result']
+        walmart_data = json.loads(json_str)
+        is_walmart_page = walmart_data.get("is_walmart_page")
+        return is_walmart_page
 
 def upload_images(original_image_path, processed_image_path, prompt, api_url="http://192.168.11.250:8004/analyze"):
     """
@@ -98,5 +114,47 @@ def upload_images(original_image_path, processed_image_path, prompt, api_url="ht
         return None
     finally:
         # 确保文件被正确关闭
+        for _, (_, file_obj, _) in files:
+            file_obj.close()
+
+def upload_multiple_images(image_paths: list, prompt: str, api_url: str = "http://192.168.11.250:8004/analyze"):
+    """
+    上传多张图片到服务器
+    
+    Args:
+        image_paths (list): 图片路径列表
+        prompt (str): 提示词
+        api_url (str): API端点URL，默认为http://192.168.11.250:8004/analyze
+        
+    Returns:
+        dict: 服务器返回的响应
+    """
+    # 准备文件
+    files = []
+    try:
+        for idx, image_path in enumerate(image_paths, 1):
+            # 获取文件扩展名
+            ext = image_path.split('.')[-1]
+            # 添加文件到列表
+            files.append(
+                ('images', (f'image{idx}.{ext}', open(image_path, 'rb'), f'image/{ext}'))
+            )
+        
+        # 准备数据
+        data = {
+            "prompt": prompt
+        }
+        
+        # 发送请求
+        response = requests.post(api_url, files=files, data=data)
+        response.raise_for_status()
+        return response.json()
+    
+    except requests.exceptions.RequestException as e:
+        print(f"上传失败: {str(e)}")
+        return None
+    
+    finally:
+        # 确保所有文件被正确关闭
         for _, (_, file_obj, _) in files:
             file_obj.close()

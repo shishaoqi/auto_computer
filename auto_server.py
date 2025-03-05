@@ -90,3 +90,8 @@ if __name__ == '__main__':
     logger.info('auto_server')
     result = call_start_api()
     print(result)
+
+    res = call_capture_api(action="find_walmart")
+    print(res)
+
+    res = call_capture_api(action="is_walmart_page")

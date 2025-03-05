@@ -12,6 +12,16 @@ class ScreenshotProcessor:
             if not os.path.exists(folder):
                 os.makedirs(folder)
 
+    def screenshot(self):
+        # 获取当前时间戳作为文件名
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        screenshot_filename = f'screenshots/screenshot_{timestamp}.png'
+
+        # 捕获整个屏幕
+        screenshot = ImageGrab.grab()
+        screenshot.save(screenshot_filename)
+        return screenshot_filename
+
     def process_screenshot(self):
         """
         捕获屏幕截图并进行处理，返回处理结果

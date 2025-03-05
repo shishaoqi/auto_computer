@@ -106,13 +106,15 @@ def capture_screen():
 
         # 根据 action 做不同的逻辑处理
         if action == 'bind_address':
-            action_handler.bind_address()
+            re = action_handler.bind_address()
         elif action == 'create_bankCard':
-            action_handler.create_bankCard()
+            re = action_handler.create_bankCard()
         elif action == 'login':
-            action_handler.login()
+            re = action_handler.login()
         elif action == 'find_walmart':
-            action_handler.find_walmart()
+            re = action_handler.find_walmart()
+        elif action == 'is_walmart_page':
+            re = action_handler.is_walmart_page()
         else:
             print(f"未知的action类型: {action}")
 
@@ -120,6 +122,7 @@ def capture_screen():
         # success, result, status_code = screenshot_processor.process_screenshot()
         return jsonify({
             'status': 'success',
+            'res': re
         }), 200
 
     except Exception as e:
