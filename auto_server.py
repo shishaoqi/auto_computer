@@ -97,7 +97,7 @@ if __name__ == '__main__':
     time.sleep(1.5)
     res = call_capture_api(action="find_walmart")
 
-    time.sleep(1.5)
+    time.sleep(3.5)
     re = call_capture_api(action="is_walmart_page")
     
     # Calculate and log total execution time

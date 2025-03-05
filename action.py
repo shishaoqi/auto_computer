@@ -108,11 +108,15 @@ class Action:
         success, result, status_code = self.screenshot_processor.process_screenshot()
         if status_code == 200:
             prompt = '''我将为您提供两张图片：第一张是原始图片，第二张是在原图基础上添加了序号标注的图片。
-                        请找出右上角的 Account 按钮。这些序号都被彩色方框包围，方框外就不是数字所属的部分。
-                        注意：您的响应应遵循以下格式：{"account": 3}，3 是序号。请勿包含任何其他信息。'''
+                        第二张图上这些序号都被彩色方框包围，方框外就不是数字所属的部分。
+                        请找出右上角的 Account 按钮。
+                        注意：您的响应应遵循以下格式：{"account": 3}，3是序号。请勿包含任何其他信息。'''
             
             number = self.process_image_with_prompt(prompt, result, "account")
-            self._click_element_by_number(number, result['parsed_content'])
+            if self._click_element_by_number(number, result['parsed_content']):
+                return result['parsed_content'][number]
+            logger.warning(f'Walmart entry with number {number} not found')
+            return None
 
         # 再次截图，--- 1. 寻找 Account  2. 寻找 Walmart+
 
