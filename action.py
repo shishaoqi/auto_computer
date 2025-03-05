@@ -2,6 +2,7 @@
 
 from screenshot_processor import ScreenshotProcessor
 from utils.logger import get_logger
+import requests
 
 logger = get_logger(__name__)
 
@@ -27,7 +28,51 @@ class Action:
         success, result, status_code = self.screenshot_processor.process_screenshot()
         if status_code == 200:
             # 询问 qwen2.5-vl 哪个是 walmart, 获取 id ，取出
-            print(result['parsed_content'])
+            # print(result['parsed_content'])
+            prompt = '''有两张图片，第一张是原图，第二张是原图经过标注的生成的图片. 请找出 Walmart Official Site(Walmart 官网) 标注数据的序号。提示：序号都被彩色方框包围着，方框之外显示不是数字的部分。您的响应应遵循以下格式：{'查找事物的名称1': 序号1, '查找事物的名称2': 序号2, ...}。请勿包含任何其他信息。'''
+            res = upload_images(result['original_image'], result['processed_image'], prompt)
+            print(res)
             pass
         else:
             logger.error('find_walmart error')
+
+def upload_images(original_image_path, processed_image_path, prompt, api_url="http://192.168.11.250:8004/analyze"):
+    """
+    上传原始图片和处理后的图片到服务器
+    
+    Args:
+        original_image_path (str): 原始图片的路径
+        processed_image_path (str): 处理后图片的路径
+        prompt (str): 提示词
+        api_url (str): API端点URL，默认为http://localhost:8004/analyze
+        
+    Returns:
+        dict: 服务器返回的响应
+    """
+    # 获取文件扩展名
+    original_ext = original_image_path.split('.')[-1]
+    processed_ext = processed_image_path.split('.')[-1]
+    
+    # 准备文件
+    files = [
+        ('images', ('image1.' + original_ext, open(original_image_path, 'rb'), f'image/{original_ext}')),
+        ('images', ('image2.' + processed_ext, open(processed_image_path, 'rb'), f'image/{processed_ext}'))
+    ]
+    
+    # 准备数据
+    data = {
+        "prompt": prompt
+    }
+    
+    try:
+        # 发送请求
+        response = requests.post(api_url, files=files, data=data)
+        response.raise_for_status()  # 检查响应状态
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        print(f"上传失败: {str(e)}")
+        return None
+    finally:
+        # 确保文件被正确关闭
+        for _, (_, file_obj, _) in files:
+            file_obj.close()
