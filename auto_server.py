@@ -2,6 +2,7 @@
 import requests
 from dotenv import load_dotenv
 import os
+import time
 from utils.logger import get_logger
 
 # Load environment variables from .env file
@@ -36,7 +37,7 @@ def call_capture_api(action=""):
     """
     Call the capture API with specified action
     """
-    url = os.getenv('CAPTURE_API_URL', 'http://localhost:5000/capture') + '/capture'  # Default fallback if not set in .env
+    url = os.getenv('CAPTURE_API_URL', 'http://localhost:5000') + '/capture'  # Default fallback if not set in .env
     
     # Prepare the payload
     payload = {
@@ -91,7 +92,9 @@ if __name__ == '__main__':
     result = call_start_api()
     print(result)
 
+    time.sleep(5)
     res = call_capture_api(action="find_walmart")
     print(res)
 
+    time.sleep(5)
     res = call_capture_api(action="is_walmart_page")
