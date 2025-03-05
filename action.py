@@ -3,6 +3,7 @@
 from screenshot_processor import ScreenshotProcessor
 from utils.logger import get_logger
 import requests
+import json 
 
 logger = get_logger(__name__)
 
@@ -34,6 +35,19 @@ class Action:
                         注意：您的响应应遵循以下格式：{"Walmart Official Site": 序号}。请勿包含任何其他信息。'''
             res = upload_images(result['original_image'], result['processed_image'], prompt)
             print(res)
+            json_str = res['result']
+            walmart_data = json.loads(json_str)
+            walmart_number = walmart_data.get("Walmart Official Site")
+            # 从 result['parsed_content'] 中遍历找出第 walmart_number 个的数据
+            # 通过索引位置找到对应的数据
+            if walmart_number and result['parsed_content']:
+                # walmart_number 从1开始，需要减1来匹配0基数的列表索引
+                if 0 <= walmart_number < len(result['parsed_content']):
+                    print(result['parsed_content'][walmart_number])
+                    return result['parsed_content'][walmart_number]
+            
+            logger.warning(f'Walmart entry with number {walmart_number} not found')
+            return None
             pass
         else:
             logger.error('find_walmart error')
