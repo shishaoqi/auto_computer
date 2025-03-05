@@ -39,13 +39,13 @@ def call_capture_api(action=""):
     """
     url = os.getenv('CAPTURE_API_URL', 'http://localhost:5000') + '/capture'  # Default fallback if not set in .env
     
-    # Prepare the payload
-    payload = {
+    # Add action as query parameter instead of JSON payload
+    params = {
         "action": action
     }
     
     try:
-        response = requests.post(url, json=payload)
+        response = requests.get(url, params=params)
         
         # Check if request was successful
         if response.status_code == 200:

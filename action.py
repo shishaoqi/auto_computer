@@ -37,10 +37,10 @@ class Action:
                         注意：您的响应应遵循以下格式：{"walmart": 序号}。请勿包含任何其他信息。'''
             res = upload_images(result['original_image'], result['processed_image'], prompt)
             # 使用两张图片（原来的用法）
-            res = upload_multiple_images(
-                [result['original_image'], result['processed_image']],
-                prompt
-            )
+            # res = upload_multiple_images(
+            #     [result['original_image'], result['processed_image']],
+            #     prompt
+            # )
             print(res)
             json_str = res['result']
             walmart_data = json.loads(json_str)
