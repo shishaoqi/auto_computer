@@ -196,7 +196,8 @@ class Action:
         time.sleep(0.8)
         bbox = [0.38615599274635315, 0.28405794501304626, 0.42059326171875, 0.30172109603881836]
         self._click_element(bbox)
-        self.mouse_controller.scroll_down(70)
+        time.sleep(0.35)
+        self.mouse_controller.scroll_down(80)
 
     def click_wallet(self):
         time.sleep(0.7)
