@@ -89,6 +89,15 @@ class Action:
         """
         self.mouse_controller.scroll(scroll_amount)
 
+    def _scroll_page_down(self, scroll_amount: int = 300):
+        """
+        向下滚动页面
+        
+        Args:
+            scroll_amount (int): 滚动的像素量，正数表示向下滚动，默认300像素
+        """
+        self.mouse_controller.scroll(-scroll_amount)  # 使用负值表示向下滚动
+
 
     def find_walmart(self):
         # 处理截图
@@ -164,7 +173,7 @@ class Action:
         time.sleep(.35)
         bbox = [0.2549503445625305, 0.8525451421737671, 0.3763135075569153, 0.8972681760787964]
         self._click_element(bbox)
-        self._scroll_page_up(350)
+        self._scroll_page_down(350)
 
 
 
