@@ -82,23 +82,25 @@ class Action:
 
     def find_walmart(self):
         # 处理截图
-        success, result, status_code = self.screenshot_processor.process_screenshot()
-        if status_code == 200:
-            prompt = '''我将为您提供两张图片：第一张是原始图片，第二张是在原图基础上添加了序号标注的图片。
-                        请找出被标注的蓝色 Walmart 官网链接的序号。这些序号都被彩色方框包围，方框外就不是数字所属的部分。
-                        注意：您的响应应遵循以下格式：{"walmart": 3}，3 是序号。请勿包含任何其他信息。'''
+        # success, result, status_code = self.screenshot_processor.process_screenshot()
+        # if status_code == 200:
+        #     prompt = '''我将为您提供两张图片：第一张是原始图片，第二张是在原图基础上添加了序号标注的图片。
+        #                 请找出被标注的蓝色 Walmart 官网链接的序号。这些序号都被彩色方框包围，方框外就不是数字所属的部分。
+        #                 注意：您的响应应遵循以下格式：{"walmart": 3}，3 是序号。请勿包含任何其他信息。'''
             
-            walmart_number = self.process_image_with_prompt(prompt, result, "walmart")
+        #     walmart_number = self.process_image_with_prompt(prompt, result, "walmart")
             
-            # 从 result['parsed_content'] 中遍历找出第 walmart_number 个的数据
-            if self._click_element_by_number(walmart_number, result['parsed_content']):
-                return result['parsed_content'][walmart_number]
+        #     # 从 result['parsed_content'] 中遍历找出第 walmart_number 个的数据
+        #     if self._click_element_by_number(walmart_number, result['parsed_content']):
+        #         return result['parsed_content'][walmart_number]
             
-            logger.warning(f'Walmart entry with number {walmart_number} not found')
-            return None
+        #     logger.warning(f'Walmart entry with number {walmart_number} not found')
+        #     return None
             
-        else:
-            logger.error('find_walmart error')
+        # else:
+        #     logger.error('find_walmart error')
+        bbox = [0.08867187798023224, 0.29027777910232544, 0.16875000298023224, 0.3125]
+        self._click_element(bbox)
 
     def is_walmart_page(self):
         img = self.screenshot_processor.screenshot()
