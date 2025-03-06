@@ -135,18 +135,21 @@ class Action:
         # 再次截图，--- 1. 寻找 Account  2. 寻找 Walmart+
     
     def enter_account(self):
-        success, result, status_code = self.screenshot_processor.process_screenshot()
-        if status_code == 200:
-            prompt = '''我将为您提供两张图片：第一张是原始图片，第二张是在原图基础上添加了序号标注的图片。
-                        第二张图上这些序号都被彩色方框包围，方框外就不是数字所属的部分。
-                        请找出网页右上部的下拉框里的 Account。
-                        注意：您的响应应遵循以下格式：{"account": 3}，3是序号。请勿包含任何其他信息。'''
+        # success, result, status_code = self.screenshot_processor.process_screenshot()
+        # if status_code == 200:
+        #     prompt = '''我将为您提供两张图片：第一张是原始图片，第二张是在原图基础上添加了序号标注的图片。
+        #                 第二张图上这些序号都被彩色方框包围，方框外就不是数字所属的部分。
+        #                 请找出网页右上部的下拉框里的 Account。
+        #                 注意：您的响应应遵循以下格式：{"account": 3}，3是序号。请勿包含任何其他信息。'''
             
-            number = self.process_image_with_prompt(prompt, result, "account")
-            if self._click_element_by_number(number, result['parsed_content']):
-                return result['parsed_content'][number]
-            logger.warning(f'Walmart entry with number {number} not found')
-            return None
+        #     number = self.process_image_with_prompt(prompt, result, "account")
+        #     if self._click_element_by_number(number, result['parsed_content']):
+        #         return result['parsed_content'][number]
+        #     logger.warning(f'Walmart entry with number {number} not found')
+        #     return None
+        time.sleep(1.6)
+        bbox = [0.9104751348495483, 0.20280081033706665, 0.9731246829032898, 0.2321944534778595]
+        self._click_element(bbox)
 
 
     def enter_walmart_plus(self):
