@@ -182,12 +182,20 @@ class Action:
         self._click_element(bbox)
 
     def click_account_setting(self):
-        time.sleep(.35)
+        time.sleep(1.5)
         bbox = [0.2549503445625305, 0.8525451421737671, 0.3763135075569153, 0.8972681760787964]
         self._click_element(bbox)
         self.mouse_controller.scroll_down(400)
 
+    def click_address(self):
+        time.sleep(0.7)
+        bbox = [0.2665168344974518, 0.745004415512085, 0.37486201524734497, 0.7754677534103394]
+        self._click_element(bbox)
 
+    def click_wallet(self):
+        time.sleep(0.7)
+        bbox = [0.25694137811660767, 0.7728841304779053, 0.3740352988243103, 0.8032107949256897]
+        self._click_element(bbox)
 
     def enter_walmart_plus(self):
         pass

@@ -37,6 +37,8 @@ ACTION_HANDLERS = {
     'is_walmart_page': lambda handler: handler.is_walmart_page(),
     'enter_account': lambda handler: handler.enter_account(),
     'click_account_setting': lambda handler: handler.click_account_setting(),
+    'click_address': lambda handler: handler.click_address(),
+    'click_wallet': lambda handler: handler.click_wallet(),
 }
 
 @app.route('/start', methods=['POST'])

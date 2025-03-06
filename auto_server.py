@@ -110,3 +110,4 @@ if __name__ == '__main__':
 
         res = call_capture_api(action='enter_account')
         res = call_capture_api(action="click_account_setting")
+        res = call_capture_api(action="click_address") # 进入新增 address 页
