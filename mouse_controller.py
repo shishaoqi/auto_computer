@@ -100,6 +100,41 @@ class MouseController:
             self.logger.error(f"点击操作失败: {str(e)}")
             raise 
 
+    def scroll_down(self, amount=None):
+        """
+        向下滚动页面
+        :param amount: 滚动的数量，默认为None时滚动一个页面高度
+        """
+        try:
+            if amount is None:
+                # 默认滚动一个页面高度（负值表示向下滚动）
+                pyautogui.scroll(-800)
+            else:
+                # 使用指定的滚动量
+                pyautogui.scroll(-amount)
+            time.sleep(0.5)  # 等待滚动完成
+            return True
+        except Exception as e:
+            self.logger.error(f"向下滚动失败: {str(e)}")
+            return False
+
+    def scroll_up(self, amount=None):
+        """
+        向上滚动页面
+        :param amount: 滚动的数量，默认为None时滚动一个页面高度
+        """
+        try:
+            if amount is None:
+                # 默认滚动一个页面高度（正值表示向上滚动）
+                pyautogui.scroll(800)
+            else:
+                # 使用指定的滚动量
+                pyautogui.scroll(amount)
+            time.sleep(0.5)  # 等待滚动完成
+            return True
+        except Exception as e:
+            self.logger.error(f"向上滚动失败: {str(e)}")
+            return False
 
 # 执行点击操作
 # click_result = mouse_controller.process_clicks(
