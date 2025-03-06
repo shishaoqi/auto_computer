@@ -192,10 +192,17 @@ class Action:
         bbox = [0.2665168344974518, 0.745004415512085, 0.37486201524734497, 0.7754677534103394]
         self._click_element(bbox)
 
+    def click_add_address(self):
+        time.sleep(0.8)
+        bbox = [0.38615599274635315, 0.28405794501304626, 0.42059326171875, 0.30172109603881836]
+        self._click_element(bbox)
+
     def click_wallet(self):
         time.sleep(0.7)
         bbox = [0.25694137811660767, 0.7728841304779053, 0.3740352988243103, 0.8032107949256897]
         self._click_element(bbox)
+
+    
 
     def enter_walmart_plus(self):
         pass

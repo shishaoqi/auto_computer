@@ -39,6 +39,7 @@ ACTION_HANDLERS = {
     'click_account_setting': lambda handler: handler.click_account_setting(),
     'click_address': lambda handler: handler.click_address(),
     'click_wallet': lambda handler: handler.click_wallet(),
+    'click_add_address': lambda handler: handler.click_add_address(),
 }
 
 @app.route('/start', methods=['POST'])
