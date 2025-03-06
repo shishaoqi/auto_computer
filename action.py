@@ -80,6 +80,15 @@ class Action:
         rel_y = (bbox[1] + bbox[3]) / 2
         self.mouse_controller.click(rel_x, rel_y)
 
+    def _scroll_page_up(self, scroll_amount: int = 300):
+        """
+        向上滚动页面
+        
+        Args:
+            scroll_amount (int): 滚动的像素量，正数表示向上滚动，默认300像素
+        """
+        self.mouse_controller.scroll(scroll_amount)
+
 
     def find_walmart(self):
         # 处理截图
@@ -150,6 +159,13 @@ class Action:
         time.sleep(1.6)
         bbox = [0.9104751348495483, 0.20280081033706665, 0.9731246829032898, 0.2321944534778595]
         self._click_element(bbox)
+
+    def click_account_setting(self):
+        time.sleep(.35)
+        bbox = [0.2549503445625305, 0.8525451421737671, 0.3763135075569153, 0.8972681760787964]
+        self._click_element(bbox)
+        self._scroll_page_up(350)
+
 
 
     def enter_walmart_plus(self):
