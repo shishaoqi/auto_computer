@@ -64,6 +64,7 @@ class Action:
             
         if 0 <= number < len(parsed_content):
             entry = parsed_content[number]
+            logger.info(logger)
             if 'bbox' in entry:
                 # bbox格式: [x1, y1, x2, y2]，取中点的相对坐标
                 rel_x = (entry['bbox'][0] + entry['bbox'][2]) / 2
@@ -71,6 +72,13 @@ class Action:
                 self.mouse_controller.click(rel_x, rel_y)
                 return True
         return False
+    
+    def _click_element(self, bbox: list) -> bool:
+        # bbox格式: [x1, y1, x2, y2]，取中点的相对坐标
+        rel_x = (bbox[0] + bbox[2]) / 2
+        rel_y = (bbox[1] + bbox[3]) / 2
+        self.mouse_controller.click(rel_x, rel_y)
+
 
     def find_walmart(self):
         # 处理截图

@@ -94,10 +94,10 @@ if __name__ == '__main__':
     result = call_start_api()
     logger.info(result)
 
-    time.sleep(1.5)
+    time.sleep(0.5)
     res = call_capture_api(action="find_walmart")
 
-    time.sleep(3.5)
+    time.sleep(1.5)
     re = call_capture_api(action="is_walmart_page")
     
     # Calculate and log total execution time
@@ -105,6 +105,7 @@ if __name__ == '__main__':
     logger.info(f"Total execution time: {execution_time:.2f} seconds")
     
     if re['res'] == 1:
+        time.sleep(3)
         res = call_capture_api(action="click_account_btn")
 
         res = call_capture_api(action='enter_account')
