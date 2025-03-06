@@ -109,3 +109,4 @@ if __name__ == '__main__':
         res = call_capture_api(action="click_account_btn")
 
         res = call_capture_api(action='enter_account')
+        res = call_capture_api(action="click_account_setting")
