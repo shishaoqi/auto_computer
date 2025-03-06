@@ -173,7 +173,7 @@ class Action:
         time.sleep(.35)
         bbox = [0.2549503445625305, 0.8525451421737671, 0.3763135075569153, 0.8972681760787964]
         self._click_element(bbox)
-        self._scroll_page_down(350)
+        self._scroll_page_up(350)
 
 
 
