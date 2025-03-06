@@ -4,7 +4,8 @@ from screenshot_processor import ScreenshotProcessor
 from mouse_controller import MouseController  
 from utils.logger import get_logger
 import requests
-import json 
+import json
+import time
 
 logger = get_logger(__name__)
 
@@ -115,18 +116,21 @@ class Action:
         return walmart_data.get("is_walmart_page")
     
     def click_account_btn(self):
-        success, result, status_code = self.screenshot_processor.process_screenshot()
-        if status_code == 200:
-            prompt = '''我将为您提供两张图片：第一张是原始图片，第二张是在原图基础上添加了序号标注的图片。
-                        第二张图上这些序号都被彩色方框包围，方框外就不是数字所属的部分。
-                        请找出网页右上角的 Account 按钮。
-                        注意：您的响应应遵循以下格式：{"account": 3}，3是序号。请勿包含任何其他信息。'''
+        # success, result, status_code = self.screenshot_processor.process_screenshot()
+        # if status_code == 200:
+        #     prompt = '''我将为您提供两张图片：第一张是原始图片，第二张是在原图基础上添加了序号标注的图片。
+        #                 第二张图上这些序号都被彩色方框包围，方框外就不是数字所属的部分。
+        #                 请找出网页右上角的 Account 按钮。
+        #                 注意：您的响应应遵循以下格式：{"account": 3}，3是序号。请勿包含任何其他信息。'''
             
-            number = self.process_image_with_prompt(prompt, result, "account")
-            if self._click_element_by_number(number, result['parsed_content']):
-                return result['parsed_content'][number]
-            logger.warning(f'Walmart entry with number {number} not found')
-            return None
+        #     number = self.process_image_with_prompt(prompt, result, "account")
+        #     if self._click_element_by_number(number, result['parsed_content']):
+        #         return result['parsed_content'][number]
+        #     logger.warning(f'Walmart entry with number {number} not found')
+        #     return None
+        time.sleep(2.3)
+        bbox = [0.9097564816474915, 0.08835277706384659, 0.9547790288925171, 0.13475187122821808]
+        self._click_element(bbox)
 
         # 再次截图，--- 1. 寻找 Account  2. 寻找 Walmart+
     
