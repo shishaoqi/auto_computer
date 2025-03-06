@@ -74,6 +74,7 @@ class LocalDesktopAgent:
         # 后续可根据需要添加更多类型的操作，例如键盘输入、滚动等
 
 if __name__ == '__main__':
+    time.sleep(6)
     agent = LocalDesktopAgent()
     
     # 示例：截取整个屏幕并保存为文件
