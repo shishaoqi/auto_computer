@@ -185,7 +185,7 @@ class Action:
         time.sleep(.35)
         bbox = [0.2549503445625305, 0.8525451421737671, 0.3763135075569153, 0.8972681760787964]
         self._click_element(bbox)
-        self.mouse_controller.scroll_up(400)
+        self.mouse_controller.scroll_down(400)
 
 
 
