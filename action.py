@@ -64,7 +64,7 @@ class Action:
             
         if 0 <= number < len(parsed_content):
             entry = parsed_content[number]
-            logger.info(logger)
+            logger.info(entry)
             if 'bbox' in entry:
                 # bbox格式: [x1, y1, x2, y2]，取中点的相对坐标
                 rel_x = (entry['bbox'][0] + entry['bbox'][2]) / 2
