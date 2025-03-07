@@ -172,7 +172,11 @@ class MouseController:
 
     def move_to(self, rel_x, rel_y):
         self.move(rel_x, rel_y)
-        
+
+    # 打字输入
+    def type_text(self, val: str):
+        pyautogui.write(val, interval=0.19)
+
 # 执行点击操作
 # click_result = mouse_controller.process_clicks(
 #     detecting_filename, 

@@ -113,9 +113,16 @@ if __name__ == '__main__':
     res = call_capture_api(action="click_account_btn")
 
     res = call_capture_api(action='enter_account')
+    time.sleep(1.5)
+
     res = call_capture_api(action="click_account_setting")
+    time.sleep(1.5)
+
     res = call_capture_api(action="click_address") # 进入新增 address 页
+    time.sleep(1.5)
+
     res = call_capture_api(action="click_add_address")
+    time.sleep(1.5)
 
     res = call_capture_api(action="fill_address_form", account_info=account_info)
     # res = call_capture_api(action="fill_wallet_form", account_info=account_info)
