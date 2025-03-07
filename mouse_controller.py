@@ -149,6 +149,27 @@ class MouseController:
             print(f"获取光标类型失败: {str(e)}")
             return "Unknown cursor"
 
+    def move(self, rel_x, rel_y):
+        """
+        移动鼠标到指定的相对坐标
+        :param rel_x: x轴相对坐标(0-1范围)
+        :param rel_y: y轴相对坐标(0-1范围)
+        """
+        try:
+            # 获取屏幕尺寸
+            screen_width, screen_height = pyautogui.size()
+            
+            # 将相对坐标转换为实际屏幕坐标
+            actual_x = int(rel_x * screen_width)
+            actual_y = int(rel_y * screen_height)
+            
+            # 移动鼠标
+            pyautogui.moveTo(actual_x, actual_y, duration=0.5)
+            return True
+        except Exception as e:
+            self.logger.error(f"移动鼠标失败: {str(e)}")
+            return False
+
 # 执行点击操作
 # click_result = mouse_controller.process_clicks(
 #     detecting_filename, 
