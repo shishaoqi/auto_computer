@@ -170,6 +170,9 @@ class MouseController:
             self.logger.error(f"移动鼠标失败: {str(e)}")
             return False
 
+    def move_to(self, rel_x, rel_y):
+        self.move(rel_x, rel_y)
+        
 # 执行点击操作
 # click_result = mouse_controller.process_clicks(
 #     detecting_filename, 
