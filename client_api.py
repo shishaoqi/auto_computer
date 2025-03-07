@@ -27,7 +27,7 @@ for folder in ['screenshots', 'detecting']:
     if not os.path.exists(folder):
         os.makedirs(folder)
 
-# 在文件开头添加 action 映射字典
+# 在文件开头添加 action 映射字典 ---- 以下方法实现在  action.py 文件中
 ACTION_HANDLERS = {
     'click_account_btn': lambda handler: handler.click_account_btn(),
     'bind_address': lambda handler: handler.bind_address(),
@@ -39,7 +39,9 @@ ACTION_HANDLERS = {
     'click_account_setting': lambda handler: handler.click_account_setting(),
     'click_address': lambda handler: handler.click_address(),
     'click_wallet': lambda handler: handler.click_wallet(),
-    'click_add_address': lambda handler: handler.click_add_address(),
+    'click_add_address': lambda handler, account_info: handler.click_add_address(account_info),
+    'fill_address_form': lambda handler, account_info: handler.fill_address_form(account_info),
+    'fill_wallet_form': lambda handler, account_info: handler.fill_wallet_form(account_info)
 }
 
 @app.route('/start', methods=['POST'])
@@ -48,6 +50,7 @@ def start_browser():
         # 获取 walmart帐号信息
         try:
             result = api_client.get_member_operate_list()
+            # walmart 帐户信息
             account_info = result['data']['list'][0]
             print(account_info)
             
@@ -97,7 +100,8 @@ def start_browser():
             
             return jsonify({
                 'status': 'success',
-                'message': '浏览器启动成功'
+                'message': '浏览器启动成功',
+                'account_info': account_info
             }), 200
             
         except Exception as e:
@@ -113,15 +117,16 @@ def start_browser():
             'message': f'浏览器启动失败: {str(e)}'
         }), 500
 
-@app.route('/capture', methods=['GET'])
+@app.route('/capture', methods=['POST'])
 def capture_screen():
     try:
-        action = request.args.get('action')
+        action = request.json.get('action')
+        account_info = request.json.get('account_info')  # Added to retrieve account_info
         
         # 使用字典获取对应的处理函数
         handler = ACTION_HANDLERS.get(action)
         if handler:
-            re = handler(action_handler)
+            re = handler(action_handler, account_info)  # Pass account_info to the handler
         else:
             print(f"未知的action类型: {action}")
             re = {'success': False, 'message': f'未知的action类型: {action}'}

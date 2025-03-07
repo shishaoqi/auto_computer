@@ -204,8 +204,18 @@ class Action:
         bbox = [0.25694137811660767, 0.7728841304779053, 0.3740352988243103, 0.8032107949256897]
         self._click_element(bbox)
 
-    
+    def fill_address_form(self, account_info):
+        logger.info(f'account_info={account_info}')
+        from forms.fill_address import Fill_address
+        fa = Fill_address(account_info)
+        fa.fill()
 
+    def fill_wallet_form(self, account_info):
+        logger.info(f'account_info={account_info}')
+        from forms.fill_wallet import Fill_wallet
+        fw = Fill_wallet(account_info)
+        fw.fill()
+    
     def enter_walmart_plus(self):
         pass
 

@@ -11,6 +11,7 @@ logger = get_logger(__name__)
 
 # 第一步：打开浏览器（已进入到搜索 walmart 结果的页）
 def call_start_api():
+    # 做为服务的文件是 client_api.py (当要查看代码时，请跳到 client_api.py)
     url = os.getenv('START_API_URL', 'http://localhost:5000') + '/start'  # Default fallback if not set in .env
     
     try:
@@ -33,19 +34,20 @@ def call_start_api():
 # find_walmart
 # 第二步：截图分辨, 找到 walmart, 打开它
 ### 异常：找不到，取截图，询问当前是什么情况，有什么处理办法。(例如有弹窗，关闭弹窗)
-def call_capture_api(action=""):
+def call_capture_api(action, account_info={}):
     """
     Call the capture API with specified action
     """
+    # 做为服务的文件是 client_api.py (当要查看代码时，请跳到 client_api.py)
     url = os.getenv('CAPTURE_API_URL', 'http://localhost:5000') + '/capture'  # Default fallback if not set in .env
     
-    # Add action as query parameter instead of JSON payload
-    params = {
-        "action": action
-    }
+    # Prepare data payload for POST request
+    data = {"action": action}
+    if account_info:  # Only add account_info if it's not empty
+        data["account_info"] = account_info
     
     try:
-        response = requests.get(url, params=params)
+        response = requests.post(url, json=data)
         
         # Check if request was successful
         if response.status_code == 200:
@@ -93,6 +95,8 @@ if __name__ == '__main__':
     logger.info('auto_server')
     result = call_start_api()
     logger.info(result)
+    account_info = result['account_info']
+    logger.info(account_info)
 
     time.sleep(0.5)
     res = call_capture_api(action="find_walmart")
@@ -112,4 +116,8 @@ if __name__ == '__main__':
         res = call_capture_api(action="click_account_setting")
         res = call_capture_api(action="click_address") # 进入新增 address 页
         res = call_capture_api(action="click_add_address")
+
+        res = call_capture_api(action="fill_address_form", account_info=account_info)
+        # res = call_capture_api(action="fill_wallet_form", account_info=account_info)
+
         
