@@ -1,6 +1,9 @@
 import ctypes
 from ctypes import wintypes
 
+# 定义 HCURSOR 类型（Windows 句柄类型）
+HCURSOR = wintypes.HANDLE
+
 # 定义 POINT 结构体
 class POINT(ctypes.Structure):
     _fields_ = [("x", wintypes.LONG),
@@ -10,7 +13,7 @@ class POINT(ctypes.Structure):
 class CURSORINFO(ctypes.Structure):
     _fields_ = [("cbSize", wintypes.DWORD),
                 ("flags", wintypes.DWORD),
-                ("hCursor", wintypes.HCURSOR),
+                ("hCursor", HCURSOR),  # 使用新定义的 HCURSOR 类型
                 ("ptScreenPos", POINT)]
 
 # 定义 ICONINFO 结构体（用于获取光标的详细信息）
