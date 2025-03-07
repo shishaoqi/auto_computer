@@ -39,7 +39,7 @@ ACTION_HANDLERS = {
     'click_account_setting': lambda handler: handler.click_account_setting(),
     'click_address': lambda handler: handler.click_address(),
     'click_wallet': lambda handler: handler.click_wallet(),
-    'click_add_address': lambda handler, account_info: handler.click_add_address(account_info),
+    'click_add_address': lambda handler: handler.click_add_address(),
     'fill_address_form': lambda handler, account_info: handler.fill_address_form(account_info),
     'fill_wallet_form': lambda handler, account_info: handler.fill_wallet_form(account_info)
 }
@@ -126,7 +126,10 @@ def capture_screen():
         # 使用字典获取对应的处理函数
         handler = ACTION_HANDLERS.get(action)
         if handler:
-            re = handler(action_handler, account_info)  # Pass account_info to the handler
+            if action in ["fill_address_form", "fill_wallet_form"]:
+                re = handler(action_handler, account_info)  # Pass account_info to the handler
+            else:
+                re = handler(action_handler)
         else:
             print(f"未知的action类型: {action}")
             re = {'success': False, 'message': f'未知的action类型: {action}'}
@@ -139,7 +142,7 @@ def capture_screen():
     except Exception as e:
         return jsonify({
             'status': 'error',
-            'message': f'截图或处理失败: {str(e)}'
+            'message': f'截图或处理失败: action={action} --- {str(e)}'
         }), 500
 
 if __name__ == '__main__':
