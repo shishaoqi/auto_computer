@@ -114,11 +114,7 @@ class Action:
             
         Returns:
             bool: 点击是否成功
-        """
-        if not self._is_clickable_element(bbox):
-            logger.warning(f'区域 {bbox} 不包含可点击元素')
-            return False
-            
+        """ 
         rel_x = (bbox[0] + bbox[2]) / 2
         rel_y = (bbox[1] + bbox[3]) / 2
         self.mouse_controller.click(rel_x, rel_y)
@@ -177,15 +173,18 @@ class Action:
 
         # 第一次截图获取的坐标
         bbox = [0.08867187798023224, 0.29027777910232544, 0.16875000298023224, 0.3125]
-        click_able = self._click_element(bbox)
-        if click_able == False:
+        
+        click_able = self._is_clickable_element(bbox)
+        if click_able:
+            self._click_element(bbox)
+        else:
             # 第二次截图获取的坐标
             bbox = [0.08749999850988388, 0.2680555582046509, 0.21250000596046448, 0.2923611104488373]
-            click_able = self._click_element(bbox)
-
+            click_able = self._is_clickable_element(bbox)
             if click_able == False:
                 logger.warning(f'区域 {bbox} 不包含可点击元素')
                 raise Exception("不可点击")  # 抛出异常
+            self._click_element(bbox)
 
 
     def is_walmart_page(self):
