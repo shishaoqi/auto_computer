@@ -101,23 +101,23 @@ if __name__ == '__main__':
     time.sleep(0.5)
     res = call_capture_api(action="find_walmart")
 
-    time.sleep(1.5)
-    re = call_capture_api(action="is_walmart_page")
+    # time.sleep(1.5)
+    # re = call_capture_api(action="is_walmart_page")
     
     # Calculate and log total execution time
     execution_time = time.time() - start_time
     logger.info(f"Total execution time: {execution_time:.2f} seconds")
     
-    if re['res'] == 1:
-        time.sleep(3)
-        res = call_capture_api(action="click_account_btn")
+    
+    time.sleep(3)
+    res = call_capture_api(action="click_account_btn")
 
-        res = call_capture_api(action='enter_account')
-        res = call_capture_api(action="click_account_setting")
-        res = call_capture_api(action="click_address") # 进入新增 address 页
-        res = call_capture_api(action="click_add_address")
+    res = call_capture_api(action='enter_account')
+    res = call_capture_api(action="click_account_setting")
+    res = call_capture_api(action="click_address") # 进入新增 address 页
+    res = call_capture_api(action="click_add_address")
 
-        res = call_capture_api(action="fill_address_form", account_info=account_info)
-        # res = call_capture_api(action="fill_wallet_form", account_info=account_info)
+    res = call_capture_api(action="fill_address_form", account_info=account_info)
+    # res = call_capture_api(action="fill_wallet_form", account_info=account_info)
 
         
