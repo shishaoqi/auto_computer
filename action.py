@@ -74,11 +74,51 @@ class Action:
                 return True
         return False
     
+    def _is_clickable_element(self, bbox: list) -> bool:
+        """
+        检测指定的bbox区域是否包含可点击的元素，通过检查鼠标悬停时的光标变化
+        
+        Args:
+            bbox (list): 要检测的区域坐标 [x1, y1, x2, y2]
+            
+        Returns:
+            bool: 如果区域包含可点击元素返回True，否则返回False
+        """
+        # 计算区域中心点
+        rel_x = (bbox[0] + bbox[2]) / 2
+        rel_y = (bbox[1] + bbox[3]) / 2
+        
+        # 移动鼠标到目标位置
+        original_cursor = self.mouse_controller.get_cursor_type()
+        self.mouse_controller.move(rel_x, rel_y)
+        time.sleep(0.1)  # 等待光标更新
+        
+        # 获取当前光标类型
+        current_cursor = self.mouse_controller.get_cursor_type()
+        
+        # 检查光标是否变为手型或其他表示可点击的类型
+        is_clickable = current_cursor in ['hand', 'pointer']
+        
+        return is_clickable
+
     def _click_element(self, bbox: list) -> bool:
-        # bbox格式: [x1, y1, x2, y2]，取中点的相对坐标
+        """
+        点击指定bbox区域的元素
+        
+        Args:
+            bbox (list): 要点击的区域坐标 [x1, y1, x2, y2]
+            
+        Returns:
+            bool: 点击是否成功
+        """
+        if not self._is_clickable_element(bbox):
+            logger.warning(f'区域 {bbox} 不包含可点击元素')
+            return False
+            
         rel_x = (bbox[0] + bbox[2]) / 2
         rel_y = (bbox[1] + bbox[3]) / 2
         self.mouse_controller.click(rel_x, rel_y)
+        return True
 
     def _scroll_page_up(self, scroll_amount: int = 300):
         """
@@ -130,8 +170,19 @@ class Action:
             
         # else:
         #     logger.error('find_walmart error')
+
+        # 第一次截图获取的坐标
         bbox = [0.08867187798023224, 0.29027777910232544, 0.16875000298023224, 0.3125]
-        self._click_element(bbox)
+        click_able = self._click_element(bbox)
+        if click_able == False:
+            # 第二次截图获取的坐标
+            bbox = [0.08749999850988388, 0.2680555582046509, 0.21250000596046448, 0.2923611104488373]
+            click_able = self._click_element(bbox)
+
+            if click_able == False:
+                logger.warning(f'区域 {bbox} 不包含可点击元素')
+                raise Exception("不可点击")  # 抛出异常
+
 
     def is_walmart_page(self):
         img = self.screenshot_processor.screenshot()
