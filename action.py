@@ -102,7 +102,7 @@ class Action:
             return False
         
         # 检查光标是否变为手型或其他表示可点击的类型
-        is_clickable = current_cursor in ['hand', 'pointer']
+        is_clickable = current_cursor in ['OCR_HAND']
         
         return is_clickable
 
