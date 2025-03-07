@@ -2,6 +2,7 @@ from PIL import Image
 import pyautogui
 import time
 import logging
+from utils.cursor import get_cursor_info, identify_cursor, CURSOR_SHOWING
 
 class MouseController:
     def __init__(self):
@@ -135,6 +136,18 @@ class MouseController:
         except Exception as e:
             self.logger.error(f"向上滚动失败: {str(e)}")
             return False
+
+    def get_cursor_type(self):
+        """获取当前光标类型"""
+        try:
+            cursor_info = get_cursor_info()
+            if cursor_info.flags & CURSOR_SHOWING:
+                return identify_cursor(cursor_info.hCursor)
+            else:
+                return "No cursor"
+        except Exception as e:
+            print(f"获取光标类型失败: {str(e)}")
+            return "Unknown cursor"
 
 # 执行点击操作
 # click_result = mouse_controller.process_clicks(

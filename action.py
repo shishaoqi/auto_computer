@@ -91,10 +91,14 @@ class Action:
         # 移动鼠标到目标位置
         original_cursor = self.mouse_controller.get_cursor_type()
         self.mouse_controller.move(rel_x, rel_y)
-        time.sleep(0.1)  # 等待光标更新
+        time.sleep(0.2)  # 等待光标更新
         
         # 获取当前光标类型
-        current_cursor = self.mouse_controller.get_cursor_type()
+        try:
+            current_cursor = self.mouse_controller.get_cursor_type()
+        except Exception as e:
+            logger.error(f'获取光标类型失败: {str(e)}')
+            return False
         
         # 检查光标是否变为手型或其他表示可点击的类型
         is_clickable = current_cursor in ['hand', 'pointer']
