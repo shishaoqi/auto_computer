@@ -96,6 +96,7 @@ class Action:
         # 获取当前光标类型
         try:
             current_cursor = self.mouse_controller.get_cursor_type()
+            logger.info(f'current_cursor = {current_cursor}  ----------------111')
         except Exception as e:
             logger.error(f'获取光标类型失败: {str(e)}')
             return False
