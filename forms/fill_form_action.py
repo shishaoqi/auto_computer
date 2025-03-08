@@ -34,6 +34,7 @@ class Fill_action:
         
         # 输入文本
         self.mouse_controller.type_text(val)
+        time.sleep(5)
         pyautogui.press("enter")
         time.sleep(0.5)  # 等待输入完成
 
