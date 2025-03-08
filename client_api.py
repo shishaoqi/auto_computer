@@ -72,6 +72,7 @@ def start_browser():
                 }), 500
             
             YAHOO_WALMART_SEARCH = 'https://www.google.com/search?q=walmart'
+            YAHOO_WALMART_SEARCH = 'https://www.walmart.com/wallet'
             #ads.driver.execute("newWindow", {'url': 'https://www.google.com/search?p=walmart'})
             # 记录当前窗口句柄
             original_handles = ads.driver.window_handles
