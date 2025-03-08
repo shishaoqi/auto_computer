@@ -21,6 +21,7 @@ class Fill_address:
         mouse_controller = MouseController()
         self.mouse_controller = mouse_controller
         self.fill_action = Fill_action(mouse_controller=mouse_controller)
+        self.account_info = account_info
         # Update ADDRESS_FORM values with account_info
         global ADDRESS_FORM
         for field_name in ADDRESS_FORM:
