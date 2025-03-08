@@ -5,7 +5,7 @@ from utils.logger import get_logger
 ADDRESS_FORM = {
     "first_name":   ["", "input", [0.38270068168640137, 0.2930210828781128, 0.6542178392410278, 0.3367534279823303]],
     "last_name":    ["", "input", [0.3827262818813324, 0.3556141257286072, 0.6540148854255676, 0.3975934386253357]],
-    "address":      ["", "input", [0.3827870488166809, 0.4166955351829529, 0.653272807598114, 0.4587864875793457]],
+    "address":      ["", "input+enter", [0.3827870488166809, 0.4166955351829529, 0.653272807598114, 0.4587864875793457]],
     "city":         ["", "input", [0.3831089735031128, 0.5378350019454956, 0.6548876762390137, 0.5809253454208374]],
     "province":     ["", "select", [0.3842995762825012, 0.5997611284255981, 0.5197539329528809, 0.6413083076477051]], # 对应表单 State
     "zip_code":     ["", "input", [0.5204119682312012, 0.5995507836341858, 0.6514458656311035, 0.6412823796272278]],
@@ -35,6 +35,8 @@ class Fill_address:
             
             if ele_type == "input":
                 self.fill_action.input_ele(bbox, value)
+            elif ele_type == "input+enter":
+                self.fill_action.input_ele_endby_enter(bbox, value)
             elif ele_type == "select":
                 self.fill_action.select_ele(bbox, value, "address_state")
             elif ele_type == "checkbox":
