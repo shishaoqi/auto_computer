@@ -67,13 +67,14 @@ class Fill_address:
         # yes = [0.4287818968296051, 0.5957921147346497, 0.570303738117218, 0.6225367188453674]
         no = [0.4248208999633789, 0.6264414191246033, 0.5720537304878235, 0.6544809937477112]
         three_eles = [[0.5547648668289185, 0.39693883061408997, 0.573358416557312, 0.43435168266296387], [0.4287818968296051, 0.5957921147346497, 0.570303738117218, 0.6225367188453674], [0.4248208999633789, 0.6264414191246033, 0.5720537304878235, 0.6544809937477112]]
+        cursor_list = []
         for i, ele in enumerate(three_eles):
             self.mouse_controller.move_to(ele)
             cursor_type = self.mouse_controller.get_cursor_type() 
-            cursor_type.append(cursor_type)
+            cursor_list.append(cursor_type)
 
         result = True # 正常保存
-        for type in cursor_type:
+        for type in cursor_list:
             if type != "OCR_HAND":
                 result = False
 
