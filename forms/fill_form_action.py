@@ -39,11 +39,11 @@ class Fill_action:
     def select_ele(self, bbox: list, val: str, form_ele: str):
         """处理下拉选择框元素"""
         if form_ele == "address_state":
-            for key, val in 59:
+            for key in range(59):
                 pyautogui.press('up')
                 time.sleep(0.06)
         elif form_ele == "wallet_state":
-            for key, val in 59:
+            for key in range(59):
                 pyautogui.press('up')
                 time.sleep(0.06)
             pass
