@@ -49,10 +49,10 @@ class Fill_address:
         
         # 点击  More delivery instructions
         bbox = [0.38673561811447144, 0.8793678283691406, 0.39610129594802856, 0.8966156840324402]
-        self.mouse_controller.click_bbox()
+        self.mouse_controller.click_bbox(bbox)
 
         # 点击 Save 按钮
         time.sleep(0.8)
         bbox = [0.6177930235862732, 0.906648576259613, 0.6507642269134521, 0.936152458190918]
-        self.mouse_controller.click_bbox()
+        self.mouse_controller.click_bbox(bbox)
 
