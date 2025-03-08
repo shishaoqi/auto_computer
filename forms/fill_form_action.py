@@ -38,6 +38,8 @@ class Fill_action:
 
     def select_ele(self, bbox: list, val: str, form_ele: str):
         """处理下拉选择框元素"""
+        self._click_element(bbox)
+
         if form_ele == "address_state":
             for key in range(59):
                 pyautogui.press('up')
@@ -47,13 +49,11 @@ class Fill_action:
                 pyautogui.press('up')
                 time.sleep(0.06)
             pass
-
-        self._click_element(bbox)
         
         # 输入选项值并回车确认
-        self.mouse_controller.type_text(val)
-        # self.mouse_controller.press_enter()
-        time.sleep(0.5)  # 等待选择完成
+        # self.mouse_controller.type_text(val)
+        self.mouse_controller.press_enter()
+        time.sleep(0.3)  # 等待选择完成
 
     def _click_element(self, bbox: list) -> bool:
         # bbox格式: [x1, y1, x2, y2]，取中点的相对坐标
