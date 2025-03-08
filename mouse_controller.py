@@ -1,7 +1,7 @@
 from PIL import Image
 import pyautogui
 import time
-import logging
+from utils.logger import get_logger
 from utils.cursor import get_cursor_info, identify_cursor, CURSOR_SHOWING
 
 class MouseController:
@@ -9,9 +9,9 @@ class MouseController:
         # 设置pyautogui的安全设置
         pyautogui.FAILSAFE = True
         pyautogui.PAUSE = 0.5  # 每个操作之间的延迟
-        self.logger = logging.getLogger(__name__)
+        self.logger = get_logger(__name__)
 
-    def click(self, rel_x, rel_y):
+    def click(self, bbox: list):
         """
         执行点击操作，将相对坐标转换为实际屏幕坐标
         :param rel_x: x轴相对坐标(0-1范围)
@@ -21,6 +21,8 @@ class MouseController:
             # 获取屏幕尺寸
             screen_width, screen_height = pyautogui.size()
             
+            rel_x = (bbox['bbox'][0] + bbox['bbox'][2]) / 2
+            rel_y = (bbox['bbox'][1] + bbox['bbox'][3]) / 2
             # 将相对坐标转换为实际屏幕坐标
             actual_x = int(rel_x * screen_width)
             actual_y = int(rel_y * screen_height)
@@ -37,8 +39,8 @@ class MouseController:
         # bbox格式: [x1, y1, x2, y2]，取中点的相对坐标
         rel_x = (bbox[0] + bbox[2]) / 2
         rel_y = (bbox[1] + bbox[3]) / 2
-        self.move_to(rel_x, rel_y)
-        self.click(rel_x, rel_y)
+        self.move(rel_x, rel_y)
+        self.click(bbox)
         time.sleep(0.15)
 
     def process_clicks(self, image_path, parsed_content):
@@ -145,18 +147,6 @@ class MouseController:
             self.logger.error(f"向上滚动失败: {str(e)}")
             return False
 
-    def get_cursor_type(self):
-        """获取当前光标类型"""
-        try:
-            cursor_info = get_cursor_info()
-            if cursor_info.flags & CURSOR_SHOWING:
-                return identify_cursor(cursor_info.hCursor)
-            else:
-                return "No cursor"
-        except Exception as e:
-            print(f"获取光标类型失败: {str(e)}")
-            return "Unknown cursor"
-
     def move(self, rel_x, rel_y):
         """
         移动鼠标到指定的相对坐标
@@ -178,7 +168,10 @@ class MouseController:
             self.logger.error(f"移动鼠标失败: {str(e)}")
             return False
 
-    def move_to(self, rel_x, rel_y):
+    def move_to(self, bbox: list):
+        # bbox格式: [x1, y1, x2, y2]，取中点的相对坐标
+        rel_x = (bbox[0] + bbox[2]) / 2
+        rel_y = (bbox[1] + bbox[3]) / 2
         self.move(rel_x, rel_y)
 
     # 打字输入
@@ -193,6 +186,51 @@ class MouseController:
             pyautogui.press('enter')  # 按下回车键
         except Exception as e:
             self.logger.error(f"按下回车键失败: {str(e)}")
+
+    def get_cursor_type(self):
+        """获取当前光标类型"""
+        try:
+            cursor_info = get_cursor_info()
+            if cursor_info.flags & CURSOR_SHOWING:
+                return identify_cursor(cursor_info.hCursor)
+            else:
+                return "No cursor"
+        except Exception as e:
+            print(f"获取光标类型失败: {str(e)}")
+            return "Unknown cursor"
+
+    def element_is_clickable(self, bbox: list) -> bool:
+        """
+        检测指定的bbox区域是否包含可点击的元素，通过检查鼠标悬停时的光标变化
+        
+        Args:
+            bbox (list): 要检测的区域坐标 [x1, y1, x2, y2]
+            
+        Returns:
+            bool: 如果区域包含可点击元素返回True，否则返回False
+        """
+        # 计算区域中心点
+        rel_x = (bbox[0] + bbox[2]) / 2
+        rel_y = (bbox[1] + bbox[3]) / 2
+        
+        # 移动鼠标到目标位置
+        original_cursor = self.get_cursor_type()
+        self.move(rel_x, rel_y)
+        time.sleep(0.15)  # 等待光标更新
+        
+        # 获取当前光标类型
+        try:
+            current_cursor = self.get_cursor_type()
+            self.logger.info(f'current_cursor = {current_cursor}  ----------------111')
+        except Exception as e:
+            self.logger.error(f'获取光标类型失败: {str(e)}')
+            return False
+        
+        # 检查光标是否变为手型或其他表示可点击的类型
+        is_clickable = current_cursor in ['OCR_HAND']
+        
+        return is_clickable
+    
 
 # 执行点击操作
 # click_result = mouse_controller.process_clicks(

@@ -56,3 +56,32 @@ class Fill_address:
         bbox = [0.6177930235862732, 0.906648576259613, 0.6507642269134521, 0.936152458190918]
         self.mouse_controller.click_bbox(bbox)
 
+        # 检测是否成功提交
+        # 1. 检测是否有弹窗：Unable to verify address
+        # 2. 如果成功的是什么样子的
+
+        # 1
+        # x_btn = [0.5547648668289185, 0.39693883061408997, 0.573358416557312, 0.43435168266296387] # 关闭按钮
+        # yes = [0.4287818968296051, 0.5957921147346497, 0.570303738117218, 0.6225367188453674]
+        no = [0.4248208999633789, 0.6264414191246033, 0.5720537304878235, 0.6544809937477112]
+        three_eles = [[0.5547648668289185, 0.39693883061408997, 0.573358416557312, 0.43435168266296387], [0.4287818968296051, 0.5957921147346497, 0.570303738117218, 0.6225367188453674], [0.4248208999633789, 0.6264414191246033, 0.5720537304878235, 0.6544809937477112]]
+        for i, ele in enumerate(three_eles):
+            self.mouse_controller.move_to(ele)
+            cursor_type = self.mouse_controller.get_cursor_type() 
+            cursor_type.append(cursor_type)
+
+        result = True # 正常保存
+        for type in cursor_type:
+            if type != "OCR_HAND":
+                result = False
+
+        # 2
+        if result:
+            logger.info('----- Success save address info -----')
+            pass
+        else:
+            self.mouse_controller.click_bbox(no)
+            # 记录写入数据库
+            logger.warn(f"Unable to verify address ---- {self.account_info}")
+            pass
+

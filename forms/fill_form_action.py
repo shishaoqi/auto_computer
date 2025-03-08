@@ -62,10 +62,8 @@ class Fill_action:
 
     def _click_element(self, bbox: list) -> bool:
         # bbox格式: [x1, y1, x2, y2]，取中点的相对坐标
-        rel_x = (bbox[0] + bbox[2]) / 2
-        rel_y = (bbox[1] + bbox[3]) / 2
-        self.mouse_controller.move_to(rel_x, rel_y)
-        self.mouse_controller.click(rel_x, rel_y)
+        self.mouse_controller.move_to(bbox)
+        self.mouse_controller.click(bbox)
         time.sleep(0.5)
 
     # x 轴左移 left px
@@ -73,7 +71,7 @@ class Fill_action:
         # bbox格式: [x1, y1, x2, y2]，取中点的相对坐标
         rel_x = (bbox[0] + bbox[2]) / 2 - left
         rel_y = (bbox[1] + bbox[3]) / 2
-        self.mouse_controller.move_to(rel_x, rel_y)
+        self.mouse_controller.move(rel_x, rel_y)
         self.mouse_controller.click(rel_x, rel_y)
         time.sleep(0.5)
 

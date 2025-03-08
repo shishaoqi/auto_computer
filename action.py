@@ -68,9 +68,7 @@ class Action:
             logger.info(entry)
             if 'bbox' in entry:
                 # bbox格式: [x1, y1, x2, y2]，取中点的相对坐标
-                rel_x = (entry['bbox'][0] + entry['bbox'][2]) / 2
-                rel_y = (entry['bbox'][1] + entry['bbox'][3]) / 2
-                self.mouse_controller.click(rel_x, rel_y)
+                self.mouse_controller.click(entry['bbox'])
                 return True
         return False
     
@@ -91,7 +89,7 @@ class Action:
         # 移动鼠标到目标位置
         original_cursor = self.mouse_controller.get_cursor_type()
         self.mouse_controller.move(rel_x, rel_y)
-        time.sleep(0.2)  # 等待光标更新
+        time.sleep(0.15)  # 等待光标更新
         
         # 获取当前光标类型
         try:
@@ -116,9 +114,7 @@ class Action:
         Returns:
             bool: 点击是否成功
         """ 
-        rel_x = (bbox[0] + bbox[2]) / 2
-        rel_y = (bbox[1] + bbox[3]) / 2
-        self.mouse_controller.click(rel_x, rel_y)
+        self.mouse_controller.click(bbox)
         return True
 
     def _scroll_page_up(self, scroll_amount: int = 300):
