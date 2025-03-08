@@ -109,12 +109,7 @@ class Fill_action:
         time.sleep(0.5)
         
     # y 轴上移 up px
-    def _click_element_by_shiftUp(self, bbox: list, up: int) -> bool:
-        # bbox格式: [x1, y1, x2, y2]，取中点的相对坐标
-        center_x = (bbox[0] + bbox[2]) / 2
-        center_y = (bbox[1] + bbox[3]) / 2
-        # 让 mouse_controller 处理实际比率的移动
-        self.mouse_controller.move(center_x, center_y)
+    def _click_element_by_shiftUp(self, up: int) -> bool:
         self.mouse_controller.move_relative(0, -up)  # 向上移动up像素
         time.sleep(0.3)
 
