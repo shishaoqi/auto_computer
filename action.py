@@ -237,7 +237,6 @@ class Action:
         self._click_element(bbox)
 
     def click_account_setting(self):
-        time.sleep(1.5)
         bbox = [0.2549503445625305, 0.8525451421737671, 0.3763135075569153, 0.8972681760787964]
         if not self._wait_for_clickable_element(bbox):
             raise Exception("account_setting 不可点击")  # 抛出异常
@@ -246,10 +245,15 @@ class Action:
         self.mouse_controller.scroll_down(400)
 
     def click_address(self):
-        time.sleep(0.7)
         bbox = [0.2665168344974518, 0.745004415512085, 0.37486201524734497, 0.7754677534103394]
         if not self._wait_for_clickable_element(bbox):
             raise Exception("click_address 不可点击")
+        self._click_element(bbox)
+
+    def after_create_address_enter_wallet(self):
+        bbox = [0.25586557388305664, 0.4200286865234375, 0.37026968598365784, 0.45071613788604736]
+        if not self._wait_for_clickable_element(bbox, 3):
+            raise Exception("after_create_address_enter_wallet Wallet link 不可点击")
         self._click_element(bbox)
 
     def click_add_address(self):

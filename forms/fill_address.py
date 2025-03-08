@@ -73,14 +73,14 @@ class Fill_address:
             self.mouse_controller.move_to(ele)
             cursor_type = self.mouse_controller.get_cursor_type() 
             cursor_list.append(cursor_type)
-
-        result = True # 正常保存
+        
+        count = 0
         for type in cursor_list:
-            if type != "OCR_HAND":
-                result = False
+            if type == "OCR_HAND":
+                count += 1
 
         # 2
-        if result:
+        if count < 3:
             logger.info('----- Success save address info -----')
             pass
         else:

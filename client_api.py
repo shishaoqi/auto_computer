@@ -41,7 +41,8 @@ ACTION_HANDLERS = {
     'click_wallet': lambda handler: handler.click_wallet(),
     'click_add_address': lambda handler: handler.click_add_address(),
     'fill_address_form': lambda handler, account_info: handler.fill_address_form(account_info),
-    'fill_wallet_form': lambda handler, account_info: handler.fill_wallet_form(account_info)
+    'fill_wallet_form': lambda handler, account_info: handler.fill_wallet_form(account_info),
+    'after_create_address_enter_wallet': lambda handler: handler.after_create_address_enter_wallet(),
 }
 
 @app.route('/start', methods=['POST'])

@@ -125,6 +125,9 @@ if __name__ == '__main__':
     time.sleep(1.5)
 
     res = call_capture_api(action="fill_address_form", account_info=account_info)
+
+    # 如果添加地址成功，则进行创建银行卡
+    res = call_capture_api(action="after_create_address_enter_wallet")
     # res = call_capture_api(action="fill_wallet_form", account_info=account_info)
 
         
