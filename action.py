@@ -213,8 +213,10 @@ class Action:
         #         return result['parsed_content'][number]
         #     logger.warning(f'Walmart entry with number {number} not found')
         #     return None
-        time.sleep(2.3)
+        time.sleep(2)
         bbox = [0.9097564816474915, 0.08835277706384659, 0.9547790288925171, 0.13475187122821808]
+        if not self._wait_for_clickable_element(bbox):
+            raise Exception("click_account_btn 不可点击")
         self._click_element(bbox)
 
         # 再次截图，--- 1. 寻找 Account  2. 寻找 Walmart+
@@ -234,18 +236,14 @@ class Action:
         #     return None
         time.sleep(1.6)
         bbox = [0.9104751348495483, 0.20280081033706665, 0.9731246829032898, 0.2321944534778595]
+        if not self._wait_for_clickable_element(bbox):
+            raise Exception("enter_account 不可点击")
         self._click_element(bbox)
 
     def click_account_setting(self):
         time.sleep(1.5)
         bbox = [0.2549503445625305, 0.8525451421737671, 0.3763135075569153, 0.8972681760787964]
-        click_able = self._is_clickable_element(bbox)
-        attempts = 0
-        while not click_able and attempts < 5:
-            time.sleep(3)
-            click_able = self._is_clickable_element(bbox)
-            attempts += 1
-        if not click_able:
+        if not self._wait_for_clickable_element(bbox):
             raise Exception("account_setting 不可点击")  # 抛出异常
 
         self._click_element(bbox)
@@ -254,11 +252,15 @@ class Action:
     def click_address(self):
         time.sleep(0.7)
         bbox = [0.2665168344974518, 0.745004415512085, 0.37486201524734497, 0.7754677534103394]
+        if not self._wait_for_clickable_element(bbox):
+            raise Exception("click_address 不可点击")
         self._click_element(bbox)
 
     def click_add_address(self):
         time.sleep(0.8)
         bbox = [0.38615599274635315, 0.28405794501304626, 0.42059326171875, 0.30172109603881836]
+        if not self._wait_for_clickable_element(bbox):
+            raise Exception("click_add_address 不可点击")
         self._click_element(bbox)
         time.sleep(0.35)
         self.mouse_controller.scroll_down(80)
@@ -282,6 +284,26 @@ class Action:
     
     def enter_walmart_plus(self):
         pass
+
+    def _wait_for_clickable_element(self, bbox: list, max_attempts: int = 5, wait_time: float = 3) -> bool:
+        """
+        等待指定的bbox区域变为可点击元素
+        
+        Args:
+            bbox (list): 要检测的区域坐标 [x1, y1, x2, y2]
+            max_attempts (int): 最大尝试次数，默认为5
+            wait_time (float): 每次尝试之间的等待时间（秒），默认为3秒
+            
+        Returns:
+            bool: 如果区域变为可点击元素返回True，否则返回False
+        """
+        click_able = self._is_clickable_element(bbox)
+        attempts = 0
+        while not click_able and attempts < max_attempts:
+            time.sleep(wait_time)
+            click_able = self._is_clickable_element(bbox)
+            attempts += 1
+        return click_able
 
 def upload_images(original_image_path, processed_image_path, prompt, api_url="http://192.168.11.250:8004/analyze"):
     """
