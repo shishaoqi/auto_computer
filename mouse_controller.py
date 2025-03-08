@@ -177,6 +177,15 @@ class MouseController:
     def type_text(self, val: str):
         pyautogui.write(val, interval=0.19)
 
+    def press_enter(self):
+        """
+        执行按下回车键的操作
+        """
+        try:
+            pyautogui.press('enter')  # 按下回车键
+        except Exception as e:
+            self.logger.error(f"按下回车键失败: {str(e)}")
+
 # 执行点击操作
 # click_result = mouse_controller.process_clicks(
 #     detecting_filename, 
