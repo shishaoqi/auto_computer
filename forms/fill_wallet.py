@@ -1,8 +1,8 @@
 from mouse_controller import MouseController 
 import time
-import logging
+from utils.logger import get_logger
 
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 WALLET_FORM = {
     "cardcode":     ["", "input", [0.39894309639930725, 0.35750240087509155, 0.4148775637149811, 0.38952094316482544]],
     "first_name":   ["", "input", [0.3940892815589905, 0.41731399297714233, 0.5608780384063721, 0.46148690581321716]],

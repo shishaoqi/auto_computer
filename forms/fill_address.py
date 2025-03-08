@@ -1,6 +1,6 @@
 from mouse_controller import MouseController 
 import time
-import logging
+from utils.logger import get_logger
 
 ADDRESS_FORM = {
     "first_name":   ["", "input", [0.38270068168640137, 0.2930210828781128, 0.6542178392410278, 0.3367534279823303]],
@@ -12,7 +12,7 @@ ADDRESS_FORM = {
     "phone_number": ["", "input", [0.3832525610923767, 0.6608595848083496, 0.6540420651435852, 0.7047080993652344]],
 }
 
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 class Fill_address:
     def __init__(self, account_info) -> None:
