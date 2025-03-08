@@ -31,7 +31,7 @@ class Fill_wallet:
             if field_name in account_info:
                 WALLET_FORM[field_name][0] = account_info[field_name]
         WALLET_FORM["MM"][0] = account_info["valid_date"][0:2]
-        WALLET_FORM["YY"][0] = account_info[field_name][2:]
+        WALLET_FORM["YY"][0] = account_info["valid_date"][2:4]
 
         
     def fill(self):
@@ -58,3 +58,5 @@ class Fill_wallet:
             
             # 每个字段填写后稍作等待
             time.sleep(0.5)
+            
+        

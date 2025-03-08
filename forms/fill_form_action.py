@@ -90,7 +90,7 @@ class Fill_action:
                     break
                 else:
                     pyautogui.press('down')
-        elif form_ele == "wallet_MM":
+        elif form_ele == "wallet_YY":
             yy_list = ['YY', '25', '26', '27', '28', '29', '30', '31', '32', '33', '34', '35', '36', '37', '38', '39', '40', '41', '42', '43', '44']
             for i, s in enumerate(yy_list):
                 if s == val:
