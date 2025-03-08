@@ -14,15 +14,15 @@ class MouseController:
     def click(self, bbox: list):
         """
         执行点击操作，将相对坐标转换为实际屏幕坐标
-        :param rel_x: x轴相对坐标(0-1范围)
-        :param rel_y: y轴相对坐标(0-1范围)
+        :param bbox: 边界框坐标 [x1, y1, x2, y2]
         """
         try:
             # 获取屏幕尺寸
             screen_width, screen_height = pyautogui.size()
             
-            rel_x = (bbox['bbox'][0] + bbox['bbox'][2]) / 2
-            rel_y = (bbox['bbox'][1] + bbox['bbox'][3]) / 2
+            # 计算中心点坐标
+            rel_x = (bbox[0] + bbox[2]) / 2
+            rel_y = (bbox[1] + bbox[3]) / 2
             # 将相对坐标转换为实际屏幕坐标
             actual_x = int(rel_x * screen_width)
             actual_y = int(rel_y * screen_height)
@@ -100,7 +100,7 @@ class MouseController:
         """
         try:
             # 移动鼠标
-            pyautogui.moveTo(x, y, duration=0.5)
+            pyautogui.moveTo(x, y, duration=0.76)
             
             if double_click:
                 pyautogui.doubleClick()
