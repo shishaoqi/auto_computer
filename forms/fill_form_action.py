@@ -72,7 +72,7 @@ class Fill_action:
             #     pyautogui.press('up')
             self._click_element_by_shiftUp(70)
             for i in range(4):
-                self.mouse_controller.scroll_up(85)
+                self.mouse_controller.scroll_up(80)
                 time.sleep(0.26)
             idx = 0
             for i, s in enumerate(state_list):
@@ -100,18 +100,21 @@ class Fill_action:
     # x 轴左移 left px
     def _click_element_by_shiftLeft(self, bbox: list, left: int) -> bool:
         # bbox格式: [x1, y1, x2, y2]，取中点的相对坐标
-        rel_x = (bbox[0] + bbox[2]) / 2 - left
-        rel_y = (bbox[1] + bbox[3]) / 2
-        self.mouse_controller.move(rel_x, rel_y)
-        self.mouse_controller.click(rel_x, rel_y)
+        center_x = (bbox[0] + bbox[2]) / 2
+        center_y = (bbox[1] + bbox[3]) / 2
+        # 让 mouse_controller 处理实际比率的移动
+        self.mouse_controller.move(center_x, center_y)
+        self.mouse_controller.move_relative(-left, 0)  # 向左移动left像素
+        self.mouse_controller.click()  # 在当前位置点击
         time.sleep(0.5)
         
     # y 轴上移 up px
     def _click_element_by_shiftUp(self, bbox: list, up: int) -> bool:
         # bbox格式: [x1, y1, x2, y2]，取中点的相对坐标
-        rel_x = (bbox[0] + bbox[2]) / 2
-        rel_y = (bbox[1] + bbox[3]) / 2 - up
-        self.mouse_controller.move(rel_x, rel_y)
-        self.mouse_controller.click(rel_x, rel_y)
-        time.sleep(0.5)
+        center_x = (bbox[0] + bbox[2]) / 2
+        center_y = (bbox[1] + bbox[3]) / 2
+        # 让 mouse_controller 处理实际比率的移动
+        self.mouse_controller.move(center_x, center_y)
+        self.mouse_controller.move_relative(0, -up)  # 向上移动up像素
+        time.sleep(0.3)
 

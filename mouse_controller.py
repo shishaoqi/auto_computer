@@ -231,6 +231,26 @@ class MouseController:
         
         return is_clickable
     
+    def move_relative(self, dx, dy):
+        """
+        从当前位置相对移动鼠标
+        :param dx: x轴相对移动距离(像素)
+        :param dy: y轴相对移动距离(像素)
+        """
+        try:
+            # 获取当前鼠标位置
+            current_x, current_y = pyautogui.position()
+            
+            # 计算新位置
+            new_x = current_x + dx
+            new_y = current_y + dy
+            
+            # 移动鼠标到新位置
+            pyautogui.moveTo(new_x, new_y, duration=0.3)
+            return True
+        except Exception as e:
+            self.logger.error(f"相对移动鼠标失败: {str(e)}")
+            return False
 
 # 执行点击操作
 # click_result = mouse_controller.process_clicks(

@@ -281,7 +281,7 @@ class Action:
     def enter_walmart_plus(self):
         pass
 
-    def _wait_for_clickable_element(self, bbox: list, max_attempts: int = 5, wait_time: float = 3) -> bool:
+    def _wait_for_clickable_element(self, bbox: list, max_attempts: int = 8, wait_time: float = 3) -> bool:
         """
         等待指定的bbox区域变为可点击元素
         
