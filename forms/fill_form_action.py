@@ -70,8 +70,9 @@ class Fill_action:
         if form_ele == "address_state":
             # for key in range(59):
             #     pyautogui.press('up')
+            self._click_element_by_shiftUp(70)
             for i in range(4):
-                self.mouse_controller.scroll_up(65)
+                self.mouse_controller.scroll_up(85)
                 time.sleep(0.26)
             idx = 0
             for i, s in enumerate(state_list):
@@ -101,6 +102,15 @@ class Fill_action:
         # bbox格式: [x1, y1, x2, y2]，取中点的相对坐标
         rel_x = (bbox[0] + bbox[2]) / 2 - left
         rel_y = (bbox[1] + bbox[3]) / 2
+        self.mouse_controller.move(rel_x, rel_y)
+        self.mouse_controller.click(rel_x, rel_y)
+        time.sleep(0.5)
+        
+    # y 轴上移 up px
+    def _click_element_by_shiftUp(self, bbox: list, up: int) -> bool:
+        # bbox格式: [x1, y1, x2, y2]，取中点的相对坐标
+        rel_x = (bbox[0] + bbox[2]) / 2
+        rel_y = (bbox[1] + bbox[3]) / 2 - up
         self.mouse_controller.move(rel_x, rel_y)
         self.mouse_controller.click(rel_x, rel_y)
         time.sleep(0.5)
