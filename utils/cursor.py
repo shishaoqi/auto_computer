@@ -9,15 +9,15 @@ class POINT(ctypes.Structure):
     _fields_ = [("x", wintypes.LONG),
                 ("y", wintypes.LONG)]
 
-# 定义 CURSORINFO 结构体
-class CURSORINFO(ctypes.Structure):
+# 定义 CURSOR_INFO 结构体
+class CURSOR_INFO(ctypes.Structure):
     _fields_ = [("cbSize", wintypes.DWORD),
                 ("flags", wintypes.DWORD),
                 ("hCursor", HCURSOR),  # 使用新定义的 HCURSOR 类型
                 ("ptScreenPos", POINT)]
 
-# 定义 ICONINFO 结构体（用于获取光标的详细信息）
-class ICONINFO(ctypes.Structure):
+# 定义 ICON_INFO 结构体（用于获取光标的详细信息）
+class ICON_INFO(ctypes.Structure):
     _fields_ = [("fIcon", wintypes.BOOL),     # 标识是否为图标（True）或光标（False）
                 ("xHotspot", wintypes.DWORD), # 热点 x 坐标
                 ("yHotspot", wintypes.DWORD), # 热点 y 坐标
@@ -49,15 +49,15 @@ user32 = ctypes.windll.user32
 
 def get_cursor_info():
     """调用 GetCursorInfo 获取当前鼠标信息"""
-    ci = CURSORINFO()
-    ci.cbSize = ctypes.sizeof(CURSORINFO)
+    ci = CURSOR_INFO()
+    ci.cbSize = ctypes.sizeof(CURSOR_INFO)
     if not user32.GetCursorInfo(ctypes.byref(ci)):
         raise ctypes.WinError()
     return ci
 
 def get_icon_info(hIcon):
     """调用 GetIconInfo 获取光标的详细信息"""
-    icon_info = ICONINFO()
+    icon_info = ICON_INFO()
     if not user32.GetIconInfo(hIcon, ctypes.byref(icon_info)):
         raise ctypes.WinError()
     return icon_info
@@ -87,9 +87,9 @@ def main():
         # 获取更多光标信息
         icon_info = get_icon_info(ci.hCursor)
         print("光标详细信息:")
-        print("  热点位置: (%d, %d)" % (icon_info.xHotspot, icon_info.yHotspot))
-        print("  hbmColor: %s" % (hex(icon_info.hbmColor) if icon_info.hbmColor else None))
-        print("  hbmMask: %s" % (hex(icon_info.hbmMask)))
+        print("     热点位置: (%d, %d)" % (icon_info.xHotspot, icon_info.yHotspot))
+        print("     hbmColor: %s" % (hex(icon_info.hbmColor) if icon_info.hbmColor else None))
+        print("     hbmMask: %s" % (hex(icon_info.hbmMask)))
     else:
         print("当前没有显示光标")
 

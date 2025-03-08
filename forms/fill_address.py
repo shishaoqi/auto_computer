@@ -36,7 +36,7 @@ class Fill_address:
             if ele_type == "input":
                 self.fill_action.input_ele(bbox, value)
             elif ele_type == "select":
-                self.fill_action.select_ele(bbox, value)
+                self.fill_action.select_ele(bbox, value, "address_state")
             elif ele_type == "checkbox":
                 self.fill_action.checkbox_ele(bbox)
             elif ele_type == "button":

@@ -1,5 +1,6 @@
 from mouse_controller import MouseController  
 from utils.logger import get_logger
+import pyautogui
 import time
 
 logger = get_logger(__name__)
@@ -35,13 +36,23 @@ class Fill_action:
         # 需要 - 再定位与选择
 
 
-    def select_ele(self, bbox: list, val: str):
+    def select_ele(self, bbox: list, val: str, form_ele: str):
         """处理下拉选择框元素"""
+        if form_ele == "address_state":
+            for key, val in 59:
+                pyautogui.press('up')
+                time.sleep(0.06)
+        elif form_ele == "wallet_state":
+            for key, val in 59:
+                pyautogui.press('up')
+                time.sleep(0.06)
+            pass
+
         self._click_element(bbox)
         
         # 输入选项值并回车确认
         self.mouse_controller.type_text(val)
-        self.mouse_controller.press_enter()
+        # self.mouse_controller.press_enter()
         time.sleep(0.5)  # 等待选择完成
 
     def _click_element(self, bbox: list) -> bool:
