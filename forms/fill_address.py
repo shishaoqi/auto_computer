@@ -19,8 +19,8 @@ class Fill_address:
         from forms.fill_form_action import Fill_action
         
         mouse_controller = MouseController()
+        self.mouse_controller = mouse_controller
         self.fill_action = Fill_action(mouse_controller=mouse_controller)
-
         # Update ADDRESS_FORM values with account_info
         global ADDRESS_FORM
         for field_name in ADDRESS_FORM:
@@ -45,5 +45,14 @@ class Fill_address:
                 logger.warning(f"Unknown element type: {ele_type} for {field_name}")
             
             # 每个字段填写后稍作等待
-            time.sleep(0.5)
+            time.sleep(0.6)
         
+        # 点击  More delivery instructions
+        bbox = [0.38673561811447144, 0.8793678283691406, 0.39610129594802856, 0.8966156840324402]
+        self.mouse_controller.click_bbox()
+
+        # 点击 Save 按钮
+        time.sleep(0.8)
+        bbox = [0.6177930235862732, 0.906648576259613, 0.6507642269134521, 0.936152458190918]
+        self.mouse_controller.click_bbox()
+

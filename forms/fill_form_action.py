@@ -45,7 +45,6 @@ class Fill_action:
         if form_ele == "address_state":
             for key in range(59):
                 pyautogui.press('up')
-                time.sleep(0.02)
             idx = 0
             for i, s in enumerate(state_list):
                 if s == val:
@@ -55,7 +54,6 @@ class Fill_action:
         elif form_ele == "wallet_state":
             for key in range(59):
                 pyautogui.press('up')
-                time.sleep(0.06)
         
         # 输入选项值并回车确认
         # self.mouse_controller.type_text(val)

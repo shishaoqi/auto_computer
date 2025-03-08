@@ -32,6 +32,14 @@ class MouseController:
         except Exception as e:
             self.logger.error(f"点击操作失败: {str(e)}")
             return False
+    
+    def click_bbox(self, bbox: list) -> bool:
+        # bbox格式: [x1, y1, x2, y2]，取中点的相对坐标
+        rel_x = (bbox[0] + bbox[2]) / 2
+        rel_y = (bbox[1] + bbox[3]) / 2
+        self.move_to(rel_x, rel_y)
+        self.click(rel_x, rel_y)
+        time.sleep(0.15)
 
     def process_clicks(self, image_path, parsed_content):
         """
