@@ -239,6 +239,15 @@ class Action:
     def click_account_setting(self):
         time.sleep(1.5)
         bbox = [0.2549503445625305, 0.8525451421737671, 0.3763135075569153, 0.8972681760787964]
+        click_able = self._is_clickable_element(bbox)
+        attempts = 0
+        while not click_able and attempts < 5:
+            time.sleep(3)
+            click_able = self._is_clickable_element(bbox)
+            attempts += 1
+        if not click_able:
+            raise Exception("account_setting 不可点击")  # 抛出异常
+
         self._click_element(bbox)
         self.mouse_controller.scroll_down(400)
 
