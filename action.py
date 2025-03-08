@@ -256,6 +256,14 @@ class Action:
             raise Exception("after_create_address_enter_wallet Wallet link 不可点击")
         self._click_element(bbox)
 
+        # 点击 Credi/debit card
+        card_bbox = [0.4318029284477234, 0.3831401467323303, 0.4449518322944641, 0.4026656150817871]
+        if not self._wait_for_clickable_element(card_bbox, 6):
+            raise Exception("after_create_address_enter_wallet card_bbox 不可点击")
+        self._click_element(card_bbox)
+
+        return 1
+
     def click_add_address(self):
         time.sleep(0.8)
         bbox = [0.38615599274635315, 0.28405794501304626, 0.42059326171875, 0.30172109603881836]

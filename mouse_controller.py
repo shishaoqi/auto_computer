@@ -35,6 +35,20 @@ class MouseController:
             self.logger.error(f"点击操作失败: {str(e)}")
             return False
     
+    def actual_click(self, actual_x, actual_y):
+        """
+        执行点击操作，将相对坐标转换为实际屏幕坐标
+        :param bbox: 边界框坐标 [x1, y1, x2, y2]
+        """
+        try:
+            # 执行点击
+            self._click_element(actual_x, actual_y)
+            
+            return True
+        except Exception as e:
+            self.logger.error(f"点击操作失败: {str(e)}")
+            return False
+    
     def click_bbox(self, bbox: list) -> bool:
         # bbox格式: [x1, y1, x2, y2]，取中点的相对坐标
         rel_x = (bbox[0] + bbox[2]) / 2
@@ -247,10 +261,10 @@ class MouseController:
             
             # 移动鼠标到新位置
             pyautogui.moveTo(new_x, new_y, duration=0.3)
-            return True
+            return [new_x, new_y]
         except Exception as e:
             self.logger.error(f"相对移动鼠标失败: {str(e)}")
-            return False
+            return []
 
 # 执行点击操作
 # click_result = mouse_controller.process_clicks(

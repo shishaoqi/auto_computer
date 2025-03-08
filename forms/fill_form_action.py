@@ -40,7 +40,7 @@ class Fill_action:
 
     def input_ele_by_shiftLeft(self, bbox: list, val: str):
         """处理输入框元素"""
-        self._click_element_by_shiftLeft(bbox, 100)
+        self._click_element_by_shiftLeft(bbox, 240)
 
         # 清空现有内容
         pyautogui.hotkey('ctrl', 'a')  # 全选现有文本
@@ -83,6 +83,20 @@ class Fill_action:
         elif form_ele == "wallet_state":
             for key in range(59):
                 pyautogui.press('up')
+        elif form_ele == "wallet_MM":
+            mm_list = ['MM', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
+            for i, s in enumerate(mm_list):
+                if s == val:
+                    break
+                else:
+                    pyautogui.press('down')
+        elif form_ele == "wallet_MM":
+            yy_list = ['YY', '25', '26', '27', '28', '29', '30', '31', '32', '33', '34', '35', '36', '37', '38', '39', '40', '41', '42', '43', '44']
+            for i, s in enumerate(yy_list):
+                if s == val:
+                    break
+                else:
+                    pyautogui.press('down')
         else:
             pass
         
@@ -100,13 +114,13 @@ class Fill_action:
     # x 轴左移 left px
     def _click_element_by_shiftLeft(self, bbox: list, left: int) -> bool:
         # bbox格式: [x1, y1, x2, y2]，取中点的相对坐标
-        center_x = (bbox[0] + bbox[2]) / 2
-        center_y = (bbox[1] + bbox[3]) / 2
+        # center_x = (bbox[0] + bbox[2]) / 2
+        # center_y = (bbox[1] + bbox[3]) / 2
         # 让 mouse_controller 处理实际比率的移动
-        self.mouse_controller.move(center_x, center_y)
-        self.mouse_controller.move_relative(-left, 0)  # 向左移动left像素
-        self.mouse_controller.click()  # 在当前位置点击
-        time.sleep(0.5)
+        # self.mouse_controller.move(center_x, center_y)
+        [actual_x, actual_y] = self.mouse_controller.move_relative(-left, 0)  # 向左移动left像素
+        self.mouse_controller.actual_click(actual_x, actual_y)  # 在当前位置点击
+        time.sleep(0.3)
         
     # y 轴上移 up px
     def _click_element_by_shiftUp(self, up: int) -> bool:
