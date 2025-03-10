@@ -310,7 +310,7 @@ class Action:
             raise Exception("walmart plux link 不可点击")
         self._click_element(bbox)
         # Monthly radio -- [0.5030820965766907, 0.37992063164711, 0.5154772996902466, 0.40496206283569336]
-        bbox = [0.5030820965766907, 0.37992063164711, 0.5154772996902466, 0.40496206283569336]
+        bbox = [0.5030820965766907, 0.37992063164711, 0.5154772996902466, 0.40166175365448]
         if not self._wait_for_clickable_element(bbox, 3):
             raise Exception("Monthly radio 不可点击")
         self._click_element(bbox)
