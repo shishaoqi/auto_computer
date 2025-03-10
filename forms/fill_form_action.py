@@ -113,11 +113,7 @@ class Fill_action:
 
     # x 轴左移 left px
     def _click_element_by_shiftLeft(self, bbox: list, left: int) -> bool:
-        # bbox格式: [x1, y1, x2, y2]，取中点的相对坐标
-        # center_x = (bbox[0] + bbox[2]) / 2
-        # center_y = (bbox[1] + bbox[3]) / 2
-        # 让 mouse_controller 处理实际比率的移动
-        # self.mouse_controller.move(center_x, center_y)
+        self.mouse_controller.move_to(bbox)
         [actual_x, actual_y] = self.mouse_controller.move_relative(-left, 0)  # 向左移动left像素
         self.mouse_controller.actual_click(actual_x, actual_y)  # 在当前位置点击
         time.sleep(0.3)
