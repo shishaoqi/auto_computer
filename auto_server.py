@@ -131,4 +131,5 @@ if __name__ == '__main__':
     # if res['res'] == 1:
     res = call_capture_api(action="fill_wallet_form", account_info=account_info)
 
-        
+    res = call_capture_api(action="start_fress_30_day_trial")
+

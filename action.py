@@ -290,8 +290,42 @@ class Action:
         fw = Fill_wallet(account_info)
         fw.fill()
     
-    def enter_walmart_plus(self):
-        pass
+    def start_fress_30_day_trial(self):
+        # 点击 Account
+        bbox = [0.2558051645755768, 0.172993004322052, 0.3718321919441223, 0.21351772546768188]
+        if not self._wait_for_clickable_element(bbox, 3):
+            raise Exception("Account list_btn 不可点击")
+        self._click_element(bbox)
+
+        # walmart plux  [0.2725761830806732, 0.2666454017162323, 0.370516836643219, 0.29633238911628723]
+        bbox = [0.2725761830806732, 0.2666454017162323, 0.370516836643219, 0.29633238911628723]
+        if not self._wait_for_clickable_element(bbox, 3):
+            raise Exception("walmart plux link 不可点击")
+        self._click_element(bbox)
+
+            
+        # start your free 30-day trial  --  [0.23940591514110565, 0.4323989748954773, 0.3389694094657898, 0.46798384189605713]
+        bbox = [0.23940591514110565, 0.4323989748954773, 0.3389694094657898, 0.46798384189605713]
+        if not self._wait_for_clickable_element(bbox, 3):
+            raise Exception("walmart plux link 不可点击")
+        self._click_element(bbox)
+        # Monthly radio -- [0.5030820965766907, 0.37992063164711, 0.5154772996902466, 0.40496206283569336]
+        bbox = [0.5030820965766907, 0.37992063164711, 0.5154772996902466, 0.40496206283569336]
+        if not self._wait_for_clickable_element(bbox, 3):
+            raise Exception("Monthly radio 不可点击")
+        self._click_element(bbox)
+
+        # I agree to the terms
+        bbox = [0.35335153341293335, 0.7572852373123169, 0.3656124472618103, 0.7804934978485107]
+        if not self._wait_for_clickable_element(bbox, 3):
+            raise Exception("'I agree to the terms' 不可点击")
+        self._click_element(bbox)
+
+        # Start free 30-day trial Btn
+        bbox = [0.5494832992553711, 0.8027747273445129, 0.6348459124565125, 0.837860643863678]
+        if not self._wait_for_clickable_element(bbox, 3):
+            raise Exception("Start free 30-day trial Btn 不可点击")
+        self._click_element(bbox)
 
     def _wait_for_clickable_element(self, bbox: list, max_attempts: int = 8, wait_time: float = 3) -> bool:
         """
