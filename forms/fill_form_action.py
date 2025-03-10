@@ -31,6 +31,7 @@ class Fill_action:
                 if current_cursor != 'OCR_IBEAM':
                     continue
             
+                self.mouse_controller.click(b)
                 # 清空现有内容
                 pyautogui.hotkey('ctrl', 'a')  # 全选现有文本
                 pyautogui.press('delete')      # 删除选中内容
