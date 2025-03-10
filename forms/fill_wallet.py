@@ -58,5 +58,10 @@ class Fill_wallet:
             
             # 每个字段填写后稍作等待
             time.sleep(0.5)
+
+        # 点击 Save 按钮
+        time.sleep(0.36)
+        bbox = [0.6793497204780579, 0.7256332635879517, 0.7290651202201843, 0.7609488368034363]
+        self.mouse_controller.click_bbox(bbox)
             
         
