@@ -11,12 +11,12 @@ load_dotenv()
 logger = get_logger(__name__)
 
 # 第一步：打开浏览器（已进入到搜索 walmart 结果的页）
-def call_start_api():
+def call_start_api(account_info):
     # 做为服务的文件是 client_api.py (当要查看代码时，请跳到 client_api.py)
     url = os.getenv('START_API_URL', 'http://localhost:5000') + '/start'  # Default fallback if not set in .env
     
     try:
-        response = requests.post(url)
+        response = requests.post(url, json=account_info)
         
         # Check if request was successful
         if response.status_code == 200:
@@ -182,7 +182,7 @@ if __name__ == '__main__':
         res = {"status": "fail", "action": ""}
         for _ in range(3):  # Retry up to 3 times
             res = process(account_info, res["action"])
-            if res["status"] != "fail":
+            if res is not None and res.get("status") != "fail":
                 break  # Exit the loop if successful
         else:
             logger.info("Failed after 3 attempts for account: %s", account_info)

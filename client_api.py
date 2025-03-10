@@ -1,11 +1,6 @@
-import base64
-import io
 from flask import Flask, jsonify, request
-from PIL import ImageGrab
-from PIL import Image
 import os
 import time
-import requests
 from datetime import datetime
 from Ads import Ads  # 添加Ads导入
 from mouse_controller import MouseController  # 添加导入
@@ -51,9 +46,7 @@ def start_browser():
     try:
         # 获取 walmart帐号信息
         try:
-            result = api_client.get_member_operate_list()
-            # walmart 帐户信息
-            account_info = result['data']['list'][0]
+            account_info = request.json.get('account_info')  # 从 POST 参数中获取 account_info
             print(account_info)
             
             # 使用API返回的账户信息，确保 password 为字符串
