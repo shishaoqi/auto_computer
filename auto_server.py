@@ -98,37 +98,37 @@ if __name__ == '__main__':
     account_info = result['account_info']
     logger.info(account_info)
 
-    time.sleep(3)
-    res = call_capture_api(action="find_walmart")
+    # time.sleep(3)
+    # res = call_capture_api(action="find_walmart")
 
     # time.sleep(1.5)
     # re = call_capture_api(action="is_walmart_page")
     
     # Calculate and log total execution time
-    execution_time = time.time() - start_time
-    logger.info(f"Total execution time: {execution_time:.2f} seconds")
+    # execution_time = time.time() - start_time
+    # logger.info(f"Total execution time: {execution_time:.2f} seconds")
     
     
-    time.sleep(4)
-    res = call_capture_api(action="click_account_btn")
+    # time.sleep(4)
+    # res = call_capture_api(action="click_account_btn")
 
-    res = call_capture_api(action='enter_account')
-    time.sleep(1.5)
+    # res = call_capture_api(action='enter_account')
+    # time.sleep(1.5)
 
-    res = call_capture_api(action="click_account_setting")
-    time.sleep(1.5)
+    # res = call_capture_api(action="click_account_setting")
+    # time.sleep(1.5)
 
-    res = call_capture_api(action="click_address") # 进入新增 address 页
-    time.sleep(1.5)
+    # res = call_capture_api(action="click_address") # 进入新增 address 页
+    # time.sleep(1.5)
 
-    res = call_capture_api(action="click_add_address")
-    time.sleep(1.5)
+    # res = call_capture_api(action="click_add_address")
+    # time.sleep(1.5)
 
-    res = call_capture_api(action="fill_address_form", account_info=account_info)
+    # res = call_capture_api(action="fill_address_form", account_info=account_info)
 
-    # 如果添加地址成功，则进行创建银行卡
-    res = call_capture_api(action="after_create_address_enter_wallet")
-    if res['res'] == 1:
-        res = call_capture_api(action="fill_wallet_form", account_info=account_info)
+    # # 如果添加地址成功，则进行创建银行卡
+    # res = call_capture_api(action="after_create_address_enter_wallet")
+    # if res['res'] == 1:
+    res = call_capture_api(action="fill_wallet_form", account_info=account_info)
 
         

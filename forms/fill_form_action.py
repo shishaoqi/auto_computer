@@ -12,16 +12,37 @@ class Fill_action:
 
     def input_ele(self, bbox: list, val: str):
         """处理输入框元素"""
-        self._click_element(bbox)
-        
-        # 清空现有内容
-        pyautogui.hotkey('ctrl', 'a')  # 全选现有文本
-        pyautogui.press('delete')      # 删除选中内容
-        time.sleep(0.2)                # 短暂等待清空完成
+        if len(bbox) == 4:
+            self._click_element(bbox)
+            
+            # 清空现有内容
+            pyautogui.hotkey('ctrl', 'a')  # 全选现有文本
+            pyautogui.press('delete')      # 删除选中内容
+            time.sleep(0.2)                # 短暂等待清空完成
 
-        # 输入文本
-        self.mouse_controller.type_text(val)
-        time.sleep(0.5)  # 等待输入完成
+            # 输入文本
+            self.mouse_controller.type_text(val)
+            time.sleep(0.5)  # 等待输入完成
+        elif len(bbox) == 2:
+            found = False
+            for i, b in enumerate(bbox):
+                self.mouse_controller.move_to(bbox)
+                current_cursor = self.mouse_controller.get_cursor_type()
+                if current_cursor != 'OCR_IBEAM':
+                    continue
+            
+                # 清空现有内容
+                pyautogui.hotkey('ctrl', 'a')  # 全选现有文本
+                pyautogui.press('delete')      # 删除选中内容
+                time.sleep(0.2)                # 短暂等待清空完成
+
+                # 输入文本
+                self.mouse_controller.type_text(val)
+                time.sleep(0.5)  # 等待输入完成
+                found = True
+
+            if not found:
+                raise Exception('input ele not found')
 
     def input_ele_endby_enter(self, bbox: list, val: str):
         """处理输入框元素"""
