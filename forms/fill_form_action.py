@@ -26,7 +26,7 @@ class Fill_action:
         elif len(bbox) == 2:
             found = False
             for i, b in enumerate(bbox):
-                self.mouse_controller.move_to(bbox)
+                self.mouse_controller.move_to(b)
                 current_cursor = self.mouse_controller.get_cursor_type()
                 if current_cursor != 'OCR_IBEAM':
                     continue
