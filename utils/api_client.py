@@ -15,7 +15,7 @@ class APIClient:
     
     def get_member_operate_list(self, 
                               page: int = 1, 
-                              limit: int = 1,
+                              limit: int = 10,
                               team: str = "wining") -> Dict[str, Any]:
         """
         Get member operation list from the API

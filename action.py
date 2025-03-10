@@ -135,7 +135,7 @@ class Action:
         """
         self.mouse_controller.scroll(0, -scroll_amount)  # 使用负值表示向下滚动
 
-    def scroll_down_page(self, scroll_times: int = 1, scroll_amount: int = 300, delay: float = 0.5):
+    def _scroll_down_page(self, scroll_times: int = 1, scroll_amount: int = 300, delay: float = 0.5):
         """
         向下滚动页面指定次数
         
@@ -183,6 +183,8 @@ class Action:
                 raise Exception("不可点击")  # 抛出异常
             self._click_element(bbox)
 
+        return 1
+
 
     def is_walmart_page(self):
         img = self.screenshot_processor.screenshot()
@@ -215,7 +217,7 @@ class Action:
             raise Exception("click_account_btn 不可点击")
         self._click_element(bbox)
 
-        # 再次截图，--- 1. 寻找 Account  2. 寻找 Walmart+
+        return 1
     
     def enter_account(self):
         # success, result, status_code = self.screenshot_processor.process_screenshot()
@@ -235,6 +237,7 @@ class Action:
         if not self._wait_for_clickable_element(bbox):
             raise Exception("enter_account 不可点击")
         self._click_element(bbox)
+        return 1
 
     def click_account_setting(self):
         bbox = [0.2549503445625305, 0.8525451421737671, 0.3763135075569153, 0.8972681760787964]
@@ -243,12 +246,14 @@ class Action:
 
         self._click_element(bbox)
         self.mouse_controller.scroll_down(400)
+        return 1
 
     def click_address(self):
         bbox = [0.2665168344974518, 0.745004415512085, 0.37486201524734497, 0.7754677534103394]
         if not self._wait_for_clickable_element(bbox):
             raise Exception("click_address 不可点击")
         self._click_element(bbox)
+        return 1
 
     def after_create_address_enter_wallet(self):
         bbox = [0.25586557388305664, 0.4200286865234375, 0.37026968598365784, 0.45071613788604736]
@@ -272,6 +277,7 @@ class Action:
         self._click_element(bbox)
         time.sleep(0.35)
         self.mouse_controller.scroll_down(80)
+        return 1
 
     def click_wallet(self):
         time.sleep(0.7)
@@ -283,12 +289,14 @@ class Action:
         from forms.fill_address import Fill_address
         fa = Fill_address(account_info)
         fa.fill()
+        return 1
 
     def fill_wallet_form(self, account_info):
         logger.info(f'account_info={account_info}')
         from forms.fill_wallet import Fill_wallet
         fw = Fill_wallet(account_info)
         fw.fill()
+        return 1
     
     def start_fress_30_day_trial(self):
         # 点击 Account
@@ -326,6 +334,7 @@ class Action:
         if not self._wait_for_clickable_element(bbox, 3):
             raise Exception("Start free 30-day trial Btn 不可点击")
         self._click_element(bbox)
+        return 1
 
     def _wait_for_clickable_element(self, bbox: list, max_attempts: int = 8, wait_time: float = 3) -> bool:
         """

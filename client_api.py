@@ -73,7 +73,7 @@ def start_browser():
                 }), 500
             
             YAHOO_WALMART_SEARCH = 'https://www.google.com/search?q=walmart'
-            YAHOO_WALMART_SEARCH = 'https://www.walmart.com/wallet'
+            # YAHOO_WALMART_SEARCH = 'https://www.walmart.com/wallet'
             #ads.driver.execute("newWindow", {'url': 'https://www.google.com/search?p=walmart'})
             # 记录当前窗口句柄
             original_handles = ads.driver.window_handles
@@ -138,13 +138,17 @@ def capture_screen():
             re = {'success': False, 'message': f'未知的action类型: {action}'}
 
         return jsonify({
+            'code': 1,
             'status': 'success',
+            'action': action,
             'res': re
         }), 200
 
     except Exception as e:
         return jsonify({
+            'code': 0,
             'status': 'error',
+            'action': action,
             'message': f'截图或处理失败: action={action} --- {str(e)}'
         }), 500
 

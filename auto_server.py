@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 import os
 import time
 from utils.logger import get_logger
+from utils.api_client import APIClient
 
 # Load environment variables from .env file
 load_dotenv()
@@ -89,47 +90,106 @@ def call_capture_api(action, account_info={}):
 
 ### 如果你不知道要如何做 或 没有可以参考的指令，那么你发起钉钉通知
 
-if __name__ == '__main__':
+def process(account_info, action:str = ""):
     start_time = time.time()  # Start timing
     
-    logger.info('auto_server')
-    result = call_start_api()
-    logger.info(result)
-    account_info = result['account_info']
-    logger.info(account_info)
+    if action == "":
+        result = call_start_api()
+        logger.info(result)
+        logger.info(account_info)
 
-    # time.sleep(3)
-    # res = call_capture_api(action="find_walmart")
+        time.sleep(3)
+        res = call_capture_api(action="find_walmart")
 
-    # time.sleep(1.5)
-    # re = call_capture_api(action="is_walmart_page")
+        # time.sleep(1.5)
+        # re = call_capture_api(action="is_walmart_page")
+        
+        # Calculate and log total execution time
+        execution_time = time.time() - start_time
+        logger.info(f"Total execution time: {execution_time:.2f} seconds")
+        
+        time.sleep(4)
+        res = call_capture_api(action="click_account_btn")
+
+        res = call_capture_api(action='enter_account')
+        time.sleep(1.5)
+
+        res = call_capture_api(action="click_account_setting")
+        time.sleep(1.5)
+
+        res = call_capture_api(action="click_address") # 进入新增 address 页
+        time.sleep(1.5)
+
+        res = call_capture_api(action="click_add_address")
+        time.sleep(1.5)
+
+    if action == "fill_address_form":
+        res = call_capture_api(action="fill_address_form", account_info=account_info)
+        if res != 1:
+            return {"status": "fail", "action": "fill_address_form"}
+        action = "fill_wallet_form"
+
+    if action == "fill_wallet_form":
+        # 如果添加地址成功，则进行创建银行卡
+        res = call_capture_api(action="after_create_address_enter_wallet")
+        if res['res'] == 1:
+            res = call_capture_api(action="fill_wallet_form", account_info=account_info)
+            if res != 1:
+                return {"status": "fail", "action": "fill_wallet_form"}
+        action = "start_fress_30_day_trial"
+
+    if action == "start_fress_30_day_trial":
+        res = call_capture_api(action="start_fress_30_day_trial")
+        if res != 1:
+            return {"status": "fail", "action": "start_fress_30_day_trial"}
+
+def post_member_operate_res(account_info):
+    url = "https://assist.weinpay.com/api/PyHandle/memberOperateRes"
+    data_form = {
+        "timestamp": 1722579064,  # 使用当前时间戳
+        "signed": "8FD39EABE64DC7E6F56953FD8EE5B31C",  # 这里的签名需要根据您的逻辑生成
+        "task_id": account_info["task_id"],
+        "code": 0,
+        "status": 1
+    }
     
-    # Calculate and log total execution time
-    # execution_time = time.time() - start_time
-    # logger.info(f"Total execution time: {execution_time:.2f} seconds")
-    
-    
-    # time.sleep(4)
-    # res = call_capture_api(action="click_account_btn")
+    for attempt in range(3):  # Retry up to 3 times
+        try:
+            response = requests.post(url, json=data_form)
+            if response.status_code == 200:
+                logger.info("POST request successful: %s", response.json())
+                return response.json()  # Return the successful response
+            else:
+                logger.info("POST request failed: %d", response.status_code)
+        except requests.exceptions.RequestException as e:
+            logger.info("POST request error: %s", str(e))
+        
+        time.sleep(3)  # Optional: wait before retrying
 
-    # res = call_capture_api(action='enter_account')
-    # time.sleep(1.5)
+    return None  # Return None if all attempts fail
 
-    # res = call_capture_api(action="click_account_setting")
-    # time.sleep(1.5)
+if __name__ == '__main__':
+    team = os.getenv('TEAM_NAME', 'wining')  # Read team name from .env, default to 'wining'
 
-    # res = call_capture_api(action="click_address") # 进入新增 address 页
-    # time.sleep(1.5)
+    api_client = APIClient()
+    result = api_client.get_member_operate_list(page=1, limit=5, team=team)
+    list = result['data']['list']
+    # account_info = result['data']['list'][0]
+    for account_info in list:
+        # walmart 帐户信息
+        print(account_info)
+        
+        res = {"status": "fail", "action": ""}
+        for _ in range(3):  # Retry up to 3 times
+            res = process(account_info, res["action"])
+            if res["status"] != "fail":
+                break  # Exit the loop if successful
+        else:
+            logger.info("Failed after 3 attempts for account: %s", account_info)
 
-    # res = call_capture_api(action="click_add_address")
-    # time.sleep(1.5)
+        # Replace the original POST request code with a call to the new function
+        result = post_member_operate_res(account_info)
 
-    # res = call_capture_api(action="fill_address_form", account_info=account_info)
 
-    # # 如果添加地址成功，则进行创建银行卡
-    # res = call_capture_api(action="after_create_address_enter_wallet")
-    # if res['res'] == 1:
-    res = call_capture_api(action="fill_wallet_form", account_info=account_info)
-
-    res = call_capture_api(action="start_fress_30_day_trial")
+        
 
