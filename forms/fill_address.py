@@ -18,9 +18,8 @@ class Fill_address:
     def __init__(self, account_info) -> None:
         from forms.fill_form_action import Fill_action
         
-        mouse_controller = MouseController()
-        self.mouse_controller = mouse_controller
-        self.fill_action = Fill_action(mouse_controller=mouse_controller)
+        self.mouse_controller = MouseController()
+        self.fill_action = Fill_action(mouse_controller=self.mouse_controller)
         self.account_info = account_info
         # Update ADDRESS_FORM values with account_info
         global ADDRESS_FORM
