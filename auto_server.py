@@ -16,7 +16,7 @@ def call_start_api(account_info):
     url = os.getenv('START_API_URL', 'http://localhost:5000') + '/start'  # Default fallback if not set in .env
     
     try:
-        response = requests.post(url, json=account_info)
+        response = requests.post(url, json={"account_info": account_info})
         
         # Check if request was successful
         if response.status_code == 200:
@@ -94,7 +94,7 @@ def process(account_info, action:str = ""):
     start_time = time.time()  # Start timing
     
     if action == "":
-        result = call_start_api()
+        result = call_start_api(account_info)
         logger.info(result)
         logger.info(account_info)
 
@@ -125,22 +125,23 @@ def process(account_info, action:str = ""):
 
     if action == "fill_address_form":
         res = call_capture_api(action="fill_address_form", account_info=account_info)
-        if res != 1:
+        # 检查 res 是否为字典，并检查 'res' 键的值
+        if isinstance(res, dict) and res.get('res') != 1:
             return {"status": "fail", "action": "fill_address_form"}
         action = "fill_wallet_form"
 
     if action == "fill_wallet_form":
         # 如果添加地址成功，则进行创建银行卡
         res = call_capture_api(action="after_create_address_enter_wallet")
-        if res['res'] == 1:
+        if isinstance(res, dict) and res.get('res') == 1:
             res = call_capture_api(action="fill_wallet_form", account_info=account_info)
-            if res != 1:
+            if isinstance(res, dict) and res.get('res') != 1:
                 return {"status": "fail", "action": "fill_wallet_form"}
         action = "start_fress_30_day_trial"
 
     if action == "start_fress_30_day_trial":
         res = call_capture_api(action="start_fress_30_day_trial")
-        if res != 1:
+        if isinstance(res, dict) and res.get('res') != 1:
             return {"status": "fail", "action": "start_fress_30_day_trial"}
 
 def post_member_operate_res(account_info):
