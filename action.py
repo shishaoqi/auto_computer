@@ -336,13 +336,13 @@ class Action:
         self._click_element(bbox)
 
         # I agree to the terms
-        bbox = [0.35335153341293335, 0.7572852373123169, 0.3656124472618103, 0.7804934978485107]
+        bbox =  [0.35320946912765503, 0.7014710903167725, 0.36595773696899414, 0.724168062210083]
         if not self._wait_for_clickable_element(bbox, 5):
             raise Exception("'I agree to the terms' 不可点击")
         self._click_element(bbox)
 
-        # Start free 30-day trial Btn
-        bbox = [0.5494832992553711, 0.8027747273445129, 0.6348459124565125, 0.837860643863678]
+        # Start free 30-day trial Btn  或  Rejoin Walmart+
+        bbox = [0.564965546131134, 0.7476170063018799, 0.6348819732666016, 0.7828387022018433]
         if not self._wait_for_clickable_element(bbox, 3):
             raise Exception("Start free 30-day trial Btn 不可点击")
         self._click_element(bbox)
