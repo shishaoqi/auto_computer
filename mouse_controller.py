@@ -8,7 +8,7 @@ class MouseController:
     def __init__(self):
         # 设置pyautogui的安全设置
         pyautogui.FAILSAFE = True
-        pyautogui.PAUSE = 0.5  # 每个操作之间的延迟
+        pyautogui.PAUSE = 0.25  # 每个操作之间的延迟
         self.logger = get_logger(__name__)
 
     def click(self, bbox: list):
@@ -176,7 +176,7 @@ class MouseController:
             actual_y = int(rel_y * screen_height)
             
             # 移动鼠标
-            pyautogui.moveTo(actual_x, actual_y, duration=0.5)
+            pyautogui.moveTo(actual_x, actual_y, duration=2.1)
             return True
         except Exception as e:
             self.logger.error(f"移动鼠标失败: {str(e)}")
@@ -190,7 +190,7 @@ class MouseController:
 
     # 打字输入
     def type_text(self, val: str):
-        pyautogui.write(val, interval=0.19)
+        pyautogui.write(val, interval=0.35)
 
     def press_enter(self):
         """
