@@ -57,6 +57,7 @@ class Fill_address:
         time.sleep(0.8)
         bbox = [0.6177930235862732, 0.906648576259613, 0.6507642269134521, 0.936152458190918]
         self.mouse_controller.click_bbox(bbox)
+        time.sleep(5)
 
         # 检测是否成功提交
         # 1. 检测是否有弹窗：Unable to verify address
