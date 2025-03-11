@@ -305,6 +305,7 @@ class Action:
             raise Exception("Account list_btn 不可点击")
         self._click_element(bbox)
 
+        time.sleep(4) # 避免点击当前页面
         # walmart plux  [0.2725761830806732, 0.2666454017162323, 0.370516836643219, 0.29633238911628723]
         bbox = [0.2725761830806732, 0.2666454017162323, 0.370516836643219, 0.29633238911628723]
         if not self._wait_for_clickable_element(bbox, 3):
