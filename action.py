@@ -304,17 +304,20 @@ class Action:
         return 1
     
     def start_fress_30_day_trial(self):
+        time.sleep(3)
+        self.mouse_controller.scroll_up(900)
+
         # 点击 Account
         bbox = [0.2558051645755768, 0.172993004322052, 0.3718321919441223, 0.21351772546768188]
         if not self._wait_for_clickable_element(bbox, 3):
             raise Exception("Account list_btn 不可点击")
         self._click_element(bbox)
 
-        time.sleep(4) # 避免点击当前页面
+        time.sleep(1)
         # walmart plux 
         bbox = [0.2725761830806732, 0.2666454017162323, 0.370516836643219, 0.29633238911628723]
         if not self._wait_for_clickable_element(bbox, 3):
-            raise Exception("walmart plux link 不可点击")
+            raise Exception("walmart+ link 不可点击")
         self._click_element(bbox)
         time.sleep(4.5)
             

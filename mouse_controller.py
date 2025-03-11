@@ -176,7 +176,7 @@ class MouseController:
             actual_y = int(rel_y * screen_height)
             
             # 移动鼠标
-            pyautogui.moveTo(actual_x, actual_y, duration=2.1)
+            pyautogui.moveTo(actual_x, actual_y, duration=1.7)
             return True
         except Exception as e:
             self.logger.error(f"移动鼠标失败: {str(e)}")
@@ -260,7 +260,7 @@ class MouseController:
             new_y = current_y + dy
             
             # 移动鼠标到新位置
-            pyautogui.moveTo(new_x, new_y, duration=0.3)
+            pyautogui.moveTo(new_x, new_y, duration=1.7)
             return [new_x, new_y]
         except Exception as e:
             self.logger.error(f"相对移动鼠标失败: {str(e)}")
