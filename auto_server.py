@@ -96,53 +96,67 @@ def process(account_info, action:str = ""):
     if action == "":
         result = call_start_api(account_info)
         logger.info(result)
-        logger.info(account_info)
+        # logger.info(account_info)
 
-        time.sleep(3)
+        time.sleep(1)
         res = call_capture_api(action="find_walmart")
+        if res is None:
+            return {"status": "continue", "action": ""}
 
         # time.sleep(1.5)
         # re = call_capture_api(action="is_walmart_page")
         
-        # Calculate and log total execution time
-        execution_time = time.time() - start_time
-        logger.info(f"Total execution time: {execution_time:.2f} seconds")
-        
-        time.sleep(4)
+        time.sleep(1)
         res = call_capture_api(action="click_account_btn")
-
+        if res is None:
+            return {"status": "continue", "action": ""}
+        
         res = call_capture_api(action='enter_account')
+        if res is None:
+            return {"status": "continue", "action": ""}
         time.sleep(1.5)
 
         res = call_capture_api(action="click_account_setting")
+        if res is None:
+            return {"status": "continue", "action": ""}
         time.sleep(1.5)
 
         res = call_capture_api(action="click_address") # 进入新增 address 页
+        if res is None:
+            return {"status": "continue", "action": ""}
         time.sleep(1.5)
 
         res = call_capture_api(action="click_add_address")
+        if res is None:
+            return {"status": "continue", "action": ""}
         time.sleep(1.5)
 
-    if action == "fill_address_form":
+    if action in ["fill_address_form", ""]:
         res = call_capture_api(action="fill_address_form", account_info=account_info)
         # 检查 res 是否为字典，并检查 'res' 键的值
-        if isinstance(res, dict) and res.get('res') != 1:
+        if res is None or (isinstance(res, dict) and res.get('res') != 1):
             return {"status": "fail", "action": "fill_address_form"}
         action = "fill_wallet_form"
 
-    if action == "fill_wallet_form":
+    if action in ["fill_wallet_form", ""]:
         # 如果添加地址成功，则进行创建银行卡
         res = call_capture_api(action="after_create_address_enter_wallet")
-        if isinstance(res, dict) and res.get('res') == 1:
+        if res is None or (isinstance(res, dict) and res.get('res') == 1):
             res = call_capture_api(action="fill_wallet_form", account_info=account_info)
             if isinstance(res, dict) and res.get('res') != 1:
                 return {"status": "fail", "action": "fill_wallet_form"}
         action = "start_fress_30_day_trial"
-
-    if action == "start_fress_30_day_trial":
+    
+    if action in ["start_fress_30_day_trial", ""]:
         res = call_capture_api(action="start_fress_30_day_trial")
-        if isinstance(res, dict) and res.get('res') != 1:
+        if res is None or (isinstance(res, dict) and res.get('res') != 1):
             return {"status": "fail", "action": "start_fress_30_day_trial"}
+    
+    # Calculate and log total execution time
+    execution_time = time.time() - start_time
+    logger.info(f"--------- Total execution time: {execution_time:.2f} seconds")
+    # 添加默认返回值，确保函数不会返回 None
+    return {"status": "success", "action": ""}
 
 def post_member_operate_res(account_info):
     url = "https://assist.weinpay.com/api/PyHandle/memberOperateRes"
@@ -151,7 +165,7 @@ def post_member_operate_res(account_info):
         "signed": "8FD39EABE64DC7E6F56953FD8EE5B31C",  # 这里的签名需要根据您的逻辑生成
         "task_id": account_info["task_id"],
         "code": 0,
-        "status": 1
+        "status": 0
     }
     
     for attempt in range(3):  # Retry up to 3 times
@@ -173,23 +187,32 @@ if __name__ == '__main__':
     team = os.getenv('TEAM_NAME', 'wining')  # Read team name from .env, default to 'wining'
 
     api_client = APIClient()
-    result = api_client.get_member_operate_list(page=1, limit=5, team=team)
-    list = result['data']['list']
-    # account_info = result['data']['list'][0]
-    for account_info in list:
-        # walmart 帐户信息
-        print(account_info)
+    
+    # Retry fetching the member operate list if it's empty
+    while True:
+        result = api_client.get_member_operate_list(page=1, limit=5, team=team)
+        list = result['data']['list']
         
-        res = {"status": "fail", "action": ""}
-        for _ in range(3):  # Retry up to 3 times
-            res = process(account_info, res["action"])
-            if res is not None and res.get("status") != "fail":
-                break  # Exit the loop if successful
-        else:
-            logger.info("Failed after 3 attempts for account: %s", account_info)
+        if len(list) == 0:
+            logger.info("List is empty, retrying in 15 seconds...")
+            time.sleep(15)  # Wait for 15 seconds before retrying
 
-        # Replace the original POST request code with a call to the new function
-        result = post_member_operate_res(account_info)
+        # account_info = result['data']['list'][0]
+        for account_info in list:
+            # walmart 帐户信息
+            logger.info(account_info)
+            
+            res = {"status": "fail", "action": ""}
+            for _ in range(3):  # Retry up to 3 times
+                next_action = res.get("action", "") if res is not None else ""
+                res = process(account_info, next_action)
+                if res is not None and res.get("status") not in ["fail", "continue"]:
+                    break  # Exit the loop if successful or completed
+            else:
+                logger.info("Failed after 3 attempts for account: %s", account_info)
+
+            # Replace the original POST request code with a call to the new function
+            result = post_member_operate_res(account_info)
 
 
         

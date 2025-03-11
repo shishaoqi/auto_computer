@@ -211,7 +211,6 @@ class Action:
         #         return result['parsed_content'][number]
         #     logger.warning(f'Walmart entry with number {number} not found')
         #     return None
-        time.sleep(2)
         bbox = [0.9097564816474915, 0.08835277706384659, 0.9547790288925171, 0.13475187122821808]
         if not self._wait_for_clickable_element(bbox):
             raise Exception("click_account_btn 不可点击")
@@ -232,7 +231,6 @@ class Action:
         #         return result['parsed_content'][number]
         #     logger.warning(f'Walmart entry with number {number} not found')
         #     return None
-        time.sleep(1.6)
         bbox = [0.9104751348495483, 0.20280081033706665, 0.9731246829032898, 0.2321944534778595]
         if not self._wait_for_clickable_element(bbox):
             raise Exception("enter_account 不可点击")
@@ -296,6 +294,8 @@ class Action:
         from forms.fill_wallet import Fill_wallet
         fw = Fill_wallet(account_info)
         fw.fill()
+
+        self.mouse_controller.scroll_up(900)
         return 1
     
     def start_fress_30_day_trial(self):
