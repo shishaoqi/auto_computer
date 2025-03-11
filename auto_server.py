@@ -106,7 +106,7 @@ def process(account_info, action:str = ""):
         # time.sleep(1.5)
         # re = call_capture_api(action="is_walmart_page")
         
-        time.sleep(1)
+        time.sleep(3.5)
         res = call_capture_api(action="click_account_btn")
         if res is None:
             return {"status": "continue", "action": ""}
@@ -119,7 +119,7 @@ def process(account_info, action:str = ""):
         res = call_capture_api(action="click_account_setting")
         if res is None:
             return {"status": "continue", "action": ""}
-        time.sleep(1.5)
+        time.sleep(2.5)
 
         res = call_capture_api(action="click_address") # 进入新增 address 页
         if res is None:

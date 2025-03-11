@@ -243,6 +243,7 @@ class Action:
             raise Exception("account_setting 不可点击")  # 抛出异常
 
         self._click_element(bbox)
+        time.sleep(1)
         self.mouse_controller.scroll_down(400)
         return 1
 
@@ -321,15 +322,17 @@ class Action:
         if not self._wait_for_clickable_element(bbox, 3):
             raise Exception("walmart plux link 不可点击")
         self._click_element(bbox)
+
+        time.sleep(5)
         # Monthly radio -- [0.5030820965766907, 0.37992063164711, 0.5154772996902466, 0.40496206283569336]
         bbox = [0.5030820965766907, 0.37992063164711, 0.5154772996902466, 0.40166175365448]
-        if not self._wait_for_clickable_element(bbox, 3):
+        if not self._wait_for_clickable_element(bbox, 5):
             raise Exception("Monthly radio 不可点击")
         self._click_element(bbox)
 
         # I agree to the terms
         bbox = [0.35335153341293335, 0.7572852373123169, 0.3656124472618103, 0.7804934978485107]
-        if not self._wait_for_clickable_element(bbox, 3):
+        if not self._wait_for_clickable_element(bbox, 5):
             raise Exception("'I agree to the terms' 不可点击")
         self._click_element(bbox)
 
@@ -338,6 +341,7 @@ class Action:
         if not self._wait_for_clickable_element(bbox, 3):
             raise Exception("Start free 30-day trial Btn 不可点击")
         self._click_element(bbox)
+        time.sleep(3)
         return 1
 
     def _wait_for_clickable_element(self, bbox: list, max_attempts: int = 8, wait_time: float = 3) -> bool:
