@@ -1,7 +1,9 @@
 import requests
-import hashlib
-import time
 from typing import Dict, Any
+import time
+from utils.logger import get_logger
+
+logger = get_logger(__name__)
 
 class APIClient:
     def __init__(self, base_url: str = "https://assist.weinpay.com"):
@@ -26,10 +28,11 @@ class APIClient:
             "page": page,
             "limit": limit,
             "client_id": "shizhongqi@gmail.com",
-            #"unique_id": int(time.time()),
-            "unique_id": 1741594600,
+            "unique_id": int(time.time()),
+            #"unique_id": 1741594600,
             "team": team
         }
+        logger.info(f"-------- payload = {payload}")
         
         headers = {
             "Content-Type": "application/json"
