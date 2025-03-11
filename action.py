@@ -274,7 +274,7 @@ class Action:
         if not self._wait_for_clickable_element(bbox):
             raise Exception("click_add_address 不可点击")
         self._click_element(bbox)
-        time.sleep(0.35)
+        time.sleep(1.35)
         self.mouse_controller.scroll_down(80)
         return 1
 
@@ -282,6 +282,7 @@ class Action:
         time.sleep(0.7)
         bbox = [0.25694137811660767, 0.7728841304779053, 0.3740352988243103, 0.8032107949256897]
         self._click_element(bbox)
+        time.sleep(4)
 
     def fill_address_form(self, account_info):
         logger.info(f'account_info={account_info}')
@@ -310,22 +311,23 @@ class Action:
         self._click_element(bbox)
 
         time.sleep(4) # 避免点击当前页面
-        # walmart plux  [0.2725761830806732, 0.2666454017162323, 0.370516836643219, 0.29633238911628723]
+        # walmart plux 
         bbox = [0.2725761830806732, 0.2666454017162323, 0.370516836643219, 0.29633238911628723]
         if not self._wait_for_clickable_element(bbox, 3):
             raise Exception("walmart plux link 不可点击")
         self._click_element(bbox)
-
+        time.sleep(4.5)
             
-        # start your free 30-day trial  --  [0.23940591514110565, 0.4323989748954773, 0.3389694094657898, 0.46798384189605713]
+        # start your free 30-day trial 
         bbox = [0.23940591514110565, 0.4323989748954773, 0.3389694094657898, 0.46798384189605713]
-        if not self._wait_for_clickable_element(bbox, 3):
+        if not self._wait_for_clickable_element(bbox, 5):
             raise Exception("walmart plux link 不可点击")
         self._click_element(bbox)
 
         time.sleep(5)
-        # Monthly radio -- [0.5030820965766907, 0.37992063164711, 0.5154772996902466, 0.40496206283569336]
-        bbox = [0.5030820965766907, 0.37992063164711, 0.5154772996902466, 0.40166175365448]
+        self.mouse_controller.scroll_up(800)
+        # Monthly radio 
+        bbox = [0.5029519200325012, 0.31222501397132874, 0.5149767994880676, 0.33702735772132874],
         if not self._wait_for_clickable_element(bbox, 5):
             raise Exception("Monthly radio 不可点击")
         self._click_element(bbox)
