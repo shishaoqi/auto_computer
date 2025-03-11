@@ -374,6 +374,19 @@ class Action:
 
         time.sleep(3)
         return 1
+    
+    def join_walmart_plus_result(self):
+        img = self.screenshot_processor.screenshot()
+        image_paths = [img]
+        prompt = '''这张图是在网站上开通 Walmart+ 的页面截图，请根据这张图来判断是否开通成功。开通成功的判断依据是：有一段英文提示您开通 Walmart Plus 成功，其它都是失败的或异常的。注意：您的响应应遵循以下格式：{"success": 1}。成功开通 Walmart+，success 置为 1，开通失败（或异常）置为 0。请勿包含任何其他信息。'''
+        
+        res = upload_multiple_images(image_paths, prompt)
+        if not res:
+            return None
+        json_str = res['result']
+        walmart_data = json.loads(json_str)
+        return walmart_data.get("success")
+        
 
     def _wait_for_clickable_element(self, bbox: list, max_attempts: int = 8, wait_time: float = 3) -> bool:
         """

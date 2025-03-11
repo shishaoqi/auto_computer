@@ -39,6 +39,7 @@ ACTION_HANDLERS = {
     'fill_wallet_form': lambda handler, account_info: handler.fill_wallet_form(account_info),
     'after_create_address_enter_wallet': lambda handler: handler.after_create_address_enter_wallet(),
     'start_fress_30_day_trial': lambda handler: handler.start_fress_30_day_trial(),
+    'join_walmart_plus_result': lambda handler: handler.join_walmart_plus_result(),
 }
 
 @app.route('/start', methods=['POST'])

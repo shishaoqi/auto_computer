@@ -151,6 +151,13 @@ def process(account_info, action:str = ""):
         res = call_capture_api(action="start_fress_30_day_trial")
         if res is None or (isinstance(res, dict) and res.get('res') != 1):
             return {"status": "fail", "action": "start_fress_30_day_trial"}
+
+    # 视觉模型确认是否开通会员成功
+    res = call_capture_api(action="join_walmart_plus_result")
+    is_join = 0
+    if isinstance(res, dict):
+        is_join = res.get('res')
+        logger.info(f'join walmart+: {is_join}')
     
     # Calculate and log total execution time
     execution_time = time.time() - start_time
