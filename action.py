@@ -330,7 +330,7 @@ class Action:
         time.sleep(5)
         self.mouse_controller.scroll_up(800)
         # Monthly radio 
-        bbox = [0.5029519200325012, 0.31222501397132874, 0.5149767994880676, 0.33702735772132874],
+        bbox = [0.5029519200325012, 0.31222501397132874, 0.5149767994880676, 0.33702735772132874]
         if not self._wait_for_clickable_element(bbox, 5):
             raise Exception("Monthly radio 不可点击")
         self._click_element(bbox)
