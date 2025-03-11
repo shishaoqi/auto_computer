@@ -287,6 +287,8 @@ class Action:
         from forms.fill_address import Fill_address
         fa = Fill_address(account_info)
         fa.fill()
+
+        time.sleep(8)
         return 1
 
     def fill_wallet_form(self, account_info):
@@ -295,7 +297,8 @@ class Action:
         fw = Fill_wallet(account_info)
         fw.fill()
 
-        self.mouse_controller.scroll_up(900)
+        #self.mouse_controller.scroll_up(900)
+        time.sleep(8)
         return 1
     
     def start_fress_30_day_trial(self):
