@@ -327,25 +327,51 @@ class Action:
             raise Exception("walmart plux link 不可点击")
         self._click_element(bbox)
 
+
         time.sleep(5)
         self.mouse_controller.scroll_up(800)
-        # Monthly radio 
-        bbox = [0.5029519200325012, 0.31222501397132874, 0.5149767994880676, 0.33702735772132874]
-        if not self._wait_for_clickable_element(bbox, 5):
-            raise Exception("Monthly radio 不可点击")
-        self._click_element(bbox)
 
-        # I agree to the terms
-        bbox =  [0.35320946912765503, 0.7014710903167725, 0.36595773696899414, 0.724168062210083]
-        if not self._wait_for_clickable_element(bbox, 5):
-            raise Exception("'I agree to the terms' 不可点击")
-        self._click_element(bbox)
+        bbox = [0.5030820965766907, 0.37992063164711, 0.5154772996902466, 0.40166175365448]
+        if self._wait_for_clickable_element(bbox, 5):
+            # First time start membership
+            # Monthly radio 
+            if not self._wait_for_clickable_element(bbox, 5):
+                raise Exception("Monthly radio 不可点击")
+            self._click_element(bbox)
 
-        # Start free 30-day trial Btn  或  Rejoin Walmart+
-        bbox = [0.564965546131134, 0.7476170063018799, 0.6348819732666016, 0.7828387022018433]
-        if not self._wait_for_clickable_element(bbox, 3):
-            raise Exception("Start free 30-day trial Btn 不可点击")
-        self._click_element(bbox)
+            # I agree to the terms
+            bbox = [0.35335153341293335, 0.7572852373123169, 0.3656124472618103, 0.7804934978485107]
+            if not self._wait_for_clickable_element(bbox, 5):
+                raise Exception("'I agree to the terms' 不可点击")
+            self._click_element(bbox)
+
+            # Start free 30-day trial Btn
+            bbox = [0.5494832992553711, 0.8027747273445129, 0.6348459124565125, 0.837860643863678]
+            if not self._wait_for_clickable_element(bbox, 3):
+                raise Exception("Start free 30-day trial Btn 不可点击")
+            self._click_element(bbox)
+        elif self._wait_for_clickable_element([0.5029519200325012, 0.31222501397132874, 0.5149767994880676, 0.33702735772132874], 5):
+            # Restart your membership
+            # Monthly radio 
+            bbox = [0.5029519200325012, 0.31222501397132874, 0.5149767994880676, 0.33702735772132874]
+            if not self._wait_for_clickable_element(bbox, 5):
+                raise Exception("Monthly radio 不可点击")
+            self._click_element(bbox)
+
+            # I agree to the terms
+            bbox =  [0.35320946912765503, 0.7014710903167725, 0.36595773696899414, 0.724168062210083]
+            if not self._wait_for_clickable_element(bbox, 5):
+                raise Exception("'I agree to the terms' 不可点击")
+            self._click_element(bbox)
+
+            # Rejoin Walmart+
+            bbox = [0.564965546131134, 0.7476170063018799, 0.6348819732666016, 0.7828387022018433]
+            if not self._wait_for_clickable_element(bbox, 3):
+                raise Exception("Start free 30-day trial Btn 不可点击")
+            self._click_element(bbox)
+        else:
+            raise Exception("寻找 Monthly radio 失败")
+
         time.sleep(3)
         return 1
 
