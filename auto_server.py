@@ -94,7 +94,7 @@ def process(account_info, action:str = "", idx = 0):
     start_time = time.time()  # Start timing
 
     if idx == 0:
-        result = call_api(account_info, "start")
+        result = call_api(account_info, "start_browser")
         if result == 'connect client fail':
             logger.error('客户端未启动 ~ ~ ~')
             return

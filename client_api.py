@@ -42,7 +42,7 @@ ACTION_HANDLERS = {
     'join_walmart_plus_result': lambda handler: handler.join_walmart_plus_result(),
 }
 
-@app.route('/start', methods=['POST'])
+@app.route('/start_browser', methods=['POST'])
 def start_browser():
     try:
         # 获取 walmart帐号信息
