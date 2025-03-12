@@ -10,6 +10,7 @@ from utils.api_client import APIClient
 from screenshot_processor import ScreenshotProcessor
 from pywinauto import Desktop
 from utils.logger import get_logger
+import pyautogui
 
 logger = get_logger(__name__)
 app = Flask(__name__)
@@ -120,7 +121,29 @@ def start_browser():
             # 根据有几个标签页做输入 walmart 地址
             # 打开新标签
             # 输入  www.walmart.com
-            
+            if tab_count == 1:
+                add_btn_bbox = [0.10888566076755524, 0.004173490684479475, 0.11842383444309235, 0.02574099972844124]
+            elif tab_count == 2:
+                add_btn_bbox =  []
+            elif tab_count == 3:
+                add_btn_bbox =  []
+            elif tab_count == 4:
+                add_btn_bbox =  []
+            elif tab_count == 5:
+                add_btn_bbox =  []
+            else:
+                pass
+            mouse_controller.click_bbox(add_btn_bbox)
+            url_input_bbox = [0.03242187574505806, 0.03333333507180214, 0.25507813692092896, 0.05694444477558136]
+            mouse_controller.click_bbox(url_input_bbox)
+            # 清空现有内容
+            pyautogui.hotkey('ctrl', 'a')  # 全选现有文本
+            pyautogui.press('delete')      # 删除选中内容
+            time.sleep(0.2)                # 短暂等待清空完成
+            # 输入文本
+            mouse_controller.type_text(YAHOO_WALMART_SEARCH)
+            time.sleep(0.2)  # 等待输入完成
+            pyautogui.press('enter')
 
             
             return jsonify({
