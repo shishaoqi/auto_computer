@@ -64,11 +64,18 @@ class Browser:
                 continue
             
             resp_json = resp.json()
-            if resp_json["code"] != 0:
+            logger.info(resp_json)
+            
+            if resp_json["code"] == 0:
+                # 成功获取响应
+                resp_data = resp_json["data"]
+                logger.info(resp_data)
+                break
+            elif resp_json["code"] != 0:
                 if resp_json["msg"] == "user account does not exist":
                     self.last_error_status = OPTION_STATUS.STATUS_ADS_ID_NOT_EXSIT_ERROR
                     logger.error(f'Browser start failed: ADS ID does not exist: {self.ads_key_id}')
-                    break
+                    return None
                 elif "User_id is already open" in resp_json["msg"]:
                     # 先尝试关闭已存在的实例
                     logger.warning(f"Browser instance already open for {self.ads_key_id}, attempting to close it first")
@@ -81,11 +88,7 @@ class Browser:
                         logger.info(f"Retrying ({attempt+1}/{max_retries})...")
                         time.sleep(2)
                         continue
-                    break
-            
-            # 成功获取响应
-            resp_data = resp_json["data"]
-            logger.info(resp_data)
+                    return None
             
         self._is_browser_running = True
 
