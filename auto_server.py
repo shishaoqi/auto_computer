@@ -124,15 +124,15 @@ def process(account_info, action:str = "", idx = 0):
         logger.info(f"Executing action: {current_action}")
         
         # Add appropriate sleep times between actions
-        if i > 0:
-            if current_action in ["click_account_setting"]:
-                time.sleep(2.5)
-            elif current_action in ["enter_account", "click_address", "click_add_address"]:
-                time.sleep(1.5)
-            elif current_action in ["click_account_btn"]:
-                time.sleep(3.5)
-            else:
-                time.sleep(1)
+        
+        if current_action in ["click_account_setting"]:
+            time.sleep(2.5)
+        elif current_action in ["enter_account", "click_address", "click_add_address"]:
+            time.sleep(1.5)
+        elif current_action in ["click_account_btn"]:
+            time.sleep(3.5)
+        else:
+            time.sleep(1)
         
         res = call_capture_api(action=current_action)
         if res is None:
@@ -233,6 +233,9 @@ if __name__ == '__main__':
 
             # Replace the original POST request code with a call to the new function
             result = post_member_operate_res(account_info)
+            # 关闭浏览器
+            
+
 
 
         

@@ -251,34 +251,41 @@ class Ads:
         options.debugger_address = debugger_address
         
         # 准备driver文件
-        chrome_version = re.findall("chrome_([\d]{1,3})", driver_path)[0]
-        formatted_time = time.strftime("%Y%m%d", time.localtime())
-        day_driver_dir = os.path.join(func.get_driver_dir(), formatted_time)
-        os.makedirs(day_driver_dir, exist_ok=True)
+        # chrome_version = re.findall("chrome_([\d]{1,3})", driver_path)[0]
+        # formatted_time = time.strftime("%Y%m%d", time.localtime())
+        # day_driver_dir = os.path.join(func.get_driver_dir(), formatted_time)
+        # os.makedirs(day_driver_dir, exist_ok=True)
         
-        chromedriver_name = f'chromedriver_{self.ads_key_id}_{chrome_version}.exe'
-        dest_driver_file = os.path.join(day_driver_dir, chromedriver_name)
+        # chromedriver_name = f'chromedriver_{self.ads_key_id}_{chrome_version}.exe'
+        # dest_driver_file = os.path.join(day_driver_dir, chromedriver_name)
         
-        # 确保进程未运行并复制driver
-        func.kill_process_by_name(chromedriver_name)
-        if not os.path.exists(dest_driver_file):
-            shutil.copy(driver_path, dest_driver_file)
-            try:
-                os.chmod(dest_driver_file, 0o777)
-            except OSError as e:
-                logger.warning(f"Failed to set driver permissions: {e}")
+        # # 确保进程未运行并复制 driver
+        # func.kill_process_by_name(chromedriver_name)
+        # if not os.path.exists(dest_driver_file):
+        #     shutil.copy(driver_path, dest_driver_file)
+        #     try:
+        #         os.chmod(dest_driver_file, 0o777)
+        #     except OSError as e:
+        #         logger.warning(f"Failed to set driver permissions: {e}")
         
-        self.cache_driver_file = dest_driver_file
+        # self.cache_driver_file = dest_driver_file
         self.driver = uc.Chrome(
             options=options,
             browser_executable_path=chrome_exe,
-            driver_executable_path=dest_driver_file
+            driver_executable_path=driver_path # dest_driver_file
         )
         
         try:
+            # 先最小化窗口
+            # logger.info("Minimizing browser window")
+            self.driver.minimize_window()
+            time.sleep(0.5)  # 短暂等待以确保最小化完成
+            
+            # 然后最大化窗口
+            # logger.info("Maximizing browser window")
             self.driver.maximize_window()
         except Exception as e:
-            logger.warning(f"Failed to maximize browser window: {e}")
+            logger.warning(f"Failed to minimize/maximize browser window: {e}")
         
         return self.driver
     
