@@ -108,7 +108,7 @@ def start_browser():
             # 当前浏览器打开了几个标签页
             img = screenshot_processor.screenshot()
             image_paths = [img]
-            prompt = '''这是一张浏览器最大化的截图，请判断浏览器打开了几个标签页。注意：您的响应应遵循以下格式：{"tab_count": 2}, 2 表示打开了2个标签页。请勿包含任何其他信息。'''
+            prompt = '''这是一张浏览器最大化的截图，请判断浏览器打开了几个标签页。如何判断：根据图片最上面的标题个数，有几个标题，就有几个标签。注意：您的响应应遵循以下格式：{"tab_count": 2}, 2 表示打开了2个标签页。请勿包含任何其他信息。'''
             
             res = action_handler.upload_multiple_images(image_paths, prompt)
             if not res:
