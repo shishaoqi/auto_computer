@@ -39,7 +39,7 @@ class Action:
             Any: AI响应中指定键的值，如果处理失败则返回None
         """
         try:
-            res = upload_images(result['original_image'], result['processed_image'], prompt)
+            res = self.upload_images(result['original_image'], result['processed_image'], prompt)
             if not res:
                 return None
             json_str = res['result']
@@ -191,7 +191,7 @@ class Action:
         image_paths = [img]
         prompt = '''请识别这张截图是不是 walmart 网站的首页。提示：walmart 网站首页是什么样的呢？首先，浏览器 URL 中能看到 walmart.com; 其次，页面顶栏最左边有 walmart logo，顶栏中间部分是搜索框。注意：您的响应应遵循以下格式：{"is_walmart_page": 1}。是 walmart 网站的首页，is_walmart_page 置为 1，不是置为 0。请勿包含任何其他信息。'''
         
-        res = upload_multiple_images(image_paths, prompt)
+        res = self.upload_multiple_images(image_paths, prompt)
         if not res:
             return None
         json_str = res['result']
@@ -380,7 +380,7 @@ class Action:
         image_paths = [img]
         prompt = '''这张图是在网站上开通 Walmart+ 的页面截图，请根据这张图来判断是否开通成功。开通成功的判断依据是：有一段英文提示您开通 Walmart+ 成功(例如：Welcome, 用户昵称！You're now part of Walmart+)，其它都是失败的或异常的。注意：您的响应应遵循以下格式：{"success": 1}。成功开通 Walmart+，success 置为 1，开通失败（或异常）置为 0。请勿包含任何其他信息。'''
         
-        res = upload_multiple_images(image_paths, prompt)
+        res = self.upload_multiple_images(image_paths, prompt)
         if not res:
             return None
         json_str = res['result']
@@ -410,85 +410,85 @@ class Action:
             attempts += 1
         return click_able
 
-def upload_images(original_image_path, processed_image_path, prompt, api_url="http://192.168.11.250:8004/analyze"):
-    """
-    上传原始图片和处理后的图片到服务器
-    
-    Args:
-        original_image_path (str): 原始图片的路径
-        processed_image_path (str): 处理后图片的路径
-        prompt (str): 提示词
-        api_url (str): API端点URL，默认为http://localhost:8004/analyze
+    def upload_images(self, original_image_path, processed_image_path, prompt, api_url="http://192.168.11.250:8004/analyze"):
+        """
+        上传原始图片和处理后的图片到服务器
         
-    Returns:
-        dict: 服务器返回的响应
-    """
-    # 获取文件扩展名
-    original_ext = original_image_path.split('.')[-1]
-    processed_ext = processed_image_path.split('.')[-1]
-    
-    # 准备文件
-    files = [
-        ('images', ('image1.' + original_ext, open(original_image_path, 'rb'), f'image/{original_ext}')),
-        ('images', ('image2.' + processed_ext, open(processed_image_path, 'rb'), f'image/{processed_ext}'))
-    ]
-    
-    # 准备数据
-    data = {
-        "prompt": prompt
-    }
-    
-    try:
-        # 发送请求
-        response = requests.post(api_url, files=files, data=data)
-        response.raise_for_status()  # 检查响应状态
-        return response.json()
-    except requests.exceptions.RequestException as e:
-        print(f"上传失败: {str(e)}")
-        return None
-    finally:
-        # 确保文件被正确关闭
-        for _, (_, file_obj, _) in files:
-            file_obj.close()
-
-def upload_multiple_images(image_paths: list, prompt: str, api_url: str = "http://192.168.11.250:8004/analyze"):
-    """
-    上传多张图片到服务器
-    
-    Args:
-        image_paths (list): 图片路径列表
-        prompt (str): 提示词
-        api_url (str): API端点URL，默认为http://192.168.11.250:8004/analyze
+        Args:
+            original_image_path (str): 原始图片的路径
+            processed_image_path (str): 处理后图片的路径
+            prompt (str): 提示词
+            api_url (str): API端点URL，默认为http://localhost:8004/analyze
+            
+        Returns:
+            dict: 服务器返回的响应
+        """
+        # 获取文件扩展名
+        original_ext = original_image_path.split('.')[-1]
+        processed_ext = processed_image_path.split('.')[-1]
         
-    Returns:
-        dict: 服务器返回的响应
-    """
-    # 准备文件
-    files = []
-    try:
-        for idx, image_path in enumerate(image_paths, 1):
-            # 获取文件扩展名
-            ext = image_path.split('.')[-1]
-            # 添加文件到列表
-            files.append(
-                ('images', (f'image{idx}.{ext}', open(image_path, 'rb'), f'image/{ext}'))
-            )
+        # 准备文件
+        files = [
+            ('images', ('image1.' + original_ext, open(original_image_path, 'rb'), f'image/{original_ext}')),
+            ('images', ('image2.' + processed_ext, open(processed_image_path, 'rb'), f'image/{processed_ext}'))
+        ]
         
         # 准备数据
         data = {
             "prompt": prompt
         }
         
-        # 发送请求
-        response = requests.post(api_url, files=files, data=data)
-        response.raise_for_status()
-        return response.json()
-    
-    except requests.exceptions.RequestException as e:
-        print(f"上传失败: {str(e)}")
-        return None
-    
-    finally:
-        # 确保所有文件被正确关闭
-        for _, (_, file_obj, _) in files:
-            file_obj.close()
+        try:
+            # 发送请求
+            response = requests.post(api_url, files=files, data=data)
+            response.raise_for_status()  # 检查响应状态
+            return response.json()
+        except requests.exceptions.RequestException as e:
+            print(f"上传失败: {str(e)}")
+            return None
+        finally:
+            # 确保文件被正确关闭
+            for _, (_, file_obj, _) in files:
+                file_obj.close()
+
+    def upload_multiple_images(self, image_paths: list, prompt: str, api_url: str = "http://192.168.11.250:8004/analyze"):
+        """
+        上传多张图片到服务器
+        
+        Args:
+            image_paths (list): 图片路径列表
+            prompt (str): 提示词
+            api_url (str): API端点URL，默认为http://192.168.11.250:8004/analyze
+            
+        Returns:
+            dict: 服务器返回的响应
+        """
+        # 准备文件
+        files = []
+        try:
+            for idx, image_path in enumerate(image_paths, 1):
+                # 获取文件扩展名
+                ext = image_path.split('.')[-1]
+                # 添加文件到列表
+                files.append(
+                    ('images', (f'image{idx}.{ext}', open(image_path, 'rb'), f'image/{ext}'))
+                )
+            
+            # 准备数据
+            data = {
+                "prompt": prompt
+            }
+            
+            # 发送请求
+            response = requests.post(api_url, files=files, data=data)
+            response.raise_for_status()
+            return response.json()
+        
+        except requests.exceptions.RequestException as e:
+            print(f"上传失败: {str(e)}")
+            return None
+        
+        finally:
+            # 确保所有文件被正确关闭
+            for _, (_, file_obj, _) in files:
+                file_obj.close()

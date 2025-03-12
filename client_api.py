@@ -1,13 +1,17 @@
 from flask import Flask, jsonify, request
 import os
 import time
+import json
 from datetime import datetime
 from browser import Browser
 from mouse_controller import MouseController  # 添加导入
 from action import Action  # 添加Action导入
 from utils.api_client import APIClient
 from screenshot_processor import ScreenshotProcessor
+from pywinauto import Desktop
+from utils.logger import get_logger
 
+logger = get_logger(__name__)
 app = Flask(__name__)
 
 # 初始化各种实例
@@ -66,6 +70,58 @@ def start_browser():
 
             browser.start_browser()
             
+            # success, result, status_code = screenshot_processor.process_screenshot()
+            # if status_code == 200:
+            #     bbox = []
+            #     prompt = '''我将为您提供两张图片：第一张是原始图片，第二张是在原图基础上添加了序号标注的图片。
+            #              第二张图片上这些序号都被彩色方框包围，方框外的就不是数字所属的部分。
+            #              请在第二张图片找出浏览器最大化的操作按钮。
+            #              注意：您的响应应遵循以下格式：{"btn": 3}，3表示序号。请勿包含任何其他信息。'''
+            #     number = action_handler.process_image_with_prompt(prompt=prompt, result=result, expected_key="btn")
+                
+            #     # 从 result['parsed_content'] 中遍历找出第 number 个的数据
+            #     if action_handler._click_element_by_number(number, result['parsed_content']):
+            #         bbox = result['parsed_content'][number]
+            #     else:
+            #         raise Exception(f"寻找浏览器最大化按钮 -- 获取 number 失败")
+            # else:
+            #     raise  Exception(f"寻找浏览器最大化按钮报错: {result}")
+            
+            # mouse_controller.click_bbox(bbox)
+            
+            windows = Desktop(backend='uia').windows()
+            target_title = account_info['amz_name']
+            target_window = None
+            
+            for w in windows:
+                if target_title.lower() in w.window_text().lower():
+                    target_window = w
+                    break
+                
+            if target_window:
+                target_window.maximize()
+                logger.info(f"窗口 '{target_title}' 已最大化")
+            else:
+                logger.info(f"未找到标题包含 '{target_title}' 的窗口")
+                
+            # 当前浏览器打开了几个标签页
+            img = screenshot_processor.screenshot()
+            image_paths = [img]
+            prompt = '''这是一张浏览器最大化的截图，请判断浏览器打开了几个标签页。注意：您的响应应遵循以下格式：{"tab_count": 2}, 2 表示打开了2个标签页。请勿包含任何其他信息。'''
+            
+            res = action_handler.upload_multiple_images(image_paths, prompt)
+            if not res:
+                return None
+            json_str = res['result']
+            data = json.loads(json_str)
+            tab_count = data.get("tab_count")
+            logger.info(f'当前打开了{tab_count}个标签页')
+            
+            # 根据有几个标签页做输入 walmart 地址
+            # 打开新标签
+            # 输入  www.walmart.com
+            
+
             
             return jsonify({
                 'status': 'success',
