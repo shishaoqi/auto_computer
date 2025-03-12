@@ -386,6 +386,8 @@ class Action:
         json_str = res['result']
         walmart_data = json.loads(json_str)
         return walmart_data.get("success")
+
+
         
 
     def _wait_for_clickable_element(self, bbox: list, max_attempts: int = 8, wait_time: float = 3) -> bool:

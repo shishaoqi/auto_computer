@@ -2,7 +2,7 @@ from flask import Flask, jsonify, request
 import os
 import time
 from datetime import datetime
-from Ads import Ads  # 添加Ads导入
+from browser import Browser
 from mouse_controller import MouseController  # 添加导入
 from action import Action  # 添加Action导入
 from utils.api_client import APIClient
@@ -11,7 +11,7 @@ from screenshot_processor import ScreenshotProcessor
 app = Flask(__name__)
 
 # 初始化各种实例
-ads = Ads()
+browser = Browser()
 mouse_controller = MouseController()
 api_client = APIClient()
 screenshot_processor = ScreenshotProcessor()
@@ -57,39 +57,15 @@ def start_browser():
                 'account_password': account_info['account_password']
             }
             
-            ads.start_browser(browser_data)
-            
-            if not ads.driver:
-                return jsonify({
-                    'status': 'error',
-                    'message': '浏览器启动失败: driver is None'
-                }), 500
+            # ads.start_browser(browser_data)
+            browser.init_user_info(browser_data)
             
             # YAHOO_WALMART_SEARCH = 'https://www.google.com/search?q=walmart'
             YAHOO_WALMART_SEARCH = 'https://www.walmart.com' # /wallet
             #ads.driver.execute("newWindow", {'url': 'https://www.google.com/search?p=walmart'})
-            # 记录当前窗口句柄
-            original_handles = ads.driver.window_handles
-            # 打开新窗口
-            ads.driver.execute("newWindow", {'url': YAHOO_WALMART_SEARCH})
-            
-            # 等待新窗口出现并获取新窗口句柄
-            new_handle = None
-            start_time = time.time()
-            while time.time() - start_time < 10: # 10s 超时限制
-                current_handles = ads.driver.window_handles
-                if len(current_handles) > len(original_handles):
-                    new_handle = [h for h in current_handles if h not in original_handles][0]
-                    break
-                time.sleep(0.1)
-            
-            if not new_handle:
-                raise Exception("新窗口未能成功打开")
 
-            # 切换到新窗口
-            ads.driver.switch_to.window(new_handle)
-            # 确保页面加载完成
-            ads.driver.get(YAHOO_WALMART_SEARCH)
+            browser.start_browser()
+            
             
             return jsonify({
                 'status': 'success',
@@ -108,6 +84,22 @@ def start_browser():
         return jsonify({
             'status': 'error',
             'message': f'浏览器启动失败: {str(e)}'
+        }), 500
+    
+@app.route('/close_browser', methods=['POST'])
+def close_browser():
+    try:
+        account_info = request.json.get('account_info')  # 从 POST 参数中获取 account_info
+        browser.close_browser(account_info['ads_id'])
+        return jsonify({
+                'status': 'success',
+                'message': '关闭浏览器成功'
+            }), 200
+    
+    except Exception as e:
+        return jsonify({
+            'status': 'error',
+            'message': f'关闭浏览器失败: {str(e)}'
         }), 500
 
 @app.route('/capture', methods=['POST'])

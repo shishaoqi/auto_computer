@@ -11,9 +11,9 @@ load_dotenv()
 logger = get_logger(__name__)
 
 # 第一步：打开浏览器（已进入到搜索 walmart 结果的页）
-def call_start_api(account_info):
+def call_api(account_info, api_name: str):
     # 做为服务的文件是 client_api.py (当要查看代码时，请跳到 client_api.py)
-    url = os.getenv('START_API_URL', 'http://localhost:5000') + '/start'  # Default fallback if not set in .env
+    url = os.getenv('START_API_URL', 'http://localhost:5000') + '/' + api_name  # Default fallback if not set in .env
     
     try:
         response = requests.post(url, json={"account_info": account_info})
@@ -30,7 +30,7 @@ def call_start_api(account_info):
             
     except requests.exceptions.RequestException as e:
         logger.info("Request failed: %s", str(e))
-        return None
+        return 'connect client fail'
 
 # find_walmart
 # 第二步：截图分辨, 找到 walmart, 打开它
@@ -94,7 +94,10 @@ def process(account_info, action:str = "", idx = 0):
     start_time = time.time()  # Start timing
 
     if idx == 0:
-        result = call_start_api(account_info)
+        result = call_api(account_info, "start")
+        if result == 'connect client fail':
+            logger.error('客户端未启动 ~ ~ ~')
+            return
         logger.info(result)
     
     # Start from the specified action
@@ -173,6 +176,11 @@ def process(account_info, action:str = "", idx = 0):
     # Calculate and log total execution time
     execution_time = time.time() - start_time
     logger.info(f"--------- Total execution time: {execution_time:.2f} seconds")
+
+    # 最后 -- 关闭浏览器
+    re = call_api(account_info, "close_browser")
+    logger.info(f'close_browser: {re}')
+
     # 添加默认返回值，确保函数不会返回 None
     return {"status": "success", "action": ""}
 
@@ -233,8 +241,7 @@ if __name__ == '__main__':
 
             # Replace the original POST request code with a call to the new function
             result = post_member_operate_res(account_info)
-            # 关闭浏览器
-            
+
 
 
 

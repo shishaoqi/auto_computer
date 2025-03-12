@@ -168,8 +168,8 @@ class Ads:
             
             # 调用 _api_start_browser 来实际启动浏览器
             self.driver = self._api_start_browser()
-            if not self.driver:
-                raise Exception("Failed to start browser")
+            # if not self.driver:
+            #     raise Exception("Failed to start browser")
             
         except Exception as e:
             logger.error(f'start_browser initialization failed: {str(e)}')
@@ -223,14 +223,14 @@ class Ads:
             
             # 成功获取响应
             resp_data = resp_json["data"]
-            driver_path = resp_data["webdriver"]
-            selenium_debugger_address = resp_data["ws"]["selenium"]
+            # driver_path = resp_data["webdriver"]
+            # selenium_debugger_address = resp_data["ws"]["selenium"]
             
-            driver = self._setup_chrome_driver(driver_path, selenium_debugger_address)
-            if driver:
-                self._is_browser_running = True
-                return driver
-            
+            # driver = self._setup_chrome_driver(driver_path, selenium_debugger_address)
+            # if driver:
+            #     self._is_browser_running = True
+            #     return driver
+            logger.info(resp_data)
         return None
 
     def _setup_chrome_driver(self, driver_path: str, debugger_address: str) -> Any:
