@@ -283,6 +283,7 @@ class Action:
         number = data.get("number")
         logger.info(f'当前帐户已经绑定{number}张卡')
 
+        # 
         while number > 0:
             add_new_payment_method = [0.3855791687965393, 0.3159421384334564, 0.4854893684387207, 0.35353779792785645]
             self.mouse_controller.move_to(add_new_payment_method)
@@ -293,7 +294,10 @@ class Action:
 
             self._click_element(edit_btn)
             self.mouse_controller.scroll_down(900)
-            time.sleep(30)
+            del_card_btn = [0.617047905921936, 0.5675092935562134, 0.672519326210022, 0.6057189702987671]
+            self._click_element(del_card_btn)
+
+            time.sleep(300)
             number -= 1
             pyautogui.press('f5')
 

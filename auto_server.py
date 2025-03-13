@@ -140,6 +140,7 @@ def process(account_info, action:str = "", idx = 0):
         
         res = call_capture_api(action=current_action)
         if res is None or (isinstance(res, dict) and res.get('code') != 1):
+            logger.info(f'call_capture_api {current_action} 出错， res = {res}')
             return {"status": "continue", "action": current_action}
 
     # 完成导航步骤后，进入表单填写
