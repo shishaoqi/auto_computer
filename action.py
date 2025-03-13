@@ -260,6 +260,11 @@ class Action:
         return 1
 
     def after_create_address_enter_wallet(self):
+        bbox = [0.25586557388305664, 0.4200286865234375, 0.37026968598365784, 0.45071613788604736]
+        if not self._wait_for_clickable_element(bbox, 3):
+            raise BBoxNotClickableException("after_create_address_enter_wallet Wallet link 不可点击")
+        self._click_element(bbox)
+
         time.sleep(6)
         # 处理找不到添加卡的链接
         # 判断是否已添加卡
@@ -278,25 +283,19 @@ class Action:
         number = data.get("number")
         logger.info(f'当前帐户已经绑定{number}张卡')
 
-        bbox = [0.25586557388305664, 0.4200286865234375, 0.37026968598365784, 0.45071613788604736]
-        if not self._wait_for_clickable_element(bbox, 3):
-            while number > 0:
-                add_new_payment_method = [0.3855791687965393, 0.3159421384334564, 0.4854893684387207, 0.35353779792785645]
-                self.mouse_controller.move_to(add_new_payment_method)
-                check_1 = self.mouse_controller.get_cursor_type()
-                edit_btn = [0.4730468690395355, 0.4504449665546417, 0.5025107860565186, 0.4814169108867645]
-                self.mouse_controller.move_to(edit_btn)
-                check_2 = self.mouse_controller.get_cursor_type()
+        while number > 0:
+            add_new_payment_method = [0.3855791687965393, 0.3159421384334564, 0.4854893684387207, 0.35353779792785645]
+            self.mouse_controller.move_to(add_new_payment_method)
+            check_1 = self.mouse_controller.get_cursor_type()
+            edit_btn = [0.4730468690395355, 0.4504449665546417, 0.5025107860565186, 0.4814169108867645]
+            self.mouse_controller.move_to(edit_btn)
+            check_2 = self.mouse_controller.get_cursor_type()
 
-                self._click_element(edit_btn)
-                self.mouse_controller.scroll_up(800)
-                time.sleep(30)
-                number -= 1
-                pyautogui.press('f5')
-
-
-            raise BBoxNotClickableException("after_create_address_enter_wallet Wallet link 不可点击")
-        self._click_element(bbox)
+            self._click_element(edit_btn)
+            self.mouse_controller.scroll_up(800)
+            time.sleep(30)
+            number -= 1
+            pyautogui.press('f5')
 
         # 点击 Credi/debit card
         card_bbox = [0.4318029284477234, 0.3831401467323303, 0.4449518322944641, 0.4026656150817871]
@@ -355,7 +354,6 @@ class Action:
         return 1
 
     def fill_wallet_form(self, account_info):
-        logger.info(f'account_info={account_info}')
         from forms.fill_wallet import Fill_wallet
         fw = Fill_wallet(account_info)
         fw.fill()
