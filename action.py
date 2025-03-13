@@ -292,6 +292,7 @@ class Action:
             self._click_element(del_confirm_btn)
             time.sleep(2)
             pyautogui.press('f5')
+            address_count -= 1
             time.sleep(6)
 
         bbox = [0.38615599274635315, 0.28405794501304626, 0.42059326171875, 0.30172109603881836]
