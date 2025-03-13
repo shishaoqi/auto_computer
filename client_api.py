@@ -128,8 +128,8 @@ def start_browser():
                 return None
             json_str = res['result']
             data = json.loads(json_str)
-            tab_count = data.get("tab_count")
-            logger.info(f'当前打开了{tab_count - 2}个标签页')
+            tab_count = data.get("tab_count") - 2
+            logger.info(f'当前打开了{tab_count}个标签页')
             
             # 根据有几个标签页做输入 walmart 地址
             # 打开新标签
