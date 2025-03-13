@@ -292,7 +292,7 @@ class Action:
             check_2 = self.mouse_controller.get_cursor_type()
 
             self._click_element(edit_btn)
-            self.mouse_controller.scroll_up(800)
+            self.mouse_controller.scroll_down(900)
             time.sleep(30)
             number -= 1
             pyautogui.press('f5')
