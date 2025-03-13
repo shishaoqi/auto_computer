@@ -264,8 +264,8 @@ class Action:
         # 判断是否已添加卡
         img = self.screenshot_processor.screenshot()
         image_paths = [img]
-        prompt = '''这是一张浏览器界面的截图，请查看主页内容中，有没有 “Credit or debit card”，如果有，那么紧接于 “Credit or debit card” 后面是括号中数字是多少。
-        注意：您的响应应遵循以下格式：{"number": n}, n 是数字。例如：{"number": 5}，其中 5 表示紧接于 “Credit or debit card” 后面是括号里的数字是 5；没有找到 “Credit or debit card” 则返回 {"number": 0}。请勿包含任何其他信息。'''   
+        prompt = '''这是一张浏览器界面的截图，请页面中查找类似 Credit or debit card(x) 句子，紧接于 Credit or debit card 后面的括号中的x是个数字，表示有几张卡。
+        注意：您的响应应遵循以下格式：{"number": n}, n 是数字。例如：{"number": 5}，其中 5 表示紧接于 “Credit or debit card” 后面是括号里的数字是 5；没有找到类似 Credit or debit card(x) 则返回 {"number": 0}。请勿包含任何其他信息。'''   
         res = self.upload_multiple_images(image_paths, prompt)
         logger.info(f'res = {res}')
         if not res:
