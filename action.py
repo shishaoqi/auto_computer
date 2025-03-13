@@ -3,6 +3,7 @@
 from screenshot_processor import ScreenshotProcessor
 from mouse_controller import MouseController  
 from utils.logger import get_logger
+import pyautogui
 import requests
 import json
 import time
@@ -283,6 +284,15 @@ class Action:
         data = json.loads(json_str)
         address_count = data.get("address_count")
         logger.info(f'当前帐户有{address_count}个地址')
+        while address_count > 0:
+            remove_btn = [0.7072377800941467, 0.32699310779571533, 0.7346668839454651, 0.35097432136535645]
+            self._click_element(remove_btn)
+            time.sleep(0.6)
+            del_confirm_btn = [0.5277529358863831, 0.5654923915863037, 0.5699787735939026, 0.5957998633384705]
+            self._click_element(del_confirm_btn)
+            time.sleep(2)
+            pyautogui.press('f5')
+            time.sleep(6)
 
         bbox = [0.38615599274635315, 0.28405794501304626, 0.42059326171875, 0.30172109603881836]
         if not self._wait_for_clickable_element(bbox):
