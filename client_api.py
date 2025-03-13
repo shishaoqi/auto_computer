@@ -104,19 +104,24 @@ def start_browser():
                 logger.info(f"窗口 '{target_title}' 已最大化")
             else:
                 logger.info(f"未找到标题包含 '{target_title}' 的窗口")
-                
-            # 当前浏览器打开了几个标签页
-            img = screenshot_processor.screenshot()
-            image_paths = [img]
-            prompt = '''这是一张浏览器界面的截图，请判断浏览器打开了几个标签页。
-            如何得出有多少个标签，有两个方法：
-                - 方法-：
-                    根据图片最上面的栏总共有几个 "x"形状的关闭按钮，那么就有几个标签（注意：要忽略标题中大写或小写"x"字母）
-                - 方法二：
-                    根据图片最上面的一栏，"+" 字符前的标题个数，有几个标题，就有几个标签。如果标题只是单独一个特殊符号的是不能计算在内的，因为它不是标签，而是功能按钮
 
-            请结合方法一与方法二判断出有几个标签。    
-            注意：您的响应应遵循以下格式：{"tab_count": n}, n 是数字。例如：{"tab_count": 5}，其中 5 表示打开了5个标签页。请勿包含任何其他信息。'''
+            # 当前浏览器打开了几个标签页
+            success, result, status_code = screenshot_processor.process_screenshot()
+            image_paths = [result["processed_image"]]
+            prompt = '''这是一张浏览器界面的截图，请判断图片最上面的一栏（或最顶的那一行）有几个序号标注。
+            注意：您的响应应遵循以下格式：{"tab_count": n}, n 是数字。例如：{"tab_count": 5}，其中 5 表示总共有5个序号标注。请勿包含任何其他信息。
+            '''
+            # img = screenshot_processor.screenshot()
+            # image_paths = [img]
+            # prompt = '''这是一张浏览器界面的截图，请判断浏览器打开了几个标签页。
+            # 如何得出有多少个标签，有两个方法：
+            #     - 方法-：
+            #         根据图片最上面的栏总共有几个 "x"形状的关闭按钮，那么就有几个标签（注意：要忽略标题中大写或小写"x"字母）
+            #     - 方法二：
+            #         根据图片最上面的一栏，"+" 字符前的标题个数，有几个标题，就有几个标签。如果标题只是单独一个特殊符号的是不能计算在内的，因为它不是标签，而是功能按钮
+
+            # 请结合方法一与方法二判断出有几个标签。    
+            # 注意：您的响应应遵循以下格式：{"tab_count": n}, n 是数字。例如：{"tab_count": 5}，其中 5 表示打开了5个标签页。请勿包含任何其他信息。'''
             
             res = action_handler.upload_multiple_images(image_paths, prompt)
             if not res:
@@ -124,7 +129,7 @@ def start_browser():
             json_str = res['result']
             data = json.loads(json_str)
             tab_count = data.get("tab_count")
-            logger.info(f'当前打开了{tab_count}个标签页')
+            logger.info(f'当前打开了{tab_count - 2}个标签页')
             
             # 根据有几个标签页做输入 walmart 地址
             # 打开新标签

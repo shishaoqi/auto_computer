@@ -85,4 +85,4 @@ class ScreenshotProcessor:
             return False, {
                 'status': 'error',
                 'message': f'截图或处理失败: {str(e)}'
-            }, 500 
+            }, 500
