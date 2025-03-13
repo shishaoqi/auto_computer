@@ -11,6 +11,7 @@ from screenshot_processor import ScreenshotProcessor
 from pywinauto import Desktop
 from utils.logger import get_logger
 import pyautogui
+from action import BBoxNotClickableException
 
 logger = get_logger(__name__)
 app = Flask(__name__)
@@ -226,6 +227,14 @@ def capture_screen():
         }), 200
 
     except Exception as e:
+        if isinstance(e, BBoxNotClickableException):
+            return jsonify({
+                'code': -100,
+                'status': 'error',
+                'action': action,
+                'message': f'bbox找不到或不可点击: action={action} --- {str(e)}'
+            }), 500
+
         return jsonify({
             'code': 0,
             'status': 'error',

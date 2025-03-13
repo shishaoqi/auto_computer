@@ -10,6 +10,10 @@ import time
 
 logger = get_logger(__name__)
 
+class BBoxNotClickableException(Exception):
+    """自定义异常类，用于表示 bbox 不可点击的情况"""
+    pass
+
 class Action:
     def __init__(self, screenshot_processor: ScreenshotProcessor, mouse_controller: MouseController) -> None:
         self.screenshot_processor = screenshot_processor
@@ -258,13 +262,13 @@ class Action:
     def after_create_address_enter_wallet(self):
         bbox = [0.25586557388305664, 0.4200286865234375, 0.37026968598365784, 0.45071613788604736]
         if not self._wait_for_clickable_element(bbox, 3):
-            raise Exception("after_create_address_enter_wallet Wallet link 不可点击")
+            raise BBoxNotClickableException("after_create_address_enter_wallet Wallet link 不可点击")
         self._click_element(bbox)
 
         # 点击 Credi/debit card
         card_bbox = [0.4318029284477234, 0.3831401467323303, 0.4449518322944641, 0.4026656150817871]
         if not self._wait_for_clickable_element(card_bbox, 6):
-            raise Exception("after_create_address_enter_wallet card_bbox 不可点击")
+            raise BBoxNotClickableException("after_create_address_enter_wallet card_bbox 不可点击")
         self._click_element(card_bbox)
 
         return 1

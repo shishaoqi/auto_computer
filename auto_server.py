@@ -56,9 +56,10 @@ def call_capture_api(action, account_info={}):
             logger.info("Capture API Success for action '%s': %s", action, result)
             return result
         else:
+            result = response.json()
             # logger.info("Error: %d", response.status_code)
-            logger.info("Error message: %s", response.json())
-            return None
+            logger.info("Error message: %s", result)
+            return result
             
     except requests.exceptions.RequestException as e:
         logger.info("Capture API request failed: %s", str(e))
@@ -148,23 +149,30 @@ def process(account_info, action:str = "", idx = 0):
     if action == "fill_address_form":
         res = call_capture_api(action="fill_address_form", account_info=account_info)
         # 检查 res 是否为字典，并检查 'res' 键的值
-        if res is None or (isinstance(res, dict) and res.get('res') != 1):
+        if (isinstance(res, dict) and res.get('res') != 1):
             return {"status": "fail", "action": "fill_address_form"}
         action = "fill_wallet_form"
+    elif (isinstance(res, dict) and res.get('code') == 0):
+        pass
 
     if action == "fill_wallet_form":
         # 如果添加地址成功，则进行创建银行卡
         res = call_capture_api(action="after_create_address_enter_wallet")
-        if res is None or (isinstance(res, dict) and res.get('res') == 1):
+        if (isinstance(res, dict) and res.get('res') == 1):
             res = call_capture_api(action="fill_wallet_form", account_info=account_info)
             if isinstance(res, dict) and res.get('res') != 1:
                 return {"status": "fail", "action": "fill_wallet_form"}
+        elif (isinstance(res, dict) and res.get('code') == -100):
+            logger.error(res.get('message'))
+            
         action = "start_fress_30_day_trial"
     
     if action == "start_fress_30_day_trial":
         res = call_capture_api(action="start_fress_30_day_trial")
-        if res is None or (isinstance(res, dict) and res.get('res') != 1):
+        if (isinstance(res, dict) and res.get('res') != 1):
             return {"status": "fail", "action": "start_fress_30_day_trial"}
+        elif (isinstance(res, dict) and res.get('code') == 0):
+            pass
 
     # 视觉模型确认是否开通会员成功
     res = call_capture_api(action="join_walmart_plus_result")
