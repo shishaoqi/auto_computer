@@ -230,7 +230,7 @@ def capture_screen():
             'code': 0,
             'status': 'error',
             'action': action,
-            'message': f'截图或处理失败: action={action} --- {str(e)}'
+            'message': f'流程处理失败: action={action} --- {str(e)}'
         }), 500
 
 if __name__ == '__main__':

@@ -270,6 +270,20 @@ class Action:
 
     def click_add_address(self):
         time.sleep(0.8)
+        # 判断是否已添加地址
+        img = self.screenshot_processor.screenshot()
+        image_paths = [img]
+        # （注意：要忽略标题中大写或小写"x"字母）
+        prompt = '''这是一张浏览器界面的截图，请查看主页内容中，Address 标题下有几个地址列表。
+        注意：您的响应应遵循以下格式：{"address_count": n}, n 是数字。例如：{"address_count": 5}，其中 5 表示有5个地址。请勿包含任何其他信息。'''   
+        res = self.upload_multiple_images(image_paths, prompt)
+        if not res:
+            return None
+        json_str = res['result']
+        data = json.loads(json_str)
+        address_count = data.get("address_count")
+        logger.info(f'当前帐户有{address_count}个地址')
+
         bbox = [0.38615599274635315, 0.28405794501304626, 0.42059326171875, 0.30172109603881836]
         if not self._wait_for_clickable_element(bbox):
             raise Exception("click_add_address 不可点击")
