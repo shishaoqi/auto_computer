@@ -168,10 +168,7 @@ def process(account_info, action:str = "", idx = 0):
             # 找不到添加卡的链接
             if res.get('message') == "bbox找不到或不可点击: action=after_create_address_enter_wallet --- after_create_address_enter_wallet card_bbox 不可点击":
                 logger.info('找不到卡')
-
-
-
-            
+                
         action = "start_fress_30_day_trial"
     
     if action == "start_fress_30_day_trial":
