@@ -262,6 +262,35 @@ class Action:
     def after_create_address_enter_wallet(self):
         bbox = [0.25586557388305664, 0.4200286865234375, 0.37026968598365784, 0.45071613788604736]
         if not self._wait_for_clickable_element(bbox, 3):
+            # 处理找不到添加卡的链接
+            # 判断是否已添加卡
+            img = self.screenshot_processor.screenshot()
+            image_paths = [img]
+            prompt = '''这是一张浏览器界面的截图，请查看主页内容中，有没有 “Credit or debit card”，如果紧接于 “Credit or debit card” 后面是括号中数字是多少。
+            注意：您的响应应遵循以下格式：{"number": n}, n 是数字。例如：{"number": 5}，其中 5 表示紧接于 “Credit or debit card” 后面是括号中数字是 5；没有 “Credit or debit card” 则把 n 置为 0。请勿包含任何其他信息。'''   
+            res = self.upload_multiple_images(image_paths, prompt)
+            if not res:
+                return None
+            json_str = res['result']
+            data = json.loads(json_str)
+            number = data.get("number")
+            logger.info(f'当前帐户已经绑定{number}张卡')
+
+            while number > 0:
+                add_new_payment_method = [0.3855791687965393, 0.3159421384334564, 0.4854893684387207, 0.35353779792785645]
+                self.mouse_controller.move_to(add_new_payment_method)
+                check_1 = self.mouse_controller.get_cursor_type()
+                edit_btn = [0.4730468690395355, 0.4504449665546417, 0.5025107860565186, 0.4814169108867645]
+                self.mouse_controller.move_to(edit_btn)
+                check_2 = self.mouse_controller.get_cursor_type()
+
+                self._click_element(edit_btn)
+                self.mouse_controller.scroll_up(800)
+                time.sleep(30)
+                number -= 1
+                pyautogui.press('f5')
+
+
             raise BBoxNotClickableException("after_create_address_enter_wallet Wallet link 不可点击")
         self._click_element(bbox)
 
@@ -278,7 +307,6 @@ class Action:
         # 判断是否已添加地址
         img = self.screenshot_processor.screenshot()
         image_paths = [img]
-        # （注意：要忽略标题中大写或小写"x"字母）
         prompt = '''这是一张浏览器界面的截图，请查看主页内容中，Address 标题下有几个地址列表。
         注意：您的响应应遵循以下格式：{"address_count": n}, n 是数字。例如：{"address_count": 5}，其中 5 表示有5个地址。请勿包含任何其他信息。'''   
         res = self.upload_multiple_images(image_paths, prompt)
