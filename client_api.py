@@ -111,6 +111,26 @@ def start_browser():
                     'status': 'fail',
                     'message': f"未找到标题包含 '{target_title}' 的窗口"
                 }), 500
+            
+            # 当前浏览器的代理状态
+            time.sleep(3)
+            img = screenshot_processor.screenshot()
+            image_paths = [img]
+            prompt = '''这是一张浏览器界面的截图，请判断页面显示代理（VPN）的状态是成功还是失败。
+            注意：您的响应应遵循以下格式：代理正常返回 {"agent": "success"}，代理失败返回 {"agent": "fail"}。请勿包含任何其他信息。'''
+            
+            res = action_handler.upload_multiple_images(image_paths, prompt)
+            if not res:
+                return None
+            json_str = res['result']
+            data = json.loads(json_str)
+            agent_state = data.get("agent")
+            logger.info(f'代理状态：{agent_state}')
+            if agent_state == "fail":
+                return jsonify({
+                    'status': 'error',
+                    'message': "代理失败"
+                }), 500
                 
 
             # 当前浏览器打开了几个标签页

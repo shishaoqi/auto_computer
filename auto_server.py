@@ -5,6 +5,7 @@ import os
 import time
 from utils.logger import get_logger
 from utils.api_client import APIClient
+from status import Status
 
 # Load environment variables from .env file
 load_dotenv()
@@ -24,9 +25,10 @@ def call_api(account_info, api_name: str):
             logger.info("Success: %s", result['message'])
             return result
         else:
+            result = response.json()
             logger.info("Error: %d", response.status_code)
-            logger.info("Error message: %s", response.json()['message'])
-            return None
+            logger.info("Error message: %s", result['message'])
+            return result
             
     except requests.exceptions.RequestException as e:
         logger.info("Request failed: %s", str(e))
@@ -100,6 +102,11 @@ def process(account_info, action:str = "", idx = 0):
             logger.error('客户端未启动 ~ ~ ~')
             return
         logger.info(result)
+        if result.get("state") == "error":
+            msg = result.get("message")
+            if msg == "代理失败":
+                post_member_operate_res(account_info, Status.STATUS_AGENT_FAIL)
+                return None
     
     # Start from the specified action
     actions_sequence = [
@@ -197,14 +204,14 @@ def process(account_info, action:str = "", idx = 0):
     # 添加默认返回值，确保函数不会返回 None
     return {"status": "success", "action": ""}
 
-def post_member_operate_res(account_info):
+def post_member_operate_res(account_info, status: int=0):
     url = "https://assist.weinpay.com/api/PyHandle/memberOperateRes"
     data_form = {
         "timestamp": 1722579064,  # 使用当前时间戳
         "signed": "8FD39EABE64DC7E6F56953FD8EE5B31C",  # 这里的签名需要根据您的逻辑生成
         "task_id": account_info["task_id"],
         "code": 0,
-        "status": 0
+        "status": status
     }
     
     for attempt in range(3):  # Retry up to 3 times
@@ -231,6 +238,7 @@ if __name__ == '__main__':
     while True:
         result = api_client.get_member_operate_list(page=1, limit=5, team=team)
         list = result['data']['list']
+        list = list[1:]
         
         if len(list) == 0:
             logger.info("List is empty, retrying in 15 seconds...")
@@ -246,11 +254,11 @@ if __name__ == '__main__':
             for i in range(3):  # Retry up to 3 times
                 next_action = res.get("action", "") if res is not None else ""
                 res = process(account_info, next_action, i)
-                if res is not None and res.get("status") not in ["fail", "continue"]:
+                logger.info(f'process return res ====== {res}')
+                if res is not None and res.get("status") == "success":
                     break  # Exit the loop if successful or completed
-                logger.info(f'res === {res}')
-            else:
-                logger.info("Failed after 3 attempts for account: %s", account_info)
+                else:
+                    logger.info("process failed %s: %s", i, account_info)
 
             # Replace the original POST request code with a call to the new function
             result = post_member_operate_res(account_info)

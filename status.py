@@ -44,6 +44,9 @@ class Status:
     # 账号尚未注册
     STATUS_ACCOUNT_NO_REGISTERED_ERROR = 26
 
+    # 代理失败
+    STATUS_AGENT_FAIL = 27
+
 
     # ###创建会员
     # 创建会员失败
