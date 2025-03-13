@@ -119,6 +119,7 @@ class Browser:
                 return False
             
             resp_json = resp.json()
+            logger.info(f'close_browser response: {resp_json}')
             if resp_json["code"] != 0:
                 if "User_id is not open" == resp_json["msg"] or 'user account does not exist' == resp_json["msg"]:
                     return True

@@ -151,10 +151,10 @@ def process(account_info, action:str = "", idx = 0):
         # 检查 res 是否为字典，并检查 'res' 键的值
         if (isinstance(res, dict) and res.get('res') != 1):
             return {"status": "fail", "action": "fill_address_form"}
+        elif (isinstance(res, dict) and res.get('code') == 0):
+            logger.error('fill_address_form error')
+            pass
         action = "fill_wallet_form"
-    elif (isinstance(res, dict) and res.get('code') == 0):
-        logger.error('fill_address_form error')
-        pass
 
     if action == "fill_wallet_form":
         # 如果添加地址成功，则进行创建银行卡
@@ -168,7 +168,7 @@ def process(account_info, action:str = "", idx = 0):
             # 找不到添加卡的链接
             if res.get('message') == "bbox找不到或不可点击: action=after_create_address_enter_wallet --- after_create_address_enter_wallet card_bbox 不可点击":
                 logger.info('找不到卡')
-                
+
         action = "start_fress_30_day_trial"
     
     if action == "start_fress_30_day_trial":

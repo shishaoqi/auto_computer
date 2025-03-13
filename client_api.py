@@ -70,6 +70,7 @@ def start_browser():
             YAHOO_WALMART_SEARCH = 'https://www.walmart.com' # /wallet
             #ads.driver.execute("newWindow", {'url': 'https://www.google.com/search?p=walmart'})
 
+            browser.close_browser(account_info['ads_id'])
             browser.start_browser()
             
             # success, result, status_code = screenshot_processor.process_screenshot()
