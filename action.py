@@ -296,11 +296,13 @@ class Action:
             self.mouse_controller.scroll_down(900)
             del_card_btn = [0.617047905921936, 0.5675092935562134, 0.672519326210022, 0.6057189702987671]
             self._click_element(del_card_btn)
-
-            time.sleep(300)
+            confirm_btn = [0.5271917581558228, 0.5723111629486084, 0.5703563690185547, 0.6032514572143555]
+            self._click_element(confirm_btn)
+            time.sleep(3)
             number -= 1
             pyautogui.press('f5')
 
+        time.sleep(6)
         # 点击 Credi/debit card
         card_bbox = [0.4318029284477234, 0.3831401467323303, 0.4449518322944641, 0.4026656150817871]
         if not self._wait_for_clickable_element(card_bbox, 6):
