@@ -11,102 +11,21 @@ from status import Status
 load_dotenv()
 logger = get_logger(__name__)
 
-# 第一步：打开浏览器（已进入到搜索 walmart 结果的页）
-def call_api(account_info, api_name: str):
-    # 做为服务的文件是 client_api.py (当要查看代码时，请跳到 client_api.py)
-    url = os.getenv('START_API_URL', 'http://localhost:5000') + '/' + api_name  # Default fallback if not set in .env
-    
-    try:
-        response = requests.post(url, json={"account_info": account_info})
-        
-        # Check if request was successful
-        if response.status_code == 200:
-            result = response.json()
-            logger.info("Success: %s", result['message'])
-            return result
-        else:
-            result = response.json()
-            logger.info("Error: %d", response.status_code)
-            logger.info("Error message: %s", result['message'])
-            return result
-            
-    except requests.exceptions.RequestException as e:
-        logger.info("Request failed: %s", str(e))
-        return 'connect client fail'
-
-# find_walmart
-# 第二步：截图分辨, 找到 walmart, 打开它
-### 异常：找不到，取截图，询问当前是什么情况，有什么处理办法。(例如有弹窗，关闭弹窗)
-def call_capture_api(action, account_info={}):
-    """
-    Call the capture API with specified action
-    """
-    # 做为服务的文件是 client_api.py (当要查看代码时，请跳到 client_api.py)
-    url = os.getenv('CAPTURE_API_URL', 'http://localhost:5000') + '/capture'  # Default fallback if not set in .env
-    
-    # Prepare data payload for POST request
-    data = {"action": action}
-    if account_info:  # Only add account_info if it's not empty
-        data["account_info"] = account_info
-    
-    try:
-        response = requests.post(url, json=data)
-        
-        # Check if request was successful
-        if response.status_code == 200:
-            result = response.json()
-            logger.info("Capture API Success for action '%s': %s", action, result)
-            return result
-        else:
-            result = response.json()
-            # logger.info("Error: %d", response.status_code)
-            logger.info("Error message: %s", result)
-            return result
-            
-    except requests.exceptions.RequestException as e:
-        logger.info("Capture API request failed: %s", str(e))
-        return None
-
-# is_walmart_page
-# 第三步：检测是否进入到 walmart 首页
-# done
-
-# 找到 Account 按钮，点击后，截图，1. 寻找 Account  2. 寻找 Walmart+
-
-# ---------------------------------------------------------------------
-## 1. 寻找 Account，点击 Account
-# 1.1 进入  walmart.com/account, 寻找 Settings --> 点击 Settings: 
-# ---------- # 1. 寻找 Address , ......
-#-- 点击 Address, 截图分辨，寻点 "+ Add address"
-#-- 表单识别并填写
-
-# ---------- # 2. 寻找 Wallet , ......
-##-- 点击 Wallet, 截图分辨， 寻点 "Credit/debit cart"
-##-- 表单识别并填写
-
-# ---------------------------------------------------------------------
-
-## 2. 寻找 Walmart+， 点击 Walmart+
-#
-# ---------------------------------------------------------------------
-
-
-### 如果你不知道要如何做 或 没有可以参考的指令，那么你发起钉钉通知
-
-def process(account_info, action:str = "", idx = 0):
+def process(account_info, action:str = "", start_browser:bool=False):
     start_time = time.time()  # Start timing
 
-    if idx == 0:
-        result = call_api(account_info, "start_browser")
+    if start_browser:
+        result = call_api(account_info, "start_browser") # 启动 Ads 浏览器
+        logger.info(f'call_api -- start_browser RESPONSE: {result}')
         if result == 'connect client fail':
-            logger.error('客户端未启动 ~ ~ ~')
+            logger.error('客户端未启动 (或可能客户依赖的服务连接不正常） ~ ~ ~')
             return
-        logger.info(result)
-        if result.get("state") == "error":
+        
+        if result.get("status") == "error":
             msg = result.get("message")
             if msg == "代理失败":
                 post_member_operate_res(account_info, Status.STATUS_AGENT_FAIL)
-                return None
+                return {'code': -601, 'message': '代理失败', 'status': 'error', 'action': ''}
     
     # Start from the specified action
     actions_sequence = [
@@ -204,6 +123,64 @@ def process(account_info, action:str = "", idx = 0):
     # 添加默认返回值，确保函数不会返回 None
     return {"status": "success", "action": ""}
 
+# 第一步：打开浏览器（已进入到搜索 walmart 结果的页）
+def call_api(account_info, api_name: str):
+    # 做为服务的文件是 client_api.py (当要查看代码时，请跳到 client_api.py)
+    url = os.getenv('START_API_URL', 'http://localhost:5000') + '/' + api_name  # Default fallback if not set in .env
+    
+    try:
+        response = requests.post(url, json={"account_info": account_info})
+        
+        # Check if request was successful
+        if response.status_code == 200:
+            result = response.json()
+            logger.info("Success: %s", result['message'])
+            return result
+        else:
+            result = response.json()
+            logger.info("Error message: %s", result['message'])
+            return result
+            
+    except requests.exceptions.RequestException as e:
+        logger.info("Request failed: %s", str(e))
+        # 请查看视觉模型服务是否正常
+        return 'connect client fail'
+
+# find_walmart
+# 第二步：截图分辨, 找到 walmart, 打开它
+### 异常：找不到，取截图，询问当前是什么情况，有什么处理办法。(例如有弹窗，关闭弹窗)
+def call_capture_api(action, account_info={}):
+    """
+    Call the capture API with specified action
+    """
+    # 做为服务的文件是 client_api.py (当要查看代码时，请跳到 client_api.py)
+    url = os.getenv('CAPTURE_API_URL', 'http://localhost:5000') + '/capture'  # Default fallback if not set in .env
+    
+    # Prepare data payload for POST request
+    data = {"action": action}
+    if account_info:  # Only add account_info if it's not empty
+        data["account_info"] = account_info
+    
+    try:
+        response = requests.post(url, json=data)
+        
+        # Check if request was successful
+        if response.status_code == 200:
+            result = response.json()
+            logger.info("Capture API Success for action '%s': %s", action, result)
+            return result
+        else:
+            result = response.json()
+            # logger.info("Error: %d", response.status_code)
+            logger.info("Error message: ------  %s", result)
+            return result
+            
+    except requests.exceptions.RequestException as e:
+        logger.info("Capture API request failed: %s", str(e))
+        return None
+    
+### 如果你不知道要如何做 或 没有可以参考的指令，那么你发起钉钉通知
+
 def post_member_operate_res(account_info, status: int=0):
     url = "https://assist.weinpay.com/api/PyHandle/memberOperateRes"
     data_form = {
@@ -229,6 +206,7 @@ def post_member_operate_res(account_info, status: int=0):
 
     return None  # Return None if all attempts fail
 
+
 if __name__ == '__main__':
     team = os.getenv('TEAM_NAME', 'wining')  # Read team name from .env, default to 'wining'
 
@@ -238,7 +216,7 @@ if __name__ == '__main__':
     while True:
         result = api_client.get_member_operate_list(page=1, limit=5, team=team)
         list = result['data']['list']
-        list = list[1:]
+        list = list[3:]
         
         if len(list) == 0:
             logger.info("List is empty, retrying in 15 seconds...")
@@ -248,20 +226,31 @@ if __name__ == '__main__':
         # account_info = result['data']['list'][0]
         for account_info in list:
             # walmart 帐户信息
-            logger.info(account_info)
+            logger.info(f'执行开通Walmart+, walmart 帐户信息 ------ {account_info}')
             
             res = {"status": "fail", "action": ""}
+            start_browser = True
             for i in range(3):  # Retry up to 3 times
+                status = Status.STATUS_SUCCEED #给 PHP 服务记录的状态
                 next_action = res.get("action", "") if res is not None else ""
-                res = process(account_info, next_action, i)
+                res = process(account_info, next_action, start_browser)
                 logger.info(f'process return res ====== {res}')
-                if res is not None and res.get("status") == "success":
+                if isinstance(res, dict) and res.get("status") == "success":
                     break  # Exit the loop if successful or completed
+                elif isinstance(res, dict) and res.get("status") == "error":
+                    if res.get("code") == -601:
+                        status = Status.STATUS_AGENT_FAIL
+                        start_browser = True
+                elif isinstance(res, dict) and res.get("status") == "continue":
+                    logger.info("process failed, retried %s times:  Ads: %s", i+1, account_info['ads_id'])
+                    start_browser = False
                 else:
-                    logger.info("process failed %s: %s", i, account_info)
+                    logger.info("process failed %s:  Ads: %s", i+1, account_info['ads_id'])
+                    start_browser = False
 
             # Replace the original POST request code with a call to the new function
-            result = post_member_operate_res(account_info)
+
+            result = post_member_operate_res(account_info, status)
 
 
 

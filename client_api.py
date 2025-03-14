@@ -113,10 +113,10 @@ def start_browser():
                 }), 500
             
             # 当前浏览器的代理状态
-            time.sleep(3)
+            time.sleep(8)
             img = screenshot_processor.screenshot()
             image_paths = [img]
-            prompt = '''这是一张浏览器界面的截图，请判断页面显示代理（VPN）的状态是成功还是失败。
+            prompt = '''这是一张浏览器界面的截图，请判断页面显示代理（VPN）的状态是成功还是失败。判断参考：代理成功，页面顶部有显示 IP。 代理失败，页面顶部会显示"代理失败"。如果页面顶部显示的只是 ---.---.---.--- ，这种也是代理失败的
             注意：您的响应应遵循以下格式：代理正常返回 {"agent": "success"}，代理失败返回 {"agent": "fail"}。请勿包含任何其他信息。'''
             
             res = action_handler.upload_multiple_images(image_paths, prompt)

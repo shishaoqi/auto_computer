@@ -46,7 +46,7 @@ def get_logger(name, log_dir="log"):
     
     # 设置日志格式
     formatter = logging.Formatter(
-        fmt='%(asctime)s - %(levelname)s - %(filename)s: %(lineno)d |-|  %(message)s',
+        fmt='%(asctime)s - %(levelname)s - [%(filename)s] %(lineno)d |-|  %(message)s',
         datefmt='%H:%M:%S,%f'[:-3]
     )
     
