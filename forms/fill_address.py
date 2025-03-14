@@ -29,6 +29,7 @@ class Fill_address:
 
         
     def fill(self):
+        time.sleep(3)
         self.mouse_controller.scroll_down(80)
 
         """遍历填写地址表单"""
