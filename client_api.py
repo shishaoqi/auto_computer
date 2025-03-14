@@ -11,7 +11,7 @@ from screenshot_processor import ScreenshotProcessor
 from pywinauto import Desktop
 from utils.logger import get_logger
 import pyautogui
-from action import BBoxNotClickableException
+from action import BBoxNotClickableException, OpenPageFail
 
 logger = get_logger(__name__)
 app = Flask(__name__)
@@ -254,6 +254,14 @@ def capture_screen():
                 'status': 'error',
                 'action': action,
                 'message': f'bbox找不到或不可点击: action={action} --- {str(e)}'
+            }), 500
+        
+        if isinstance(e, OpenPageFail):
+            return jsonify({
+                'code': -602,
+                'status': 'error',
+                'action': action,
+                'message': f'网页打开失败: action={action} --- {str(e)}'
             }), 500
 
         return jsonify({

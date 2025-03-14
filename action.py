@@ -14,6 +14,10 @@ class BBoxNotClickableException(Exception):
     """自定义异常类，用于表示 bbox 不可点击的情况"""
     pass
 
+class OpenPageFail(Exception):
+    """自定义异常类，用于表示打开网页失败的情况"""
+    pass
+
 class Action:
     def __init__(self, screenshot_processor: ScreenshotProcessor, mouse_controller: MouseController) -> None:
         self.screenshot_processor = screenshot_processor
@@ -204,38 +208,32 @@ class Action:
         return walmart_data.get("is_walmart_page")
     
     def click_account_btn(self):
-        # success, result, status_code = self.screenshot_processor.process_screenshot()
-        # if status_code == 200:
-        #     prompt = '''我将为您提供两张图片：第一张是原始图片，第二张是在原图基础上添加了序号标注的图片。
-        #                 第二张图上这些序号都被彩色方框包围，方框外就不是数字所属的部分。
-        #                 请找出网页右上角的 Account 按钮。
-        #                 注意：您的响应应遵循以下格式：{"account": 3}，3是序号。请勿包含任何其他信息。'''
-            
-        #     number = self.process_image_with_prompt(prompt, result, "account")
-        #     if self._click_element_by_number(number, result['parsed_content']):
-        #         return result['parsed_content'][number]
-        #     logger.warning(f'Walmart entry with number {number} not found')
-        #     return None
         bbox = [0.9097564816474915, 0.08835277706384659, 0.9547790288925171, 0.13475187122821808]
         if not self._wait_for_clickable_element(bbox):
-            raise Exception("click_account_btn 不可点击")
+            # 不可点击的话，额外用视觉模型判断是什么问题
+            image_paths = [self.screenshot_processor.screenshot()]
+            prompt = '''这是打开 Walmart 网站首页的截图，请判断页面是否正常打开。打开失败的情况有：1. 页面加载不完全  2. 页面显示内容为 "This site can't be reached"
+            注意：您的响应应遵循以下格式：正常打开返回{"status": "success"}, 打开失败返回{"status": "fail"}。请勿包含任何其他信息。''' 
+
+            res = self.upload_multiple_images(image_paths, prompt)
+            logger.info(f'res = {res}')
+            if not res:
+                return None
+            json_str = res['result']
+            data = json.loads(json_str)
+            status = data.get("status")
+            logger.info(f'当前页面打开状态是{status}')
+
+            if status == "success":
+                raise BBoxNotClickableException("click_account_btn 不可点击")
+            else:
+                raise OpenPageFail("walmart 页面打不开")
+                
         self._click_element(bbox)
 
         return 1
     
     def enter_account(self):
-        # success, result, status_code = self.screenshot_processor.process_screenshot()
-        # if status_code == 200:
-        #     prompt = '''我将为您提供两张图片：第一张是原始图片，第二张是在原图基础上添加了序号标注的图片。
-        #                 第二张图上这些序号都被彩色方框包围，方框外就不是数字所属的部分。
-        #                 请找出网页右上部的下拉框里的 Account。
-        #                 注意：您的响应应遵循以下格式：{"account": 3}，3是序号。请勿包含任何其他信息。'''
-            
-        #     number = self.process_image_with_prompt(prompt, result, "account")
-        #     if self._click_element_by_number(number, result['parsed_content']):
-        #         return result['parsed_content'][number]
-        #     logger.warning(f'Walmart entry with number {number} not found')
-        #     return None
         bbox = [0.9104751348495483, 0.20280081033706665, 0.9731246829032898, 0.2321944534778595]
         if not self._wait_for_clickable_element(bbox):
             raise Exception("enter_account 不可点击")

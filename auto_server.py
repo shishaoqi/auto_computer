@@ -64,8 +64,12 @@ def process(account_info, action:str = "", start_browser:bool=False):
         else:
             time.sleep(1)
         
-        res = call_capture_api(action=current_action)
+        res = call_action_api(action=current_action)
+        logger.info(f'call_action_api RESPONSE: {res}')
         if res is None or (isinstance(res, dict) and res.get('code') != 1):
+            logger.info(f'call_capture_api {current_action} 出错， res = {res}')
+            return {"status": "continue", "action": current_action}
+        elif (isinstance(res, dict) and res.get('code') == -602):
             logger.info(f'call_capture_api {current_action} 出错， res = {res}')
             return {"status": "continue", "action": current_action}
 
@@ -74,7 +78,7 @@ def process(account_info, action:str = "", start_browser:bool=False):
         action = "fill_address_form"
         
     if action == "fill_address_form":
-        res = call_capture_api(action="fill_address_form", account_info=account_info)
+        res = call_action_api(action="fill_address_form", account_info=account_info)
         # 检查 res 是否为字典，并检查 'res' 键的值
         if (isinstance(res, dict) and res.get('res') != 1):
             return {"status": "fail", "action": "fill_address_form"}
@@ -85,9 +89,9 @@ def process(account_info, action:str = "", start_browser:bool=False):
 
     if action == "fill_wallet_form":
         # 如果添加地址成功，则进行创建银行卡
-        res = call_capture_api(action="after_create_address_enter_wallet")
+        res = call_action_api(action="after_create_address_enter_wallet")
         if (isinstance(res, dict) and res.get('res') == 1):
-            res = call_capture_api(action="fill_wallet_form", account_info=account_info)
+            res = call_action_api(action="fill_wallet_form", account_info=account_info)
             if isinstance(res, dict) and res.get('res') != 1:
                 return {"status": "fail", "action": "fill_wallet_form"}
         elif (isinstance(res, dict) and res.get('code') == -100):
@@ -99,14 +103,14 @@ def process(account_info, action:str = "", start_browser:bool=False):
         action = "start_fress_30_day_trial"
     
     if action == "start_fress_30_day_trial":
-        res = call_capture_api(action="start_fress_30_day_trial")
+        res = call_action_api(action="start_fress_30_day_trial")
         if (isinstance(res, dict) and res.get('res') != 1):
             return {"status": "fail", "action": "start_fress_30_day_trial"}
         elif (isinstance(res, dict) and res.get('code') == 0):
             pass
 
     # 视觉模型确认是否开通会员成功
-    res = call_capture_api(action="join_walmart_plus_result")
+    res = call_action_api(action="join_walmart_plus_result")
     is_join = 0
     if isinstance(res, dict):
         is_join = res.get('res')
@@ -149,7 +153,7 @@ def call_api(account_info, api_name: str):
 # find_walmart
 # 第二步：截图分辨, 找到 walmart, 打开它
 ### 异常：找不到，取截图，询问当前是什么情况，有什么处理办法。(例如有弹窗，关闭弹窗)
-def call_capture_api(action, account_info={}):
+def call_action_api(action, account_info={}):
     """
     Call the capture API with specified action
     """
@@ -216,7 +220,6 @@ if __name__ == '__main__':
     while True:
         result = api_client.get_member_operate_list(page=1, limit=5, team=team)
         list = result['data']['list']
-        list = list[3:]
         
         if len(list) == 0:
             logger.info("List is empty, retrying in 15 seconds...")
