@@ -113,7 +113,7 @@ def start_browser():
                 }), 500
             
             # 当前浏览器的代理状态
-            time.sleep(8)
+            time.sleep(16)
             img = screenshot_processor.screenshot()
             image_paths = [img]
             prompt = '''这是一张浏览器界面的截图，请判断页面显示代理（VPN）的状态是成功还是失败。判断参考：代理的成功依据是页面中有显示 IP（例如 IP：110.120.89.163 ）。 代理的失败依据是页面中会显示"代理失败"。如果页面中显示的内容有包含 ---.---.---.--- ，判断为代理失败。
