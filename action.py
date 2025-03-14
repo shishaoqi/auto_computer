@@ -208,6 +208,7 @@ class Action:
         return walmart_data.get("is_walmart_page")
     
     def click_account_btn(self):
+        i = 0
         while True:
             bbox = [0.9097564816474915, 0.08835277706384659, 0.9547790288925171, 0.13475187122821808]
             if not self._wait_for_clickable_element(bbox):
@@ -232,14 +233,17 @@ class Action:
                     
             self._click_element(bbox)
 
-            for i in range(2):
-                bbox = [0.9104751348495483, 0.20280081033706665, 0.9731246829032898, 0.2321944534778595]
-                if not self._wait_for_clickable_element(bbox) and i == 0: # 可能是有弹窗，点击一下
-                    self._click_element(bbox)
-                elif not self._wait_for_clickable_element(bbox):
-                    # raise Exception("enter_account 不可点击")
-                    continue
-            self._click_element(bbox)
+            bbox = [0.9104751348495483, 0.20280081033706665, 0.9731246829032898, 0.2321944534778595]
+            if not self._wait_for_clickable_element(bbox) and i == 0: # 可能是有弹窗，点击一下
+                self._click_element(bbox)
+                i += 1
+                continue
+            elif not self._wait_for_clickable_element(bbox):
+                # raise Exception("enter_account 不可点击")
+                continue
+            else:
+                self._click_element(bbox)
+                break
 
         return 1
     
