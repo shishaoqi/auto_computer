@@ -300,10 +300,20 @@ class Action:
             self._click_element(edit_btn)
             time.sleep(2.5)
             self.mouse_controller.scroll_down(900)
+
             del_card_btn = [0.617047905921936, 0.5675092935562134, 0.672519326210022, 0.6057189702987671]
-            self._click_element(del_card_btn)
-            confirm_btn = [0.5271917581558228, 0.5723111629486084, 0.5703563690185547, 0.6032514572143555]
-            self._click_element(confirm_btn)
+            if self._wait_for_clickable_element(del_card_btn, 6):
+                del_card_btn = [0.617047905921936, 0.5675092935562134, 0.672519326210022, 0.6057189702987671]
+                self._click_element(del_card_btn)
+                confirm_btn = [0.5271917581558228, 0.5723111629486084, 0.5703563690185547, 0.6032514572143555]
+                self._click_element(confirm_btn)
+            elif self._wait_for_clickable_element([0.6169742345809937, 0.6176642775535583, 0.6727732419967651, 0.6560440063476562], 6):
+                del_card_btn = [0.6169742345809937, 0.6176642775535583, 0.6727732419967651, 0.6560440063476562]
+                self._click_element(del_card_btn)
+                confirm_btn = [0.5271917581558228, 0.5723111629486084, 0.5703563690185547, 0.6032514572143555]
+                self._click_element(confirm_btn)
+
+            
             time.sleep(3)
             number -= 1
             pyautogui.press('f5')
