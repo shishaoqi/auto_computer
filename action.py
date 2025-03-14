@@ -234,10 +234,14 @@ class Action:
         return 1
     
     def enter_account(self):
-        bbox = [0.9104751348495483, 0.20280081033706665, 0.9731246829032898, 0.2321944534778595]
-        if not self._wait_for_clickable_element(bbox):
-            raise Exception("enter_account 不可点击")
+        for i in range(2):
+            bbox = [0.9104751348495483, 0.20280081033706665, 0.9731246829032898, 0.2321944534778595]
+            if not self._wait_for_clickable_element(bbox) and i == 0: # 可能是有弹窗，点击一下
+                self._click_element(bbox)
+            elif not self._wait_for_clickable_element(bbox):
+                raise Exception("enter_account 不可点击")
         self._click_element(bbox)
+
         return 1
 
     def click_account_setting(self):
@@ -339,7 +343,7 @@ class Action:
             raise Exception("click_add_address 不可点击")
         self._click_element(bbox)
         time.sleep(1.35)
-        self.mouse_controller.scroll_down(80)
+        
         return 1
 
     def click_wallet(self):

@@ -29,6 +29,8 @@ class Fill_address:
 
         
     def fill(self):
+        self.mouse_controller.scroll_down(80)
+
         """遍历填写地址表单"""
         for field_name, (value, ele_type, bbox) in ADDRESS_FORM.items():
             logger.info(f"Filling {field_name}: {value}")
