@@ -276,7 +276,7 @@ class Action:
             image_paths = [img]
             prompt = '''这是一张浏览器界面的截图。首先，判断页面是不是加载完整，如果未加载完整，则直接返回 {"number": -1}。接着在页面中查找类似 Credit or debit card (x) 句子，紧接于 Credit or debit card 后面的括号中的x是个数字，表示有几张卡。
             注意：您的响应应遵循以下格式：{"number": n}, n 是数字。例如：{"number": 5}，其中 5 表示紧接于 “Credit or debit card” 后面是括号里的数字是 5；没有找到类似 Credit or debit card(x) 则返回 {"number": 0}。请勿包含任何其他信息。''' 
-            
+
             res = self.upload_multiple_images(image_paths, prompt)
             logger.info(f'res = {res}')
             if not res:
@@ -298,6 +298,7 @@ class Action:
             check_2 = self.mouse_controller.get_cursor_type()
 
             self._click_element(edit_btn)
+            time.sleep(2.5)
             self.mouse_controller.scroll_down(900)
             del_card_btn = [0.617047905921936, 0.5675092935562134, 0.672519326210022, 0.6057189702987671]
             self._click_element(del_card_btn)
