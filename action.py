@@ -208,28 +208,38 @@ class Action:
         return walmart_data.get("is_walmart_page")
     
     def click_account_btn(self):
-        bbox = [0.9097564816474915, 0.08835277706384659, 0.9547790288925171, 0.13475187122821808]
-        if not self._wait_for_clickable_element(bbox):
-            # 不可点击的话，额外用视觉模型判断是什么问题
-            image_paths = [self.screenshot_processor.screenshot()]
-            prompt = '''这是打开 Walmart 网站首页的截图，请判断页面是否正常打开。打开失败的情况有：1. 页面加载不完全  2. 页面显示内容为 "This site can't be reached"
-            注意：您的响应应遵循以下格式：正常打开返回{"status": "success"}, 打开失败返回{"status": "fail"}。请勿包含任何其他信息。''' 
+        while True:
+            bbox = [0.9097564816474915, 0.08835277706384659, 0.9547790288925171, 0.13475187122821808]
+            if not self._wait_for_clickable_element(bbox):
+                # 不可点击的话，额外用视觉模型判断是什么问题
+                image_paths = [self.screenshot_processor.screenshot()]
+                prompt = '''这是打开 Walmart 网站首页的截图，请判断页面是否正常打开。打开失败的情况有：1. 页面加载不完全  2. 页面显示内容为 "This site can't be reached"
+                注意：您的响应应遵循以下格式：正常打开返回{"status": "success"}, 打开失败返回{"status": "fail"}。请勿包含任何其他信息。''' 
 
-            res = self.upload_multiple_images(image_paths, prompt)
-            logger.info(f'res = {res}')
-            if not res:
-                return None
-            json_str = res['result']
-            data = json.loads(json_str)
-            status = data.get("status")
-            logger.info(f'当前页面打开状态是{status}')
+                res = self.upload_multiple_images(image_paths, prompt)
+                logger.info(f'res = {res}')
+                if not res:
+                    return None
+                json_str = res['result']
+                data = json.loads(json_str)
+                status = data.get("status")
+                logger.info(f'当前页面打开状态是{status}')
 
-            if status == "success":
-                raise BBoxNotClickableException("click_account_btn 不可点击")
-            else:
-                raise OpenPageFail("walmart 页面打不开")
-                
-        self._click_element(bbox)
+                if status == "success":
+                    raise BBoxNotClickableException("click_account_btn 不可点击")
+                else:
+                    raise OpenPageFail("walmart 页面打不开")
+                    
+            self._click_element(bbox)
+
+            for i in range(2):
+                bbox = [0.9104751348495483, 0.20280081033706665, 0.9731246829032898, 0.2321944534778595]
+                if not self._wait_for_clickable_element(bbox) and i == 0: # 可能是有弹窗，点击一下
+                    self._click_element(bbox)
+                elif not self._wait_for_clickable_element(bbox):
+                    # raise Exception("enter_account 不可点击")
+                    continue
+            self._click_element(bbox)
 
         return 1
     
@@ -302,12 +312,12 @@ class Action:
             self.mouse_controller.scroll_down(900)
 
             del_card_btn = [0.617047905921936, 0.5675092935562134, 0.672519326210022, 0.6057189702987671]
-            if self._wait_for_clickable_element(del_card_btn, 6):
+            if self._wait_for_clickable_element(del_card_btn, 4):
                 del_card_btn = [0.617047905921936, 0.5675092935562134, 0.672519326210022, 0.6057189702987671]
                 self._click_element(del_card_btn)
                 confirm_btn = [0.5271917581558228, 0.5723111629486084, 0.5703563690185547, 0.6032514572143555]
                 self._click_element(confirm_btn)
-            elif self._wait_for_clickable_element([0.6169742345809937, 0.6176642775535583, 0.6727732419967651, 0.6560440063476562], 6):
+            elif self._wait_for_clickable_element([0.6169742345809937, 0.6176642775535583, 0.6727732419967651, 0.6560440063476562], 3):
                 del_card_btn = [0.6169742345809937, 0.6176642775535583, 0.6727732419967651, 0.6560440063476562]
                 self._click_element(del_card_btn)
                 confirm_btn = [0.5271917581558228, 0.5723111629486084, 0.5703563690185547, 0.6032514572143555]

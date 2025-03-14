@@ -31,7 +31,7 @@ def process(account_info, action:str = "", start_browser:bool=False):
     actions_sequence = [
         # "find_walmart",
         "click_account_btn",
-        "enter_account",
+        # "enter_account",
         "click_account_setting",
         "click_address",
         "click_add_address"
@@ -220,6 +220,7 @@ if __name__ == '__main__':
     while True:
         result = api_client.get_member_operate_list(page=1, limit=5, team=team)
         list = result['data']['list']
+        list = list[1:]
         
         if len(list) == 0:
             logger.info("List is empty, retrying in 15 seconds...")
