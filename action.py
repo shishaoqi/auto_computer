@@ -268,22 +268,25 @@ class Action:
         self._click_element(bbox)
 
         time.sleep(6)
-        # 处理找不到添加卡的链接
-        # 判断是否已添加卡
-        img = self.screenshot_processor.screenshot()
-        image_paths = [img]
-        prompt = '''这是一张浏览器界面的截图，请页面中查找类似 Credit or debit card (x) 句子，紧接于 Credit or debit card 后面的括号中的x是个数字，表示有几张卡。
-        注意：您的响应应遵循以下格式：{"number": n}, n 是数字。例如：{"number": 5}，其中 5 表示紧接于 “Credit or debit card” 后面是括号里的数字是 5；没有找到类似 Credit or debit card(x) 则返回 {"number": 0}。请勿包含任何其他信息。''' 
 
-        # prompt = '''这是一张浏览器界面的截图，请页面中查找 Payment methods，紧接于 Payment methods 后面的是括号与数字。'''  
-        res = self.upload_multiple_images(image_paths, prompt)
-        logger.info(f'res = {res}')
-        if not res:
-            return None
-        json_str = res['result']
-        data = json.loads(json_str)
-        number = data.get("number")
-        logger.info(f'当前帐户已经绑定{number}张卡')
+        while True:
+            # 处理找不到添加卡的链接
+            # 判断是否已添加卡
+            img = self.screenshot_processor.screenshot()
+            image_paths = [img]
+            prompt = '''这是一张浏览器界面的截图。首先，判断页面是不是加载完整，如果未加载完整，则直接返回 {"number": -1}。接着在页面中查找类似 Credit or debit card (x) 句子，紧接于 Credit or debit card 后面的括号中的x是个数字，表示有几张卡。
+            注意：您的响应应遵循以下格式：{"number": n}, n 是数字。例如：{"number": 5}，其中 5 表示紧接于 “Credit or debit card” 后面是括号里的数字是 5；没有找到类似 Credit or debit card(x) 则返回 {"number": 0}。请勿包含任何其他信息。''' 
+            
+            res = self.upload_multiple_images(image_paths, prompt)
+            logger.info(f'res = {res}')
+            if not res:
+                return None
+            json_str = res['result']
+            data = json.loads(json_str)
+            number = data.get("number")
+            logger.info(f'当前帐户已经绑定{number}张卡')
+            if number != -1:
+                break
 
         # 
         while number > 0:
