@@ -6,3 +6,4 @@
 /cache
 /detecting/*
 /forms/__pycache__/
+unconsumed_items.json

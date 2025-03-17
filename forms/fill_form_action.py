@@ -13,7 +13,15 @@ class Fill_action:
     def input_ele(self, bbox: list, val: str):
         """处理输入框元素"""
         if len(bbox) == 4:
-            self._click_element(bbox)
+            for i in range(5):
+                self.mouse_controller.move_to(bbox)
+                current_cursor = self.mouse_controller.get_cursor_type()
+                if current_cursor != 'OCR_IBEAM':
+                    continue
+                else:
+                    break
+
+            self.mouse_controller.click(bbox)
             
             # 清空现有内容
             pyautogui.hotkey('ctrl', 'a')  # 全选现有文本
