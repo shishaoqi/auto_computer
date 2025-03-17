@@ -472,31 +472,35 @@ class Action:
         return 1
     
     def join_walmart_plus_result(self):
-        img = self.screenshot_processor.screenshot()
-        image_paths = [img]
-        prompt = '''这是一张浏览器界面的截图，请查看图片内容判断是否成功开通 Walmart+ 。。
-        注意：您的响应应遵循以下格式：成功开通返回 {"resut": "success", "msg": ""}, 右侧弹窗报异常返回 {"resut": "window_error", "msg": "描述弹窗情况"}, 其它情况（未知） {"resut": "other", "msg": "描述情况"}。其中，msg 指的是把发生情况描述出来。请勿包含任何其他信息。'''
-        
-        res = self.upload_multiple_images(image_paths, prompt)
-        if not res:
-            raise Exception("Error: join_walmart_plus_result response error")
-        logger.info(f'join_walmart_plus_result == {res}')
-        json_str = res['result']
-        data = json.loads(json_str)
-        return data.get("resut")
+        for i in range(3):
+            img = self.screenshot_processor.screenshot()
+            image_paths = [img]
+            prompt = '''这是一张浏览器界面的截图，请查看图片内容判断是否成功开通 Walmart+ 。。
+            注意：您的响应应遵循以下格式：成功开通返回 {"resut": "success", "msg": ""}, 右侧弹窗报异常返回 {"resut": "window_error", "msg": "描述弹窗情况"}, 其它情况（未知） {"resut": "other", "msg": "描述情况"}。其中，msg 指的是把发生情况描述出来。请勿包含任何其他信息。'''
+            
+            res = self.upload_multiple_images(image_paths, prompt)
+            if not res:
+                raise Exception("Error: join_walmart_plus_result response error")
+            logger.info(f'join_walmart_plus_result == {res}, in {i+1}')
+            json_str = res['result']
+            data = json.loads(json_str)
+            result =  data.get("resut")
+            if result == "success":
+                break
     
+        return result
         # 截图，让视频模型判断情况：1. 成功  2. 有弹窗  3. 其它（未知）
-        img = self.screenshot_processor.screenshot()
-        image_paths = [img]
-        prompt = '''这是一张浏览器界面的截图，请查看图片内容判断是否成功开通 Walmart+ 。。
-        注意：您的响应应遵循以下格式：成功开通返回 {"resut": "success", "msg": ""}, 右侧弹窗报异常返回 {"resut": "window_error", "msg": "描述弹窗情况"}, 其它情况（未知） {"resut": "other", "msg": "描述情况"}。其中，msg 指的是把发生情况描述出来。请勿包含任何其他信息。'''   
-        res = self.upload_multiple_images(image_paths, prompt)
-        if not res:
-            raise Exception("判断是否已开通 Walmart+ 出错")
-        json_str = res['result']
-        data = json.loads(json_str)
-        resut = data.get("resut")
-        logger.info(f'------------- 开始结果为 {resut}')
+        # img = self.screenshot_processor.screenshot()
+        # image_paths = [img]
+        # prompt = '''这是一张浏览器界面的截图，请查看图片内容判断是否成功开通 Walmart+ 。。
+        # 注意：您的响应应遵循以下格式：成功开通返回 {"resut": "success", "msg": ""}, 右侧弹窗报异常返回 {"resut": "window_error", "msg": "描述弹窗情况"}, 其它情况（未知） {"resut": "other", "msg": "描述情况"}。其中，msg 指的是把发生情况描述出来。请勿包含任何其他信息。'''   
+        # res = self.upload_multiple_images(image_paths, prompt)
+        # if not res:
+        #     raise Exception("判断是否已开通 Walmart+ 出错")
+        # json_str = res['result']
+        # data = json.loads(json_str)
+        # resut = data.get("resut")
+        # logger.info(f'------------- 开始结果为 {resut}')
 
 
     def logging(self, account_info):
