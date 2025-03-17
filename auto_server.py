@@ -77,6 +77,8 @@ def process(account_info, action:str = "", start_browser:bool=False):
                 if res:
                     logging = res.get("logging")
                     logger.info(f"logging status: {logging}")
+                    if logging == 0:
+                        return {'code': -603, 'message': '帐号未登录', 'status': 'error', 'action': ''}
                 else:
                     logger.info("异常-----")
 
@@ -270,11 +272,15 @@ if __name__ == '__main__':
                     if res.get("code") == -601:
                         status = Status.STATUS_AGENT_FAIL
                         start_browser = True
+                    elif res.get("code") == -603:
+                        status = Status.STATUS_LOGOUT
+                        start_browser = False
+                        break
                 elif isinstance(res, dict) and res.get("status") == "continue":
                     logger.info("process failed, retried %s times:  Ads: %s", i+1, account_info['ads_id'])
                     start_browser = False
                 else:
-                    logger.info("process failed %s:  Ads: %s", i+1, account_info['ads_id'])
+                    logger.info("------------- process failed %s:  Ads: %s", i+1, account_info['ads_id'])
                     start_browser = False
 
             # Replace the original POST request code with a call to the new function

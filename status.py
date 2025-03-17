@@ -2,6 +2,9 @@ class Status:
     # 成功
     STATUS_SUCCEED = 0
 
+    # 未登录
+    STATUS_LOGOUT = 11
+
     # 登录失败
     STATUS_LOGIN_ERROR = 12
 
