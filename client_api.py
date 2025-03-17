@@ -46,6 +46,7 @@ ACTION_HANDLERS = {
     'after_create_address_enter_wallet': lambda handler: handler.after_create_address_enter_wallet(),
     'start_fress_30_day_trial': lambda handler: handler.start_fress_30_day_trial(),
     'join_walmart_plus_result': lambda handler: handler.join_walmart_plus_result(),
+    'logging': lambda handler, account_info: handler.logging(account_info),
 }
 
 @app.route('/start_browser', methods=['POST'])
@@ -232,7 +233,7 @@ def capture_screen():
         # 使用字典获取对应的处理函数
         handler = ACTION_HANDLERS.get(action)
         if handler:
-            if action in ["fill_address_form", "fill_wallet_form"]:
+            if action in ["fill_address_form", "fill_wallet_form", "logging"]:
                 re = handler(action_handler, account_info)  # Pass account_info to the handler
             else:
                 re = handler(action_handler)

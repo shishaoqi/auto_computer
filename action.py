@@ -477,12 +477,30 @@ class Action:
         
         res = self.upload_multiple_images(image_paths, prompt)
         if not res:
-            return None
+            raise Exception("Error: join_walmart_plus_result response error")
         json_str = res['result']
         walmart_data = json.loads(json_str)
         return walmart_data.get("success")
 
 
+    def logging(self):
+        img = self.screenshot_processor.screenshot()
+        image_paths = [img]
+        prompt = '''这张图是Walmart页面截图，请根据这张图来判断当前有无帐户登录是否。判断依据：1. 页面右上角如果有  Sign In Account 或 页面内容主体里靠下边的部分有 Sign in or create account，那么说明是没有登录帐户。 2. 如果页面右上角是 Hello xxxx，那么说明是有登录帐户。注意：您的响应应遵循以下格式：有登录帐户返回 {"is_logging": 1}。无帐户登录返回 {"is_logging": 0}。请勿包含任何其他信息。'''
+        
+        res = self.upload_multiple_images(image_paths, prompt)
+        if not res:
+            raise Exception("Error: logging response error")
+        json_str = res['result']
+        data = json.loads(json_str)
+        is_logging = data.get("is_logging")
+        if is_logging == 1:
+            return {'logging': 1}
+        else:
+            # 执行登录操作
+            
+
+            return {'logging': 0}
         
 
     def _wait_for_clickable_element(self, bbox: list, max_attempts: int = 8, wait_time: float = 3) -> bool:

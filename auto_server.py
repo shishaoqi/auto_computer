@@ -68,6 +68,17 @@ def process(account_info, action:str = "", start_browser:bool=False):
         logger.info(f'call_action_api RESPONSE: {res}')
         if res is None or (isinstance(res, dict) and res.get('code') != 1):
             logger.info(f'call_capture_api {current_action} 出错， res = {res}')
+            # 如果 action 是 click_account_setting，则检查下是不是未登录
+            # 未登录，下一步就进行登录。登录流程走完，就回归到主流程
+            if res.get("action") == "click_account_setting":
+                logging_res = call_action_api(action="logging")
+                res = logging_res.get("res")
+                if res:
+                    logging = res.get("logging")
+                    logger.info(f"logging status: {logging}")
+                else:
+                    logger.info("异常-----")
+
             return {"status": "continue", "action": current_action}
         elif (isinstance(res, dict) and res.get('code') == -602):
             logger.info(f'call_capture_api {current_action} 出错， res = {res}')
@@ -215,12 +226,20 @@ if __name__ == '__main__':
     team = os.getenv('TEAM_NAME', 'wining')  # Read team name from .env, default to 'wining'
 
     api_client = APIClient()
-    
+    actions_sequence = [
+        # "find_walmart",
+        "click_account_btn",
+        # "enter_account",
+        "click_account_setting",
+        "click_address",
+        "click_add_address"
+    ]
+
     # Retry fetching the member operate list if it's empty
     while True:
         result = api_client.get_member_operate_list(page=1, limit=5, team=team)
         list = result['data']['list']
-        list = list[1:]
+        list = list[3:]
         
         if len(list) == 0:
             logger.info("List is empty, retrying in 15 seconds...")
@@ -237,6 +256,11 @@ if __name__ == '__main__':
             for i in range(3):  # Retry up to 3 times
                 status = Status.STATUS_SUCCEED #给 PHP 服务记录的状态
                 next_action = res.get("action", "") if res is not None else ""
+
+                # fill_address_form 动作前失败的都从 click_account_btn 开始
+                if next_action in actions_sequence:
+                    next_action = "click_account_btn"
+
                 res = process(account_info, next_action, start_browser)
                 logger.info(f'process return res ====== {res}')
                 if isinstance(res, dict) and res.get("status") == "success":
