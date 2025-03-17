@@ -72,6 +72,7 @@ def process(account_info, action:str = "", start_browser:bool=False):
             # 未登录，下一步就进行登录。登录流程走完，就回归到主流程
             if res.get("action") == "click_account_setting":
                 logging_res = call_action_api(action="logging")
+                logger.info(f'logging_res == {logging_res}')
                 res = logging_res.get("res")
                 if res:
                     logging = res.get("logging")

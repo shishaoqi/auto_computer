@@ -493,12 +493,13 @@ class Action:
             raise Exception("Error: logging response error")
         json_str = res['result']
         data = json.loads(json_str)
+        logger.info(f'logging 视觉模型的分析结果：{data}')
         is_logging = data.get("is_logging")
         if is_logging == 1:
             return {'logging': 1}
         else:
             # 执行登录操作
-            
+
 
             return {'logging': 0}
         
