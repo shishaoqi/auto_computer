@@ -6,10 +6,52 @@ import time
 from utils.logger import get_logger
 from utils.api_client import APIClient
 from status import Status
+import json
+import signal
+import sys
+import atexit
 
 # Load environment variables from .env file
 load_dotenv()
 logger = get_logger(__name__)
+
+# Global variable to track unconsumed items
+unconsumed_items = []
+
+def save_unconsumed_items():
+    """Save any unconsumed items to a file when the program exits"""
+    if unconsumed_items:
+        try:
+            with open('unconsumed_items.json', 'w') as f:
+                json.dump(unconsumed_items, f)
+            logger.info(f"Saved {len(unconsumed_items)} unconsumed items to file")
+        except Exception as e:
+            logger.error(f"Failed to save unconsumed items: {e}")
+
+def load_unconsumed_items():
+    """Load any previously unconsumed items from file"""
+    try:
+        if os.path.exists('unconsumed_items.json'):
+            with open('unconsumed_items.json', 'r') as f:
+                items = json.load(f)
+            logger.info(f"Loaded {len(items)} unconsumed items from file")
+            # Remove the file after loading
+            os.remove('unconsumed_items.json')
+            return items
+    except Exception as e:
+        logger.error(f"Failed to load unconsumed items: {e}")
+    return []
+
+def handle_exit(signum=None, frame=None):
+    """Handle program exit gracefully"""
+    logger.info("Program is exiting, saving unconsumed items...")
+    save_unconsumed_items()
+    sys.exit(0)
+
+# Register the exit handler
+signal.signal(signal.SIGINT, handle_exit)
+signal.signal(signal.SIGTERM, handle_exit)
+atexit.register(save_unconsumed_items)
 
 def process(account_info, action:str = "", start_browser:bool=False):
     start_time = time.time()  # Start timing
@@ -238,19 +280,32 @@ if __name__ == '__main__':
         "click_add_address"
     ]
 
+    # Load any previously unconsumed items
+    unconsumed_items = load_unconsumed_items()
+    
     # Retry fetching the member operate list if it's empty
     while True:
-        result = api_client.get_member_operate_list(page=1, limit=5, team=team)
-        list = result['data']['list']
-        list = list[3:]
-        
-        if len(list) == 0:
-            logger.info("List is empty, retrying in 15 seconds...")
-            time.sleep(15)  # Wait for 15 seconds before retrying
+        # Process any unconsumed items first
+        if unconsumed_items:
+            logger.info(f"Processing {len(unconsumed_items)} previously unconsumed items")
+            list_to_process = unconsumed_items
+            unconsumed_items = []  # Clear the list as we're about to process these items
+        else:
+            # Fetch new items from API
+            result = api_client.get_member_operate_list(page=1, limit=5, team=team)
+            list_to_process = result['data']['list']
+            # list_to_process = list_to_process[3:]
+            
+            if len(list_to_process) == 0:
+                logger.info("List is empty, retrying in 15 seconds...")
+                time.sleep(15)  # Wait for 15 seconds before retrying
+                continue
 
-        # logger.info(f'list == {list}')
-        # account_info = result['data']['list'][0]
-        for account_info in list:
+        # Store all items as unconsumed initially
+        unconsumed_items = list_to_process.copy()
+        
+        # Process each item
+        for account_info in list_to_process:
             # walmart 帐户信息
             logger.info(f'执行开通Walmart+, walmart 帐户信息 ------ {account_info}')
             
@@ -283,9 +338,13 @@ if __name__ == '__main__':
                     logger.info("------------- process failed %s:  Ads: %s", i+1, account_info['ads_id'])
                     start_browser = False
 
-            # Replace the original POST request code with a call to the new function
-
+            # Post the result to the server
             result = post_member_operate_res(account_info, status)
+            
+            # Mark this item as consumed by removing it from unconsumed_items
+            if account_info in unconsumed_items:
+                unconsumed_items.remove(account_info)
+                logger.info(f"Marked item with ads_id {account_info.get('ads_id')} as consumed")
 
 
 
