@@ -294,7 +294,7 @@ class Action:
             res = self.upload_multiple_images(image_paths, prompt)
             logger.info(f'res = {res}')
             if not res:
-                return None
+                raise Exception("判断是否已添加卡出错")
             json_str = res['result']
             data = json.loads(json_str)
             number = data.get("number")
@@ -350,7 +350,7 @@ class Action:
         注意：您的响应应遵循以下格式：{"address_count": n}, n 是数字。例如：{"address_count": 5}，其中 5 表示有5个地址。请勿包含任何其他信息。'''   
         res = self.upload_multiple_images(image_paths, prompt)
         if not res:
-            return None
+            raise Exception("判断是否已添加地址出错")
         json_str = res['result']
         data = json.loads(json_str)
         address_count = data.get("address_count")
@@ -467,20 +467,36 @@ class Action:
         else:
             raise Exception("寻找 Monthly radio 失败")
 
-        time.sleep(3)
+        time.sleep(5)
+
         return 1
     
     def join_walmart_plus_result(self):
         img = self.screenshot_processor.screenshot()
         image_paths = [img]
-        prompt = '''这张图是在网站上开通 Walmart+ 的页面截图，请根据这张图来判断是否开通成功。开通成功的判断依据是：有一段英文提示您开通 Walmart+ 成功(例如：Welcome, 用户昵称！You're now part of Walmart+)，其它都是失败的或异常的。注意：您的响应应遵循以下格式：{"success": 1}。成功开通 Walmart+，success 置为 1，开通失败（或异常）置为 0。请勿包含任何其他信息。'''
+        prompt = '''这是一张浏览器界面的截图，请查看图片内容判断是否成功开通 Walmart+ 。。
+        注意：您的响应应遵循以下格式：成功开通返回 {"resut": "success", "msg": ""}, 右侧弹窗报异常返回 {"resut": "window_error", "msg": "描述弹窗情况"}, 其它情况（未知） {"resut": "other", "msg": "描述情况"}。其中，msg 指的是把发生情况描述出来。请勿包含任何其他信息。'''
         
         res = self.upload_multiple_images(image_paths, prompt)
         if not res:
             raise Exception("Error: join_walmart_plus_result response error")
+        logger.info(f'join_walmart_plus_result == {res}')
         json_str = res['result']
-        walmart_data = json.loads(json_str)
-        return walmart_data.get("success")
+        data = json.loads(json_str)
+        return data.get("resut")
+    
+        # 截图，让视频模型判断情况：1. 成功  2. 有弹窗  3. 其它（未知）
+        img = self.screenshot_processor.screenshot()
+        image_paths = [img]
+        prompt = '''这是一张浏览器界面的截图，请查看图片内容判断是否成功开通 Walmart+ 。。
+        注意：您的响应应遵循以下格式：成功开通返回 {"resut": "success", "msg": ""}, 右侧弹窗报异常返回 {"resut": "window_error", "msg": "描述弹窗情况"}, 其它情况（未知） {"resut": "other", "msg": "描述情况"}。其中，msg 指的是把发生情况描述出来。请勿包含任何其他信息。'''   
+        res = self.upload_multiple_images(image_paths, prompt)
+        if not res:
+            raise Exception("判断是否已开通 Walmart+ 出错")
+        json_str = res['result']
+        data = json.loads(json_str)
+        resut = data.get("resut")
+        logger.info(f'------------- 开始结果为 {resut}')
 
 
     def logging(self, account_info):

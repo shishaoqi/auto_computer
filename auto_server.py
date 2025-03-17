@@ -166,11 +166,13 @@ def process(account_info, action:str = "", start_browser:bool=False):
             pass
 
     # 视觉模型确认是否开通会员成功
-    res = call_action_api(action="join_walmart_plus_result")
+    re = call_action_api(action="join_walmart_plus_result")
     is_join = 0
-    if isinstance(res, dict):
-        is_join = res.get('res')
-        logger.info(f'join walmart+: {is_join}')
+    if isinstance(re, dict):
+        is_join = re.get('res')
+        logger.info(f'join walmart+ -------- : {is_join}')
+        if is_join != "success":
+            return {'code': -604, 'message': '最后开通 Walmart+ 失败', 'status': 'error', 'action': ''}
     
     # Calculate and log total execution time
     execution_time = time.time() - start_time
