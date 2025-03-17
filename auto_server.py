@@ -71,7 +71,7 @@ def process(account_info, action:str = "", start_browser:bool=False):
             # 如果 action 是 click_account_setting，则检查下是不是未登录
             # 未登录，下一步就进行登录。登录流程走完，就回归到主流程
             if res.get("action") == "click_account_setting":
-                logging_res = call_action_api(action="logging")
+                logging_res = call_action_api(action="logging", account_info=account_info)
                 logger.info(f'logging_res == {logging_res}')
                 res = logging_res.get("res")
                 if res:
