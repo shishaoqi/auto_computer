@@ -114,57 +114,33 @@ def start_browser():
                     'message': f"未找到标题包含 '{target_title}' 的窗口"
                 }), 500
             
+            for i in range(5):
             # 当前浏览器的代理状态
-            time.sleep(16)
-            img = screenshot_processor.screenshot()
-            image_paths = [img]
-            prompt = '''这是一张浏览器界面的截图，请判断页面显示代理（VPN）的状态是成功还是失败。以下是判断代理成功的说明：代理是成功的依据是页面中有显示 IP（例如 IP：110.120.89.163 ），没有这么显示则说明是代理失败。 以下是判断代理失败的说明：代理的失败可依据是页面中显示"代理失败"。另外，如果页面中显示的内容有包含 ---.---.---.--- ，可判断为代理失败。
-            注意：您的响应应遵循以下格式：代理成功返回 {"agent": "success"}，代理失败返回 {"agent": "fail"}。请勿包含任何其他信息。'''
-            
-            res = action_handler.upload_multiple_images(image_paths, prompt)
-            if not res:
-                return None
-            json_str = res['result']
-            data = json.loads(json_str)
-            agent_state = data.get("agent")
-            logger.info(f'代理状态：{agent_state}')
+                time.sleep(3.5)
+                img = screenshot_processor.screenshot()
+                image_paths = [img]
+                prompt = '''这是一张浏览器界面的截图，请判断页面显示代理（VPN）的状态是成功还是失败。以下是判断代理成功的说明：代理是成功的依据是页面中有显示 IP（例如 IP：110.120.89.163 ），没有这么显示则说明是代理失败。 以下是判断代理失败的说明：代理的失败可依据是页面中显示"代理失败"。另外，如果页面中显示的内容有包含 ---.---.---.--- ，可判断为代理失败。
+                注意：您的响应应遵循以下格式：代理成功返回 {"agent": "success"}，代理失败返回 {"agent": "fail"}。请勿包含任何其他信息。'''
+                
+                res = action_handler.upload_multiple_images(image_paths, prompt)
+                if not res:
+                    return None
+                json_str = res['result']
+                data = json.loads(json_str)
+                agent_state = data.get("agent")
+                logger.info(f'代理状态：{agent_state}')
+                if agent_state == "success":
+                    break
+
+
             if agent_state == "fail":
                 return jsonify({
                     'status': 'error',
                     'message': "代理失败"
                 }), 500
-                
-
-            # 当前浏览器打开了几个标签页
-            # success, result, status_code = screenshot_processor.process_screenshot()
-            # image_paths = [result["processed_image"]]
-            # prompt = '''这是一张浏览器界面的截图，请判断图片最上面的标题栏（有"+"符号的那栏）有几个序号标注。
-            # 注意：你的响应应遵循以下格式：{"tab_count": n}, n 是数字。例如：{"tab_count": 5}，其中 5 表示总共有5个序号标注。请勿包含任何其他信息。
-            # '''
-            
-            # img = screenshot_processor.screenshot()
-            # image_paths = [img]
-            # # （注意：要忽略标题中大写或小写"x"字母）
-            # prompt = '''这是一张浏览器界面的截图，请判断浏览器打开了几个标签页。
-            # 如何得出有多少个标签，判断方法如下：
-            #     根据浏览器的标题栏总里共有几个 "x"形状的关闭按钮，那么就有几个标签
-                
-            # 注意：您的响应应遵循以下格式：{"tab_count": n}, n 是数字。例如：{"tab_count": 5}，其中 5 表示打开了5个标签。请勿包含任何其他信息。'''
-            #  - 方法二： 根据浏览器的标题栏里的 "+" 字符前的标题来判断有多少个标签。有几个标题，就有几个标签。如果标题只是单独一个特殊符号的是不能计算在内的，因为它不是标签，而是功能按钮
-            # 请结合方法一与方法二判断出有几个标签。   
-            
-            # res = action_handler.upload_multiple_images(image_paths, prompt)
-            # if not res:
-            #     return None
-            # json_str = res['result']
-            # data = json.loads(json_str)
-            # tab_count = data.get("tab_count") - 2
-            # logger.info(f'当前打开了{tab_count}个标签页')
             
             tab_count = 1
             # 根据有几个标签页做输入 walmart 地址
-            # 打开新标签
-            # 输入  www.walmart.com
             if tab_count == 1:
                 add_btn_bbox = [0.10888566076755524, 0.004173490684479475, 0.11842383444309235, 0.02574099972844124]
             elif tab_count == 2:
