@@ -173,6 +173,7 @@ class Action:
                 raise OpenPageFail("walmart 页面打不开")
                 
         self._click_element(bbox_home_account)
+        time.sleep(0.46)
         self._click_element(bbox_walmart_plus)
 
         time.sleep(4)
