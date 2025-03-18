@@ -158,8 +158,9 @@ class Action:
             time.sleep(delay)
 
     def check_is_walmart_plus(self):
+        bbox_home_account = [0.9097564816474915, 0.08835277706384659, 0.9547790288925171, 0.13475187122821808]
         bbox_walmart_plus = [0.9120470285415649, 0.1770082712173462, 0.9745729565620422, 0.20471949875354767]
-        if not self._wait_for_clickable_element(bbox_walmart_plus):
+        if not self._wait_for_clickable_element(bbox_home_account):
             prompt = '''这是打开 Walmart 网站首页的截图，请判断页面是否正常打开。打开失败的情况有：1. 页面加载不完全  2. 页面显示内容为 "This site can't be reached"
             注意：您的响应应遵循以下格式：正常打开返回{"status": "success"}, 打开失败返回{"status": "fail"}。请勿包含任何其他信息。'''
             
@@ -167,10 +168,11 @@ class Action:
             logger.info(f'当前页面打开状态是{status}')
 
             if status == "success":
-                raise BBoxNotClickableException("walmart+_btn 不可点击")
+                raise BBoxNotClickableException("bbox_home_account_btn 不可点击")
             else:
                 raise OpenPageFail("walmart 页面打不开")
                 
+        self._click_element(bbox_home_account)
         self._click_element(bbox_walmart_plus)
 
         """Check if the current page is the Walmart homepage"""
