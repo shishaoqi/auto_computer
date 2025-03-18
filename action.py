@@ -190,7 +190,7 @@ class Action:
         
         if is_walmart_plus == 0:
             back_url = [0.002662018407136202, 0.03252004086971283, 0.015001296997070312, 0.05462697520852089]
-            self._click_element(bbox_home_account)
+            self._click_element(back_url)
             time.sleep(1)
 
         return is_walmart_plus
