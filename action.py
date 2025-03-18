@@ -479,7 +479,7 @@ class Action:
         """Check if Walmart+ subscription was successfully activated"""
         prompt = '''这是一张浏览器界面的截图，请查看图片内容判断是否成功开通 Walmart+。
         判断依据：
-            1. 页面会有 "Welcome, XXX(user name)" 或 ”You're now part of Walmart+"，则表示开通成功，
+            1. 页面会有 "Welcome, user-name!" 或 ”You're now part of Walmart+"，则表示开通成功，
             2. 没有找到 1 所提的内容的，就是开通失败
         注意：您的响应应遵循以下格式：成功开通返回 {"resut": "success", "msg": ""}, 右侧弹窗报异常返回 {"resut": "window_error", "msg": "描述弹窗情况"}, 其它情况（未知） {"resut": "other", "msg": "描述情况"}。其中，msg 指的是把发生情况描述出来。请勿包含任何其他信息。'''
         
