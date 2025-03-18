@@ -367,7 +367,24 @@ class Action:
 
         time.sleep(3)
 
-        
+        # 识别是否创建地址信息成功
+        prompt = '''这是一张浏览器界面的截图，请查看主页内容，识别是否创建地址信息成功。
+        注意：您的响应应遵循以下格式：成功返回 {"result": "success", "msg": ""}, 失败返回 {"result": "fail", "msg": "描述情况"}，msg 是用来记录失败时页面在描述什么。请勿包含任何其他信息。'''
+
+        re = self._process_screenshot_with_prompt(prompt)
+        logger.info(f'创建地址信息结果为 {re}')
+        result = re.get("result")
+        if result == "fail":
+            msg = re.get("msg")
+            use_suggested_addr = [0.4289628863334656, 0.6256446242332458, 0.5703867077827454, 0.65202397108078]
+            entered_addr = [0.4644531309604645, 0.6638888716697693, 0.536328136920929, 0.6840277910232544]
+            self.mouse_controller.move_to(use_suggested_addr)
+            use_suggested_addr_cursor = self.mouse_controller.get_cursor_type()
+            self.mouse_controller.move_to(entered_addr)
+            entered_addr_cursor = self.mouse_controller.get_cursor_type()
+            if use_suggested_addr_cursor == 'OCR_HAND' and entered_addr_cursor == 'OCR_HAND':
+                self.mouse_controller.click(entered_addr)
+
         return 1
 
     def fill_wallet_form(self, account_info):
