@@ -157,6 +157,29 @@ class Action:
             self._scroll_page_down(scroll_amount)
             time.sleep(delay)
 
+    def check_is_walmart_plus(self):
+        bbox_walmart_plus = [0.9120470285415649, 0.1770082712173462, 0.9745729565620422, 0.20471949875354767]
+        if not self._wait_for_clickable_element(bbox_walmart_plus):
+            prompt = '''这是打开 Walmart 网站首页的截图，请判断页面是否正常打开。打开失败的情况有：1. 页面加载不完全  2. 页面显示内容为 "This site can't be reached"
+            注意：您的响应应遵循以下格式：正常打开返回{"status": "success"}, 打开失败返回{"status": "fail"}。请勿包含任何其他信息。'''
+            
+            status = self._process_screenshot_with_prompt(prompt, "status")
+            logger.info(f'当前页面打开状态是{status}')
+
+            if status == "success":
+                raise BBoxNotClickableException("walmart+_btn 不可点击")
+            else:
+                raise OpenPageFail("walmart 页面打不开")
+                
+        self._click_element(bbox_walmart_plus)
+
+        """Check if the current page is the Walmart homepage"""
+        prompt = '''请通过这图浏览器截图判断当前用户是否已开通 Walmart+。判断方法： 如果页面内容中包含 "Your Walmart+ benefits" 或 "Manage membership",那么就可以判断为已开通 Walmart+。其它情况，统统可归类为未开通 Walmart+。
+        注意：您的响应应遵循以下格式：已开通 Walmart+ 返回 {"is_walmart_plus": 1}；未开通 Walmart+ 返回 {"is_walmart_plus": 0}。请勿包含任何其他信息。'''
+        
+        is_walmart_plus = self._process_screenshot_with_prompt(prompt, "is_walmart_plus")
+        return is_walmart_plus
+
     def find_walmart(self):
         # 处理截图
         # success, result, status_code = self.screenshot_processor.process_screenshot()
@@ -221,16 +244,16 @@ class Action:
                     
             self._click_element(bbox)
 
-            bbox = [0.9104751348495483, 0.20280081033706665, 0.9731246829032898, 0.2321944534778595]
-            if not self._wait_for_clickable_element(bbox) and i == 0: # 可能是有弹窗，点击一下
-                self._click_element(bbox)
+            bbox_account = [0.9104751348495483, 0.20280081033706665, 0.9731246829032898, 0.2321944534778595]
+            if (not self._wait_for_clickable_element(bbox_account)) and i == 0: # 可能是有弹窗，点击一下
+                self._click_element(bbox_account)
                 i += 1
                 continue
-            elif not self._wait_for_clickable_element(bbox):
+            elif not self._wait_for_clickable_element(bbox_account):
                 # raise Exception("enter_account 不可点击")
                 continue
             else:
-                self._click_element(bbox)
+                self._click_element(bbox_account)
                 break
 
         return 1

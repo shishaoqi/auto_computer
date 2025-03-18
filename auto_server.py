@@ -68,6 +68,11 @@ def process(account_info, action:str = "", start_browser:bool=False):
             if msg == "代理失败":
                 post_member_operate_res(account_info, Status.STATUS_AGENT_FAIL)
                 return {'code': -601, 'message': '代理失败', 'status': 'error', 'action': ''}
+            
+    # 检测是否已经开启 Walmart+
+    res = call_action_api(action="check_is_walmart_plus")
+    if isinstance(res, dict) and res.get('res') == 1:
+        return {"status": "success", "action": ""}
     
     # Start from the specified action
     actions_sequence = [

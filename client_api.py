@@ -30,6 +30,7 @@ for folder in ['screenshots', 'detecting']:
 
 # 在文件开头添加 action 映射字典 ---- 以下方法实现在  action.py 文件中
 ACTION_HANDLERS = {
+    'check_is_walmart_plus': lambda handler: handler.check_is_walmart_plus(),
     'click_account_btn': lambda handler: handler.click_account_btn(),
     'bind_address': lambda handler: handler.bind_address(),
     'create_bankCard': lambda handler: handler.create_bankCard(),
