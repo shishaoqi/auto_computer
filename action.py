@@ -158,6 +158,7 @@ class Action:
             time.sleep(delay)
 
     def check_is_walmart_plus(self):
+        time.sleep(3)
         bbox_home_account = [0.9097564816474915, 0.08835277706384659, 0.9547790288925171, 0.13475187122821808]
         bbox_walmart_plus = [0.9120470285415649, 0.1770082712173462, 0.9745729565620422, 0.20471949875354767]
         if not self._wait_for_clickable_element(bbox_home_account):
@@ -186,6 +187,11 @@ class Action:
             is_walmart_plus = self._process_screenshot_with_prompt(prompt, "is_walmart_plus")
             if is_walmart_plus == 1:
                 break
+        
+        if is_walmart_plus == 0:
+            back_url = [0.002662018407136202, 0.03252004086971283, 0.015001296997070312, 0.05462697520852089]
+            self._click_element(bbox_home_account)
+            time.sleep(1)
 
         return is_walmart_plus
 
