@@ -370,7 +370,7 @@ class Action:
 
         for i in range(2):
             # 识别是否创建地址信息成功
-            prompt = '''这是一张浏览器界面的截图，请查看主页内容，识别是否创建地址信息成。判断依据为页面上有“Your address was successfully added”，其它情况都是失败的。
+            prompt = '''这是一张浏览器界面的截图，请查看主页内容，识别是否创建地址信息成。判断依据为: 如果页面上有“Your address was successfully added” 表示创建成功，其它情况都是失败的。
             注意：您的响应应遵循以下格式：成功返回 {"result": "success", "msg": ""}, 失败返回 {"result": "fail", "msg": "描述情况"}，msg 是用来记录失败时页面在描述什么。请勿包含任何其他信息。'''
 
             re = self._process_screenshot_with_prompt(prompt)
@@ -479,8 +479,8 @@ class Action:
         """Check if Walmart+ subscription was successfully activated"""
         prompt = '''这是一张浏览器界面的截图，请查看图片内容判断是否成功开通 Walmart+。
         判断依据：
-            1. 页面会有 "Welcome, user-name!" 或 ”You're now part of Walmart+"，则表示开通成功，
-            2. 没有找到 1 所提的内容的，就是开通失败
+            1. 如果页面中有 ”You're now part of Walmart+"，则表示开通成功，
+            2. 没有找到 ”You're now part of Walmart+"，就是开通失败，又可以分为 右侧弹窗报异常与其它情况（未知）。
         注意：您的响应应遵循以下格式：成功开通返回 {"resut": "success", "msg": ""}, 右侧弹窗报异常返回 {"resut": "window_error", "msg": "描述弹窗情况"}, 其它情况（未知） {"resut": "other", "msg": "描述情况"}。其中，msg 指的是把发生情况描述出来。请勿包含任何其他信息。'''
         
         for i in range(3):
