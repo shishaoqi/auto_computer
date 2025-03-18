@@ -484,15 +484,15 @@ class Action:
         注意：您的响应应遵循以下格式：成功开通返回 {"resut": "success", "msg": ""}, 右侧弹窗报异常返回 {"resut": "window_error", "msg": "描述弹窗情况"}, 其它情况（未知） {"resut": "other", "msg": "描述情况"}。其中，msg 指的是把发生情况描述出来。请勿包含任何其他信息。'''
         
         for i in range(3):
-            result = self._process_screenshot_with_prompt(prompt, "resut")
-            if not result:
+            re = self._process_screenshot_with_prompt(prompt, "resut")
+            if not re:
                 raise Exception("Error: join_walmart_plus_result response error")
-            logger.info(f'join_walmart_plus_result == {result}, in {i+1}')
-            if result == "success":
+            logger.info(f'join_walmart_plus_result == {re}, in {i+1}')
+            if re == "success":
                 break
-            time.sleep(3.5)
+            time.sleep(4.5)
         
-        return result
+        return re
 
     def _process_screenshot_with_prompt(self, prompt, expected_key=None, max_retries=1):
         """

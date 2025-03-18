@@ -238,7 +238,7 @@ def capture_screen():
             else:
                 re = handler(action_handler)
         else:
-            print(f"未知的action类型: {action}")
+            logger.error(f"未知的action类型: {action}")
             re = {'success': False, 'message': f'未知的action类型: {action}'}
 
         return jsonify({

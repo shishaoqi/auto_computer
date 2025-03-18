@@ -225,7 +225,6 @@ def call_action_api(action, account_info={}):
             return result
         else:
             result = response.json()
-            # logger.info("Error: %d", response.status_code)
             logger.info("Error message: ------  %s", result)
             return result
             
