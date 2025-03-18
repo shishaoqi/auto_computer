@@ -196,34 +196,22 @@ class Action:
 
 
     def is_walmart_page(self):
-        img = self.screenshot_processor.screenshot()
-        image_paths = [img]
+        """Check if the current page is the Walmart homepage"""
         prompt = '''请识别这张截图是不是 walmart 网站的首页。提示：walmart 网站首页是什么样的呢？首先，浏览器 URL 中能看到 walmart.com; 其次，页面顶栏最左边有 walmart logo，顶栏中间部分是搜索框。注意：您的响应应遵循以下格式：{"is_walmart_page": 1}。是 walmart 网站的首页，is_walmart_page 置为 1，不是置为 0。请勿包含任何其他信息。'''
         
-        res = self.upload_multiple_images(image_paths, prompt)
-        if not res:
-            return None
-        json_str = res['result']
-        walmart_data = json.loads(json_str)
-        return walmart_data.get("is_walmart_page")
+        return self._process_screenshot_with_prompt(prompt, "is_walmart_page")
     
     def click_account_btn(self):
+        """Click the account button in the header"""
         i = 0
         while True:
             bbox = [0.9097564816474915, 0.08835277706384659, 0.9547790288925171, 0.13475187122821808]
             if not self._wait_for_clickable_element(bbox):
-                # 不可点击的话，额外用视觉模型判断是什么问题
-                image_paths = [self.screenshot_processor.screenshot()]
+                # Check if page loaded correctly
                 prompt = '''这是打开 Walmart 网站首页的截图，请判断页面是否正常打开。打开失败的情况有：1. 页面加载不完全  2. 页面显示内容为 "This site can't be reached"
-                注意：您的响应应遵循以下格式：正常打开返回{"status": "success"}, 打开失败返回{"status": "fail"}。请勿包含任何其他信息。''' 
-
-                res = self.upload_multiple_images(image_paths, prompt)
-                logger.info(f'res = {res}')
-                if not res:
-                    return None
-                json_str = res['result']
-                data = json.loads(json_str)
-                status = data.get("status")
+                注意：您的响应应遵循以下格式：正常打开返回{"status": "success"}, 打开失败返回{"status": "fail"}。请勿包含任何其他信息。'''
+                
+                status = self._process_screenshot_with_prompt(prompt, "status")
                 logger.info(f'当前页面打开状态是{status}')
 
                 if status == "success":
@@ -259,11 +247,9 @@ class Action:
         return 1
 
     def click_account_setting(self):
+        """Navigate to account settings"""
         bbox = [0.2549503445625305, 0.8525451421737671, 0.3763135075569153, 0.8972681760787964]
-        if not self._wait_for_clickable_element(bbox):
-            raise Exception("account_setting 不可点击")  # 抛出异常
-
-        self._click_element(bbox)
+        self._click_when_clickable(bbox, error_message="account_setting 不可点击")
         time.sleep(1)
         self.mouse_controller.scroll_down(400)
         return 1
@@ -286,23 +272,14 @@ class Action:
         while True:
             # 处理找不到添加卡的链接
             # 判断是否已添加卡
-            img = self.screenshot_processor.screenshot()
-            image_paths = [img]
             prompt = '''这是一张浏览器界面的截图。首先，判断页面是不是加载完整，如果未加载完整，则直接返回 {"number": -1}。接着在页面中查找类似 Credit or debit card (x) 句子，紧接于 Credit or debit card 后面的括号中的x是个数字，表示有几张卡。
-            注意：您的响应应遵循以下格式：{"number": n}, n 是数字。例如：{"number": 5}，其中 5 表示紧接于 “Credit or debit card” 后面是括号里的数字是 5；没有找到类似 Credit or debit card(x) 则返回 {"number": 0}。请勿包含任何其他信息。''' 
+            注意：您的响应应遵循以下格式：{"number": n}, n 是数字。例如：{"number": 5}，其中 5 表示紧接于 "Credit or debit card" 后面是括号里的数字是 5；没有找到类似 Credit or debit card(x) 则返回 {"number": 0}。请勿包含任何其他信息。'''
 
-            res = self.upload_multiple_images(image_paths, prompt)
-            logger.info(f'res = {res}')
-            if not res:
-                raise Exception("判断是否已添加卡出错")
-            json_str = res['result']
-            data = json.loads(json_str)
-            number = data.get("number")
+            number = self._process_screenshot_with_prompt(prompt, "number")
             logger.info(f'当前帐户已经绑定{number}张卡')
             if number != -1:
                 break
 
-        # 
         while number > 0:
             add_new_payment_method = [0.3855791687965393, 0.3159421384334564, 0.4854893684387207, 0.35353779792785645]
             self.mouse_controller.move_to(add_new_payment_method)
@@ -344,16 +321,18 @@ class Action:
     def click_add_address(self):
         time.sleep(0.8)
         # 判断是否已添加地址
-        img = self.screenshot_processor.screenshot()
-        image_paths = [img]
+        # img = self.screenshot_processor.screenshot()
+        # image_paths = [img]
         prompt = '''这是一张浏览器界面的截图，请查看主页内容中，Address 标题下有几个地址列表。
         注意：您的响应应遵循以下格式：{"address_count": n}, n 是数字。例如：{"address_count": 5}，其中 5 表示有5个地址。请勿包含任何其他信息。'''   
-        res = self.upload_multiple_images(image_paths, prompt)
-        if not res:
-            raise Exception("判断是否已添加地址出错")
-        json_str = res['result']
-        data = json.loads(json_str)
-        address_count = data.get("address_count")
+        # res = self.upload_multiple_images(image_paths, prompt)
+        # if not res:
+        #     raise Exception("判断是否已添加地址出错")
+        # json_str = res['result']
+        # data = json.loads(json_str)
+        # address_count = data.get("address_count")
+
+        address_count = self._process_screenshot_with_prompt(prompt, "address_count")
         logger.info(f'当前帐户有{address_count}个地址')
         while address_count > 0:
             remove_btn = [0.7072377800941467, 0.32699310779571533, 0.7346668839454651, 0.35097432136535645]
@@ -387,6 +366,8 @@ class Action:
         fa.fill()
 
         time.sleep(3)
+
+        
         return 1
 
     def fill_wallet_form(self, account_info):
@@ -472,56 +453,66 @@ class Action:
         return 1
     
     def join_walmart_plus_result(self):
+        """Check if Walmart+ subscription was successfully activated"""
+        prompt = '''这是一张浏览器界面的截图，请查看图片内容判断是否成功开通 Walmart+ 。。
+        注意：您的响应应遵循以下格式：成功开通返回 {"resut": "success", "msg": ""}, 右侧弹窗报异常返回 {"resut": "window_error", "msg": "描述弹窗情况"}, 其它情况（未知） {"resut": "other", "msg": "描述情况"}。其中，msg 指的是把发生情况描述出来。请勿包含任何其他信息。'''
+        
         for i in range(3):
-            img = self.screenshot_processor.screenshot()
-            image_paths = [img]
-            prompt = '''这是一张浏览器界面的截图，请查看图片内容判断是否成功开通 Walmart+ 。。
-            注意：您的响应应遵循以下格式：成功开通返回 {"resut": "success", "msg": ""}, 右侧弹窗报异常返回 {"resut": "window_error", "msg": "描述弹窗情况"}, 其它情况（未知） {"resut": "other", "msg": "描述情况"}。其中，msg 指的是把发生情况描述出来。请勿包含任何其他信息。'''
-            
-            res = self.upload_multiple_images(image_paths, prompt)
-            if not res:
+            result = self._process_screenshot_with_prompt(prompt, "resut")
+            if not result:
                 raise Exception("Error: join_walmart_plus_result response error")
-            logger.info(f'join_walmart_plus_result == {res}, in {i+1}')
-            json_str = res['result']
-            data = json.loads(json_str)
-            result =  data.get("resut")
+            logger.info(f'join_walmart_plus_result == {result}, in {i+1}')
             if result == "success":
                 break
             time.sleep(3.5)
-    
+        
         return result
-        # 截图，让视频模型判断情况：1. 成功  2. 有弹窗  3. 其它（未知）
-        # img = self.screenshot_processor.screenshot()
-        # image_paths = [img]
-        # prompt = '''这是一张浏览器界面的截图，请查看图片内容判断是否成功开通 Walmart+ 。。
-        # 注意：您的响应应遵循以下格式：成功开通返回 {"resut": "success", "msg": ""}, 右侧弹窗报异常返回 {"resut": "window_error", "msg": "描述弹窗情况"}, 其它情况（未知） {"resut": "other", "msg": "描述情况"}。其中，msg 指的是把发生情况描述出来。请勿包含任何其他信息。'''   
-        # res = self.upload_multiple_images(image_paths, prompt)
-        # if not res:
-        #     raise Exception("判断是否已开通 Walmart+ 出错")
-        # json_str = res['result']
-        # data = json.loads(json_str)
-        # resut = data.get("resut")
-        # logger.info(f'------------- 开始结果为 {resut}')
 
+    def _process_screenshot_with_prompt(self, prompt, expected_key=None, max_retries=1):
+        """
+        Take a screenshot, process it with the given prompt, and extract the expected key
+        
+        Args:
+            prompt (str): The prompt to send to the vision model
+            expected_key (str, optional): The key to extract from the response
+            max_retries (int): Number of retries if processing fails
+            
+        Returns:
+            The value of the expected key, or the entire parsed data if no key specified
+        """
+        for _ in range(max_retries):
+            try:
+                img = self.screenshot_processor.screenshot()
+                image_paths = [img]
+                
+                res = self.upload_multiple_images(image_paths, prompt)
+                if not res:
+                    logger.error("Failed to get response from vision model")
+                    continue
+                    
+                json_str = res['result']
+                data = json.loads(json_str)
+                
+                if expected_key:
+                    return data.get(expected_key)
+                return data
+                
+            except Exception as e:
+                logger.error(f"Error processing screenshot: {str(e)}")
+                if _ < max_retries - 1:  # Don't sleep on the last iteration
+                    time.sleep(3)
+        
+        return None
 
     def logging(self, account_info):
-        img = self.screenshot_processor.screenshot()
-        image_paths = [img]
+        """Check if user is logged in and handle login if needed"""
         prompt = '''这张图是Walmart页面截图，请根据这张图来判断当前有无帐户登录是否。判断依据：1. 页面右上角如果有  Sign In Account 或 页面内容主体里靠下边的部分有 Sign in or create account，那么说明是没有登录帐户。 2. 如果页面右上角是 Hi xxxx，那么说明是有登录帐户。注意：您的响应应遵循以下格式：有登录帐户返回 {"is_logging": 1}。无帐户登录返回 {"is_logging": 0}。请勿包含任何其他信息。'''
         
-        res = self.upload_multiple_images(image_paths, prompt)
-        if not res:
-            raise Exception("Error: logging response error")
-        json_str = res['result']
-        data = json.loads(json_str)
-        logger.info(f'logging 视觉模型的分析结果：{data}')
-        is_logging = data.get("is_logging")
+        is_logging = self._process_screenshot_with_prompt(prompt, "is_logging")
         if is_logging == 1:
             return {'logging': 1}
         else:
             # 执行登录操作
-
-
             return {'logging': 0}
         
 
@@ -627,3 +618,44 @@ class Action:
             # 确保所有文件被正确关闭
             for _, (_, file_obj, _) in files:
                 file_obj.close()
+
+    def _click_when_clickable(self, bbox, max_attempts=8, wait_time=3, error_message=None):
+        """
+        Wait for an element to become clickable and then click it
+        
+        Args:
+            bbox (list): The bounding box coordinates [x1, y1, x2, y2]
+            max_attempts (int): Maximum number of attempts to check clickability
+            wait_time (float): Time to wait between attempts
+            error_message (str): Custom error message if element is not clickable
+            
+        Returns:
+            bool: True if clicked successfully
+            
+        Raises:
+            BBoxNotClickableException: If the element is not clickable after max attempts
+        """
+        if not self._wait_for_clickable_element(bbox, max_attempts, wait_time):
+            if error_message:
+                raise BBoxNotClickableException(error_message)
+            else:
+                raise BBoxNotClickableException(f"Element at {bbox} is not clickable")
+        
+        return self._click_element(bbox)
+
+    def _check_page_state(self, prompt, expected_key, expected_value=None):
+        """
+        Check the current page state using the vision model
+        
+        Args:
+            prompt (str): The prompt to send to the vision model
+            expected_key (str): The key to extract from the response
+            expected_value: The expected value for the key
+            
+        Returns:
+            bool: True if the page state matches the expected state
+        """
+        result = self._process_screenshot_with_prompt(prompt, expected_key)
+        if expected_value is not None:
+            return result == expected_value
+        return result is not None
