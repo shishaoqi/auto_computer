@@ -189,9 +189,9 @@ class Action:
                 break
         
         if is_walmart_plus == 0:
-            back_url = [0.002662018407136202, 0.03252004086971283, 0.015001296997070312, 0.05462697520852089]
-            self._click_element(back_url)
-            time.sleep(1)
+            walmart_home = [0.015906335785984993, 0.08713185787200928, 0.05957440286874771, 0.13244634866714478]
+            self._click_element(walmart_home)
+            time.sleep(1.8)
 
         return is_walmart_plus
 
