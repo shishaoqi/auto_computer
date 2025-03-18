@@ -342,6 +342,11 @@ class Action:
                 self._click_element(del_card_btn)
                 confirm_btn = [0.5271917581558228, 0.5723111629486084, 0.5703563690185547, 0.6032514572143555]
                 self._click_element(confirm_btn)
+            elif self._wait_for_clickable_element([0.6171774864196777, 0.6802083253860474, 0.6726424098014832, 0.7184507846832275], 3):
+                del_card_btn = [0.6171774864196777, 0.6802083253860474, 0.6726424098014832, 0.7184507846832275]
+                self._click_element(del_card_btn)
+                confirm_btn = [0.5271917581558228, 0.5723111629486084, 0.5703563690185547, 0.6032514572143555]
+                self._click_element(confirm_btn)
 
             
             time.sleep(3)
