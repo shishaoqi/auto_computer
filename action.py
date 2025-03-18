@@ -279,6 +279,7 @@ class Action:
             logger.info(f'当前帐户已经绑定{number}张卡')
             if number != -1:
                 break
+            time.sleep(3.5)
 
         while number > 0:
             add_new_payment_method = [0.3855791687965393, 0.3159421384334564, 0.4854893684387207, 0.35353779792785645]
