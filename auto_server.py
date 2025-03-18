@@ -96,15 +96,7 @@ def process(account_info, action:str = "", start_browser:bool=False):
         logger.info(f"Executing action: {current_action}")
         
         # Add appropriate sleep times between actions
-        
-        if current_action in ["click_account_setting"]:
-            time.sleep(2.5)
-        elif current_action in ["enter_account", "click_address", "click_add_address"]:
-            time.sleep(1.5)
-        elif current_action in ["click_account_btn"]:
-            time.sleep(3.5)
-        else:
-            time.sleep(1)
+        time.sleep(3.5)
         
         res = call_action_api(action=current_action)
         logger.info(f'call_action_api RESPONSE: {res}')
@@ -246,8 +238,8 @@ def call_action_api(action, account_info={}):
 def post_member_operate_res(account_info, status: int=0):
     url = "https://assist.weinpay.com/api/PyHandle/memberOperateRes"
     data_form = {
-        "timestamp": 1722579064,  # 使用当前时间戳
-        "signed": "8FD39EABE64DC7E6F56953FD8EE5B31C",  # 这里的签名需要根据您的逻辑生成
+        "timestamp": 1722579064,
+        "signed": "8FD39EABE64DC7E6F56953FD8EE5B31C",
         "task_id": account_info["task_id"],
         "code": 0,
         "status": status
@@ -308,29 +300,33 @@ if __name__ == '__main__':
         
         # Process each item
         for account_info in list_to_process:
-            # walmart 帐户信息
-            logger.info(f'执行开通Walmart+, walmart 帐户信息 ------ {account_info}')
+            logger.info(f'执行开通Walmart+, walmart 帐户信息 ------ {account_info}') # walmart 帐户信息
             
             res = {"status": "fail", "action": ""}
             start_browser = True
             for i in range(3):  # Retry up to 3 times
-                status = Status.STATUS_SUCCEED #给 PHP 服务记录的状态
+                status = 0 #给 PHP 服务记录的状态
                 next_action = res.get("action", "") if res is not None else ""
 
-                # fill_address_form 动作前失败的都从 click_account_btn 开始
+                # fill_address_form 动作前失败的动作都重新从 click_account_btn 开始
                 if next_action in actions_sequence:
                     next_action = "click_account_btn"
 
                 res = process(account_info, next_action, start_browser)
                 logger.info(f'process return res ====== {res}')
                 if isinstance(res, dict) and res.get("status") == "success":
-                    break  # Exit the loop if successful or completed
+                    status = Status.STATUS_SUCCEED
+                    break  # Exit the loop if successful
                 elif isinstance(res, dict) and res.get("status") == "error":
                     if res.get("code") == -601:
                         status = Status.STATUS_AGENT_FAIL
                         start_browser = True
                     elif res.get("code") == -603:
                         status = Status.STATUS_LOGOUT
+                        start_browser = False
+                        break
+                    elif res.get("code") == -604:
+                        status = Status.STATUS_MEMBERSHIP_CREATE_UNKNOW_ERROR
                         start_browser = False
                         break
                 elif isinstance(res, dict) and res.get("status") == "continue":
