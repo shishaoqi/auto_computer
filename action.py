@@ -487,6 +487,7 @@ class Action:
             result =  data.get("resut")
             if result == "success":
                 break
+            time.sleep(3.5)
     
         return result
         # 截图，让视频模型判断情况：1. 成功  2. 有弹窗  3. 其它（未知）
