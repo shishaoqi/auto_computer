@@ -366,21 +366,16 @@ class Action:
         return 1
 
     def click_add_address(self, account_info):
-        time.sleep(0.8)
+        time.sleep(2.8)
         # 判断是否已添加地址
-        # img = self.screenshot_processor.screenshot()
-        # image_paths = [img]
-        prompt = '''这是一张浏览器界面的截图，请查看主页内容中，Address 标题下有几个地址列表。
-        注意：您的响应应遵循以下格式：{"address_count": n}, n 是数字。例如：{"address_count": 5}，其中 5 表示有5个地址。请勿包含任何其他信息。'''   
-        # res = self.upload_multiple_images(image_paths, prompt)
-        # if not res:
-        #     raise Exception("判断是否已添加地址出错")
-        # json_str = res['result']
-        # data = json.loads(json_str)
-        # address_count = data.get("address_count")
-
-        address_count = self._process_screenshot_with_prompt(prompt, "address_count")
-        logger.info(f'当前帐户有{address_count}个地址')
+        for i in range(3):
+            prompt = '''这是一张浏览器界面的截图，请查看主页内容中，Addresses 标题下有几个地址列表。如果页面还没加载中，返回 {"address_count": -1} 。
+            注意：您的响应应遵循以下格式：{"address_count": n}, n 是数字。例如：{"address_count": 5}，其中 5 表示有5个地址。请勿包含任何其他信息。'''   
+            address_count = self._process_screenshot_with_prompt(prompt, "address_count")
+            logger.info(f'当前帐户有{address_count}个地址')
+            if address_count > -1:
+                break
+            time.sleep(3.5)
 
         if address_count == 1:
             prompt = '''这是一张浏览器界面的截图，Addresses 标题之下是地址信息（在 +Add address 下面），请获取地址相关的所有数据。
