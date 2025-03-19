@@ -210,7 +210,7 @@ def capture_screen():
         # 使用字典获取对应的处理函数
         handler = ACTION_HANDLERS.get(action)
         if handler:
-            if action in ["fill_address_form", "fill_wallet_form", "logging"]:
+            if action in ["fill_address_form", "fill_wallet_form", "logging", "click_add_address"]:
                 re = handler(action_handler, account_info)  # Pass account_info to the handler
             else:
                 re = handler(action_handler)
