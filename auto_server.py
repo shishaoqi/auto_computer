@@ -151,7 +151,7 @@ def process(account_info, action:str = "", start_browser:bool=False):
 
     if action == "fill_wallet_form":
         # 如果添加地址成功，则进行创建银行卡
-        res = call_action_api(action="after_create_address_enter_wallet")
+        res = call_action_api(action="after_create_address_enter_wallet", account_info=account_info)
         if (isinstance(res, dict) and res.get('res') == 1):
             res = call_action_api(action="fill_wallet_form", account_info=account_info)
             if isinstance(res, dict) and res.get('res') != 1:
