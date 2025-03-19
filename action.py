@@ -313,8 +313,8 @@ class Action:
         while True:
             # 处理找不到添加卡的链接
             # 判断是否已添加卡
-            prompt = '''这是一张浏览器界面的截图。首先，判断页面是不是加载完整，如果未加载完整，则直接返回 {"number": -1}。接着在页面中查找类似 Payment methods(x) 或 Credit or debit card (x) 句子，紧接于 Payment methods 后面的括号里的是个数字，表示有几张卡。
-            注意：您的响应应遵循以下格式：{"number": n}, n 是数字。例如：{"number": 5}，其中 5 表示紧接于 "Payment methods" 后面的括号里的数字是 5。没有找到类似 Payment methods(x) ，找到 Add a payment method，则返回 {"number": 0}。请勿包含任何其他信息。'''
+            prompt = '''这是一张浏览器界面的截图。首先，判断页面是不是加载完整，如果未加载完整，则直接返回 {"number": -1}。接着，在页面中查找 "Payment methods"后面的括号里的哪个数字，该数字表示有 n 张卡。
+            注意：您的响应应遵循以下格式：{"number": n}, n 是表示数字。例如：{"number": 5}，其中 5 表示紧接于 "Payment methods" 后面的括号里的是 5。没有找到 "Payment methods"，而是找到 "Add a payment method"，则返回 {"number": 0}。请勿包含任何其他信息。'''
 
             number = self._process_screenshot_with_prompt(prompt, "number")
             logger.info(f'当前帐户已经绑定{number}张卡')
@@ -327,37 +327,37 @@ class Action:
 
             card_number = self._process_screenshot_with_prompt(prompt, "card_number")
             logger.info(f'卡号后四位是 {card_number}')
-            if account_info['cardcode'][-4:] == card_number:
+            if account_info['cardcode'][-4:] == str(card_number):
                 return 206
-        else:
-            while number > 0:
-                add_new_payment_method = [0.3855791687965393, 0.3159421384334564, 0.4854893684387207, 0.35353779792785645]
-                self.mouse_controller.move_to(add_new_payment_method)
-                check_1 = self.mouse_controller.get_cursor_type()
-                edit_btn = [0.4730468690395355, 0.4504449665546417, 0.5025107860565186, 0.4814169108867645]
-                self.mouse_controller.move_to(edit_btn)
-                check_2 = self.mouse_controller.get_cursor_type()
+        
+        while number > 0:
+            add_new_payment_method = [0.3855791687965393, 0.3159421384334564, 0.4854893684387207, 0.35353779792785645]
+            self.mouse_controller.move_to(add_new_payment_method)
+            check_1 = self.mouse_controller.get_cursor_type()
+            edit_btn = [0.4730468690395355, 0.4504449665546417, 0.5025107860565186, 0.4814169108867645]
+            self.mouse_controller.move_to(edit_btn)
+            check_2 = self.mouse_controller.get_cursor_type()
 
-                self._click_element(edit_btn)
-                time.sleep(2.5)
-                self.mouse_controller.scroll_down(900)
+            self._click_element(edit_btn)
+            time.sleep(2.5)
+            self.mouse_controller.scroll_down(900)
 
+            del_card_btn = [0.617047905921936, 0.5675092935562134, 0.672519326210022, 0.6057189702987671]
+            if self._wait_for_clickable_element(del_card_btn, 4):
                 del_card_btn = [0.617047905921936, 0.5675092935562134, 0.672519326210022, 0.6057189702987671]
-                if self._wait_for_clickable_element(del_card_btn, 4):
-                    del_card_btn = [0.617047905921936, 0.5675092935562134, 0.672519326210022, 0.6057189702987671]
-                    self._click_element(del_card_btn)
-                    confirm_btn = [0.5271917581558228, 0.5723111629486084, 0.5703563690185547, 0.6032514572143555]
-                    self._click_element(confirm_btn)
-                elif self._wait_for_clickable_element([0.6169742345809937, 0.6176642775535583, 0.6727732419967651, 0.6560440063476562], 3):
-                    del_card_btn = [0.6169742345809937, 0.6176642775535583, 0.6727732419967651, 0.6560440063476562]
-                    self._click_element(del_card_btn)
-                    confirm_btn = [0.5271917581558228, 0.5723111629486084, 0.5703563690185547, 0.6032514572143555]
-                    self._click_element(confirm_btn)
-                elif self._wait_for_clickable_element([0.6171774864196777, 0.6802083253860474, 0.6726424098014832, 0.7184507846832275], 3):
-                    del_card_btn = [0.6171774864196777, 0.6802083253860474, 0.6726424098014832, 0.7184507846832275]
-                    self._click_element(del_card_btn)
-                    confirm_btn = [0.5271917581558228, 0.5723111629486084, 0.5703563690185547, 0.6032514572143555]
-                    self._click_element(confirm_btn)
+                self._click_element(del_card_btn)
+                confirm_btn = [0.5271917581558228, 0.5723111629486084, 0.5703563690185547, 0.6032514572143555]
+                self._click_element(confirm_btn)
+            elif self._wait_for_clickable_element([0.6169742345809937, 0.6176642775535583, 0.6727732419967651, 0.6560440063476562], 3):
+                del_card_btn = [0.6169742345809937, 0.6176642775535583, 0.6727732419967651, 0.6560440063476562]
+                self._click_element(del_card_btn)
+                confirm_btn = [0.5271917581558228, 0.5723111629486084, 0.5703563690185547, 0.6032514572143555]
+                self._click_element(confirm_btn)
+            elif self._wait_for_clickable_element([0.6171774864196777, 0.6802083253860474, 0.6726424098014832, 0.7184507846832275], 3):
+                del_card_btn = [0.6171774864196777, 0.6802083253860474, 0.6726424098014832, 0.7184507846832275]
+                self._click_element(del_card_btn)
+                confirm_btn = [0.5271917581558228, 0.5723111629486084, 0.5703563690185547, 0.6032514572143555]
+                self._click_element(confirm_btn)
 
                 
                 time.sleep(3)
