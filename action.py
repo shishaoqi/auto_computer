@@ -180,7 +180,6 @@ class Action:
         time.sleep(4)
         for i in range(2):
             time.sleep(4.5)
-            """Check if the current page is the Walmart homepage"""
             prompt = '''请通过这图浏览器截图判断当前用户是否已开通 Walmart+。判断方法： 如果页面内容中包含 "Your Walmart+ benefits" 或 "Manage membership",那么就可以判断为已开通 Walmart+。其它情况，统统可归类为未开通 Walmart+。
             注意：您的响应应遵循以下格式：已开通 Walmart+ 返回 {"is_walmart_plus": 1}；未开通 Walmart+ 返回 {"is_walmart_plus": 0}。请勿包含任何其他信息。'''
             
@@ -190,8 +189,9 @@ class Action:
         
         if is_walmart_plus == 0:
             walmart_home = [0.015906335785984993, 0.08713185787200928, 0.05957440286874771, 0.13244634866714478]
-            self._click_element(walmart_home)
-            time.sleep(1.8)
+            if self._wait_for_clickable_element(walmart_home):
+                self._click_element(walmart_home)
+            time.sleep(2.8)
 
         return is_walmart_plus
 
