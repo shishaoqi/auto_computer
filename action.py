@@ -3,6 +3,7 @@
 from screenshot_processor import ScreenshotProcessor
 from mouse_controller import MouseController  
 from utils.logger import get_logger
+from browser import Browser
 import pyautogui
 import requests
 import json
@@ -157,7 +158,7 @@ class Action:
             self._scroll_page_down(scroll_amount)
             time.sleep(delay)
 
-    def check_is_walmart_plus(self):
+    def check_is_walmart_plus(self, account_info):
         time.sleep(3)
         bbox_home_account = [0.9097564816474915, 0.08835277706384659, 0.9547790288925171, 0.13475187122821808]
         bbox_walmart_plus = [0.9120470285415649, 0.1770082712173462, 0.9745729565620422, 0.20471949875354767]
@@ -185,6 +186,8 @@ class Action:
             
             is_walmart_plus = self._process_screenshot_with_prompt(prompt, "is_walmart_plus")
             if is_walmart_plus == 1:
+                b = Browser()
+                b.close_browser(account_info['ads_id'])
                 break
         
         if is_walmart_plus == 0:
@@ -527,7 +530,7 @@ class Action:
 
         return 1
     
-    def join_walmart_plus_result(self):
+    def join_walmart_plus_result(self, account_info):
         """Check if Walmart+ subscription was successfully activated"""
         prompt = '''这是一张浏览器界面的截图，请查看图片内容判断是否成功开通 Walmart+。
         判断依据：
@@ -541,6 +544,8 @@ class Action:
                 raise Exception("Error: join_walmart_plus_result response error")
             logger.info(f'join_walmart_plus_result == {re}, in {i+1}')
             if re == "success":
+                b = Browser()
+                b.close_browser(account_info['ads_id'])
                 break
             time.sleep(4.5)
         

@@ -30,7 +30,7 @@ for folder in ['screenshots', 'detecting']:
 
 # 在文件开头添加 action 映射字典 ---- 以下方法实现在  action.py 文件中
 ACTION_HANDLERS = {
-    'check_is_walmart_plus': lambda handler: handler.check_is_walmart_plus(),
+    'check_is_walmart_plus': lambda handler, account_info: handler.check_is_walmart_plus(account_info),
     'click_account_btn': lambda handler: handler.click_account_btn(),
     'bind_address': lambda handler: handler.bind_address(),
     'create_bankCard': lambda handler: handler.create_bankCard(),
@@ -46,7 +46,7 @@ ACTION_HANDLERS = {
     'fill_wallet_form': lambda handler, account_info: handler.fill_wallet_form(account_info),
     'after_create_address_enter_wallet': lambda handler: handler.after_create_address_enter_wallet(),
     'start_fress_30_day_trial': lambda handler: handler.start_fress_30_day_trial(),
-    'join_walmart_plus_result': lambda handler: handler.join_walmart_plus_result(),
+    'join_walmart_plus_result': lambda handler, account_info: handler.join_walmart_plus_result(account_info),
     'logging': lambda handler, account_info: handler.logging(account_info),
 }
 
@@ -210,7 +210,7 @@ def capture_screen():
         # 使用字典获取对应的处理函数
         handler = ACTION_HANDLERS.get(action)
         if handler:
-            if action in ["fill_address_form", "fill_wallet_form", "logging", "click_add_address"]:
+            if action in ["fill_address_form", "fill_wallet_form", "logging", "click_add_address", "join_walmart_plus_result", "check_is_walmart_plus"]:
                 re = handler(action_handler, account_info)  # Pass account_info to the handler
             else:
                 re = handler(action_handler)
