@@ -381,8 +381,11 @@ class Action:
             prompt = '''这是一张浏览器界面的截图，Addresses 标题之下是地址信息（在 +Add address 下面），请获取地址相关的所有数据。
             注意：您的响应应遵循以下格式：{"address": "address_info"}，请用地址信息替换掉 address_info。如果没有找到地址信息，返回 {"address": ""}。请勿包含任何其他信息。'''
             address = self._process_screenshot_with_prompt(prompt, "address")
+            address = address.lower()
             logger.info(f'address === {address}')
-            if account_info['address'] in address:
+            if account_info['address'].lower() in address:
+                return 205
+            if account_info['first_name'] in address and account_info['last_name'] in address and account_info['zip_code'] in address:
                 return 205
         
         while address_count > 0:
