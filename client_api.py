@@ -41,7 +41,7 @@ ACTION_HANDLERS = {
     'click_account_setting': lambda handler: handler.click_account_setting(),
     'click_address': lambda handler: handler.click_address(),
     'click_wallet': lambda handler: handler.click_wallet(),
-    'click_add_address': lambda handler: handler.click_add_address(),
+    'click_add_address': lambda handler, account_info: handler.click_add_address(account_info),
     'fill_address_form': lambda handler, account_info: handler.fill_address_form(account_info),
     'fill_wallet_form': lambda handler, account_info: handler.fill_wallet_form(account_info),
     'after_create_address_enter_wallet': lambda handler: handler.after_create_address_enter_wallet(),

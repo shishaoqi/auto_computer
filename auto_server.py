@@ -84,6 +84,8 @@ def process(account_info, action:str = "", start_browser:bool=False):
         "click_add_address"
     ]
 
+    has_address = False
+    has_wallet = False
     if action == "":
         action = "click_account_btn"
 
@@ -102,8 +104,13 @@ def process(account_info, action:str = "", start_browser:bool=False):
         
         # Add appropriate sleep times between actions
         time.sleep(3.5)
-        
-        res = call_action_api(action=current_action)
+        if action in ["click_add_address"]:
+            res = call_action_api(action=current_action, account_info=account_info)
+            # call_action_api RESPONSE: {'action': 'click_add_address', 'code': 1, 'res': 1, 'status': 'success'}
+            if res.get('code') == 205:
+                has_address = True
+        else:
+            res = call_action_api(action=current_action)
         logger.info(f'call_action_api RESPONSE: {res}')
         if res is None or (isinstance(res, dict) and res.get('code') != 1):
             logger.info(f'call_capture_api {current_action} 出错， res = {res}')
@@ -131,14 +138,17 @@ def process(account_info, action:str = "", start_browser:bool=False):
         action = "fill_address_form"
         
     if action == "fill_address_form":
-        res = call_action_api(action="fill_address_form", account_info=account_info)
-        # 检查 res 是否为字典，并检查 'res' 键的值
-        if (isinstance(res, dict) and res.get('res') != 1):
-            return {"status": "fail", "action": "fill_address_form"}
-        elif (isinstance(res, dict) and res.get('code') == 0):
-            logger.error('fill_address_form error')
-            pass
-        action = "fill_wallet_form"
+        if has_address:
+            action = "fill_wallet_form"
+        else:
+            res = call_action_api(action="fill_address_form", account_info=account_info)
+            # 检查 res 是否为字典，并检查 'res' 键的值
+            if (isinstance(res, dict) and res.get('res') != 1):
+                return {"status": "fail", "action": "fill_address_form"}
+            elif (isinstance(res, dict) and res.get('code') == 0):
+                logger.error('fill_address_form error')
+                pass
+            action = "fill_wallet_form"
 
     if action == "fill_wallet_form":
         # 如果添加地址成功，则进行创建银行卡
