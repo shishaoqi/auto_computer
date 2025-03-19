@@ -345,7 +345,7 @@ if __name__ == '__main__':
                         break
                 elif isinstance(res, dict) and res.get("status") == "continue":
                     logger.info("process failed, retried %s times:  Ads: %s", i+1, account_info['ads_id'])
-                    start_browser = False
+                    start_browser = True
                 else:
                     logger.info("------------- process failed %s:  Ads: %s", i+1, account_info['ads_id'])
                     start_browser = False
