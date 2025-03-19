@@ -302,7 +302,7 @@ class Action:
         self._click_element(bbox)
         return 1
 
-    def after_create_address_enter_wallet(self):
+    def after_create_address_enter_wallet(self, account_info):
         bbox = [0.25586557388305664, 0.4200286865234375, 0.37026968598365784, 0.45071613788604736]
         if not self._wait_for_clickable_element(bbox, 3):
             raise BBoxNotClickableException("after_create_address_enter_wallet Wallet link 不可点击")
@@ -321,40 +321,48 @@ class Action:
             if number != -1:
                 break
             time.sleep(3.5)
+        if number == 1:
+            prompt = '''这是一张浏览器界面的截图。页面中，在 "Credit or debit card(1)" 下面是一张卡的信息，请获取 "Card ending in" 后面的四个数字。
+            注意：您的响应应遵循以下格式：{"card_number": 4308}，4308 是在"Card ending in" 后面的那四个数字'''
 
-        while number > 0:
-            add_new_payment_method = [0.3855791687965393, 0.3159421384334564, 0.4854893684387207, 0.35353779792785645]
-            self.mouse_controller.move_to(add_new_payment_method)
-            check_1 = self.mouse_controller.get_cursor_type()
-            edit_btn = [0.4730468690395355, 0.4504449665546417, 0.5025107860565186, 0.4814169108867645]
-            self.mouse_controller.move_to(edit_btn)
-            check_2 = self.mouse_controller.get_cursor_type()
+            card_number = self._process_screenshot_with_prompt(prompt, "card_number")
+            logger.info(f'卡号后四位是 {card_number}')
+            if account_info['cardcode'][-4:] == card_number:
+                return 206
+        else:
+            while number > 0:
+                add_new_payment_method = [0.3855791687965393, 0.3159421384334564, 0.4854893684387207, 0.35353779792785645]
+                self.mouse_controller.move_to(add_new_payment_method)
+                check_1 = self.mouse_controller.get_cursor_type()
+                edit_btn = [0.4730468690395355, 0.4504449665546417, 0.5025107860565186, 0.4814169108867645]
+                self.mouse_controller.move_to(edit_btn)
+                check_2 = self.mouse_controller.get_cursor_type()
 
-            self._click_element(edit_btn)
-            time.sleep(2.5)
-            self.mouse_controller.scroll_down(900)
+                self._click_element(edit_btn)
+                time.sleep(2.5)
+                self.mouse_controller.scroll_down(900)
 
-            del_card_btn = [0.617047905921936, 0.5675092935562134, 0.672519326210022, 0.6057189702987671]
-            if self._wait_for_clickable_element(del_card_btn, 4):
                 del_card_btn = [0.617047905921936, 0.5675092935562134, 0.672519326210022, 0.6057189702987671]
-                self._click_element(del_card_btn)
-                confirm_btn = [0.5271917581558228, 0.5723111629486084, 0.5703563690185547, 0.6032514572143555]
-                self._click_element(confirm_btn)
-            elif self._wait_for_clickable_element([0.6169742345809937, 0.6176642775535583, 0.6727732419967651, 0.6560440063476562], 3):
-                del_card_btn = [0.6169742345809937, 0.6176642775535583, 0.6727732419967651, 0.6560440063476562]
-                self._click_element(del_card_btn)
-                confirm_btn = [0.5271917581558228, 0.5723111629486084, 0.5703563690185547, 0.6032514572143555]
-                self._click_element(confirm_btn)
-            elif self._wait_for_clickable_element([0.6171774864196777, 0.6802083253860474, 0.6726424098014832, 0.7184507846832275], 3):
-                del_card_btn = [0.6171774864196777, 0.6802083253860474, 0.6726424098014832, 0.7184507846832275]
-                self._click_element(del_card_btn)
-                confirm_btn = [0.5271917581558228, 0.5723111629486084, 0.5703563690185547, 0.6032514572143555]
-                self._click_element(confirm_btn)
+                if self._wait_for_clickable_element(del_card_btn, 4):
+                    del_card_btn = [0.617047905921936, 0.5675092935562134, 0.672519326210022, 0.6057189702987671]
+                    self._click_element(del_card_btn)
+                    confirm_btn = [0.5271917581558228, 0.5723111629486084, 0.5703563690185547, 0.6032514572143555]
+                    self._click_element(confirm_btn)
+                elif self._wait_for_clickable_element([0.6169742345809937, 0.6176642775535583, 0.6727732419967651, 0.6560440063476562], 3):
+                    del_card_btn = [0.6169742345809937, 0.6176642775535583, 0.6727732419967651, 0.6560440063476562]
+                    self._click_element(del_card_btn)
+                    confirm_btn = [0.5271917581558228, 0.5723111629486084, 0.5703563690185547, 0.6032514572143555]
+                    self._click_element(confirm_btn)
+                elif self._wait_for_clickable_element([0.6171774864196777, 0.6802083253860474, 0.6726424098014832, 0.7184507846832275], 3):
+                    del_card_btn = [0.6171774864196777, 0.6802083253860474, 0.6726424098014832, 0.7184507846832275]
+                    self._click_element(del_card_btn)
+                    confirm_btn = [0.5271917581558228, 0.5723111629486084, 0.5703563690185547, 0.6032514572143555]
+                    self._click_element(confirm_btn)
 
-            
-            time.sleep(3)
-            number -= 1
-            pyautogui.press('f5')
+                
+                time.sleep(3)
+                number -= 1
+                pyautogui.press('f5')
 
         time.sleep(6)
         # 点击 Credi/debit card
@@ -493,11 +501,15 @@ class Action:
                 raise Exception("Monthly radio 不可点击")
             self._click_element(bbox)
 
-            # I agree to the terms
-            bbox = [0.35335153341293335, 0.7572852373123169, 0.3656124472618103, 0.7804934978485107]
-            if not self._wait_for_clickable_element(bbox, 5):
-                raise Exception("'I agree to the terms' 不可点击")
-            self._click_element(bbox)
+            for i in range(2):
+                # I agree to the terms
+                bbox = [0.35335153341293335, 0.7572852373123169, 0.3656124472618103, 0.7804934978485107]
+                if not self._wait_for_clickable_element(bbox, 5):
+                    # raise Exception("'I agree to the terms' 不可点击")
+                    if i == 1:
+                        self._scroll_page_down(50)
+                    continue
+                self._click_element(bbox)
 
             # Start free 30-day trial Btn
             bbox = [0.5494832992553711, 0.8027747273445129, 0.6348459124565125, 0.837860643863678]

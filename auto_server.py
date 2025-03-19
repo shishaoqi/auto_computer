@@ -106,7 +106,7 @@ def process(account_info, action:str = "", start_browser:bool=False):
         time.sleep(3.5)
         if current_action in ["click_add_address"]:
             res = call_action_api(action=current_action, account_info=account_info)
-            if res.get('code') == 205:
+            if res.get('res') == 205:
                 has_address = True
         else:
             res = call_action_api(action=current_action)
@@ -156,6 +156,8 @@ def process(account_info, action:str = "", start_browser:bool=False):
             res = call_action_api(action="fill_wallet_form", account_info=account_info)
             if isinstance(res, dict) and res.get('res') != 1:
                 return {"status": "fail", "action": "fill_wallet_form"}
+        elif (isinstance(res, dict) and res.get('res') == 206):
+            has_wallet = True
         elif (isinstance(res, dict) and res.get('code') == -100):
             logger.error(res.get('message'))
             # 找不到添加卡的链接
@@ -346,7 +348,9 @@ if __name__ == '__main__':
                     start_browser = True
                 else:
                     logger.info("------------- process failed %s:  Ads: %s", i+1, account_info['ads_id'])
-                    start_browser = False
+                    # 置空，让其重新开始
+                    res['action'] = ""
+                    start_browser = True
 
             # Post the result to the server
             result = post_member_operate_res(account_info, status)

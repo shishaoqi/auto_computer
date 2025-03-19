@@ -44,7 +44,7 @@ ACTION_HANDLERS = {
     'click_add_address': lambda handler, account_info: handler.click_add_address(account_info),
     'fill_address_form': lambda handler, account_info: handler.fill_address_form(account_info),
     'fill_wallet_form': lambda handler, account_info: handler.fill_wallet_form(account_info),
-    'after_create_address_enter_wallet': lambda handler: handler.after_create_address_enter_wallet(),
+    'after_create_address_enter_wallet': lambda handler, account_info: handler.after_create_address_enter_wallet(account_info),
     'start_fress_30_day_trial': lambda handler: handler.start_fress_30_day_trial(),
     'join_walmart_plus_result': lambda handler, account_info: handler.join_walmart_plus_result(account_info),
     'logging': lambda handler, account_info: handler.logging(account_info),
@@ -210,7 +210,7 @@ def capture_screen():
         # 使用字典获取对应的处理函数
         handler = ACTION_HANDLERS.get(action)
         if handler:
-            if action in ["fill_address_form", "fill_wallet_form", "logging", "click_add_address", "join_walmart_plus_result", "check_is_walmart_plus"]:
+            if action in ["fill_address_form", "fill_wallet_form", "logging", "click_add_address", "join_walmart_plus_result", "check_is_walmart_plus", "after_create_address_enter_wallet"]:
                 re = handler(action_handler, account_info)  # Pass account_info to the handler
             else:
                 re = handler(action_handler)
