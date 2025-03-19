@@ -380,8 +380,8 @@ class Action:
         logger.info(f'当前帐户有{address_count}个地址')
 
         if address_count == 1:
-            prompt = '''这是一张浏览器界面的截图，请查看主页内容中，Address 标题下有一个地址信息，请获取地址相关的所有数据，替换下面 json 中的 address_info。
-            注意：您的响应应遵循以下格式：{"address": "address_info"}。请勿包含任何其他信息。'''
+            prompt = '''这是一张浏览器界面的截图，Addresses 标题之下是地址信息（在 +Add address 下面），请获取地址相关的所有数据。
+            注意：您的响应应遵循以下格式：{"address": "address_info"}，请用地址信息替换掉 address_info。如果没有找到地址信息，返回 {"address": ""}。请勿包含任何其他信息。'''
             address = self._process_screenshot_with_prompt(prompt, "address")
             logger.info(f'address === {address}')
             if account_info['address'] in address:
@@ -531,8 +531,8 @@ class Action:
         """Check if Walmart+ subscription was successfully activated"""
         prompt = '''这是一张浏览器界面的截图，请查看图片内容判断是否成功开通 Walmart+。
         判断依据：
-            1. 如果页面中有 ”You're now part of Walmart+"，则表示开通成功，
-            2. 没有找到 ”You're now part of Walmart+"，就是开通失败，又可以分为 右侧弹窗报异常与其它情况（未知）。
+            1. 如果页面中有 "You're now part of Walmart+"，则表示开通成功，
+            2. 没有找到 "You're now part of Walmart+"，就是开通失败，又可以分为 右侧弹窗报异常与其它情况（未知）。
         注意：您的响应应遵循以下格式：成功开通返回 {"resut": "success", "msg": ""}, 右侧弹窗报异常返回 {"resut": "window_error", "msg": "描述弹窗情况"}, 其它情况（未知） {"resut": "other", "msg": "描述情况"}。其中，msg 指的是把发生情况描述出来。请勿包含任何其他信息。'''
         
         for i in range(3):
