@@ -380,7 +380,7 @@ class Action:
         logger.info(f'当前帐户有{address_count}个地址')
 
         if address_count == 1:
-            prompt = '''这是一张浏览器界面的截图，请查看主页内容中，Address 标题下有一个地址信息，请获取相关所有数据放入 address_info。
+            prompt = '''这是一张浏览器界面的截图，请查看主页内容中，Address 标题下有一个地址信息，请获取地址相关的所有数据，替换下面 json 中的 address_info。
             注意：您的响应应遵循以下格式：{"address": "address_info"}。请勿包含任何其他信息。'''
             address = self._process_screenshot_with_prompt(prompt, "address")
             logger.info(f'address === {address}')
