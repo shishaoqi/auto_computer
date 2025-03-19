@@ -385,7 +385,9 @@ class Action:
             logger.info(f'address === {address}')
             if account_info['address'].lower() in address:
                 return 205
-            if account_info['first_name'].lower() in address and account_info['last_name'].lower() in address and account_info['zip_code'] in address:
+            
+            logger.info(f"{account_info['first_name'].lower()} ---- {account_info['city'].lower()} ------------ {account_info['zip_code']}")
+            if account_info['first_name'].lower() in address and account_info['city'].lower() in address and account_info['zip_code'] in address:
                 return 205
         
         while address_count > 0:
