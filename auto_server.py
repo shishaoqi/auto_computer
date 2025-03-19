@@ -104,9 +104,8 @@ def process(account_info, action:str = "", start_browser:bool=False):
         
         # Add appropriate sleep times between actions
         time.sleep(3.5)
-        if action in ["click_add_address"]:
+        if current_action in ["click_add_address"]:
             res = call_action_api(action=current_action, account_info=account_info)
-            # call_action_api RESPONSE: {'action': 'click_add_address', 'code': 1, 'res': 1, 'status': 'success'}
             if res.get('code') == 205:
                 has_address = True
         else:
@@ -215,9 +214,8 @@ def call_api(account_info, api_name: str):
         # 请查看视觉模型服务是否正常
         return 'connect client fail'
 
-# find_walmart
-# 第二步：截图分辨, 找到 walmart, 打开它
-### 异常：找不到，取截图，询问当前是什么情况，有什么处理办法。(例如有弹窗，关闭弹窗)
+
+
 def call_action_api(action, account_info={}):
     """
     Call the capture API with specified action
