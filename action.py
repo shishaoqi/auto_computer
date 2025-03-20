@@ -160,45 +160,48 @@ class Action:
 
     def check_is_walmart_plus(self, account_info):
         time.sleep(3)
-        bbox_home_account = [0.9097564816474915, 0.08835277706384659, 0.9547790288925171, 0.13475187122821808]
-        bbox_walmart_plus = [0.9120470285415649, 0.1770082712173462, 0.9745729565620422, 0.20471949875354767]
-        if not self._wait_for_clickable_element(bbox_home_account):
-            prompt = '''这是打开 Walmart 网站首页的截图，请判断页面是否正常打开。打开失败的情况有：1. 页面加载不完全  2. 页面显示内容为 "This site can't be reached"
-            注意：您的响应应遵循以下格式：正常打开返回{"status": "success"}, 打开失败返回{"status": "fail"}。请勿包含任何其他信息。'''
-            
-            status = self._process_screenshot_with_prompt(prompt, "status")
-            logger.info(f'当前页面打开状态是{status}')
-
-            if status == "success":
-                raise BBoxNotClickableException("bbox_home_account_btn 不可点击")
-            else:
-                raise OpenPageFail("walmart 页面打不开")
+        try:
+            bbox_home_account = [0.9097564816474915, 0.08835277706384659, 0.9547790288925171, 0.13475187122821808]
+            bbox_walmart_plus = [0.9120470285415649, 0.1770082712173462, 0.9745729565620422, 0.20471949875354767]
+            if not self._wait_for_clickable_element(bbox_home_account):
+                prompt = '''这是打开 Walmart 网站首页的截图，请判断页面是否正常打开。打开失败的情况有：1. 页面加载不完全  2. 页面显示内容为 "This site can't be reached"
+                注意：您的响应应遵循以下格式：正常打开返回{"status": "success"}, 打开失败返回{"status": "fail"}。请勿包含任何其他信息。'''
                 
-        self._click_element(bbox_home_account)
-        time.sleep(0.46)
-        self._click_element(bbox_walmart_plus)
+                status = self._process_screenshot_with_prompt(prompt, "status")
+                logger.info(f'当前页面打开状态是{status}')
 
-        time.sleep(4)
-        for i in range(2):
-            time.sleep(4.5)
-            prompt = '''请通过这图浏览器截图判断当前用户是否已开通 Walmart+。判断方法： 如果页面中有 "Your Walmart+ benefits",就可以判断为已开通 Walmart+。其它情况，统统可归类为未开通 Walmart+。
-            注意：您的响应应遵循以下格式：已开通 Walmart+ 返回 {"is_walmart_plus": 1}；未开通 Walmart+ 返回 {"is_walmart_plus": 0}。请勿包含任何其他信息。'''
+                if status == "success":
+                    raise BBoxNotClickableException("bbox_home_account_btn 不可点击")
+                else:
+                    raise OpenPageFail("walmart 页面打不开")
+                    
+            self._click_element(bbox_home_account)
+            time.sleep(0.46)
+            self._click_element(bbox_walmart_plus)
+
+            time.sleep(4)
+            for i in range(2):
+                time.sleep(4.5)
+                prompt = '''请通过这图浏览器截图判断当前用户是否已开通 Walmart+。判断方法： 如果页面中有 "Your Walmart+ benefits",就可以判断为已开通 Walmart+。其它情况，统统可归类为未开通 Walmart+。
+                注意：您的响应应遵循以下格式：已开通 Walmart+ 返回 {"is_walmart_plus": 1}；未开通 Walmart+ 返回 {"is_walmart_plus": 0}。请勿包含任何其他信息。'''
+                
+                is_walmart_plus = self._process_screenshot_with_prompt(prompt, "is_walmart_plus")
+                is_walmart_plus = int(is_walmart_plus)
+                logger.info(f"is_walmart_plus ------- {is_walmart_plus}")
+                if is_walmart_plus == 1:
+                    b = Browser()
+                    b.close_browser(account_info['ads_id'])
+                    break
             
-            is_walmart_plus = self._process_screenshot_with_prompt(prompt, "is_walmart_plus")
-            is_walmart_plus = int(is_walmart_plus)
-            logger.info(f"is_walmart_plus ------- {is_walmart_plus}")
-            if is_walmart_plus == 1:
-                b = Browser()
-                b.close_browser(account_info['ads_id'])
-                break
-        
-        if is_walmart_plus == 0:
-            walmart_home = [0.015906335785984993, 0.08713185787200928, 0.05957440286874771, 0.13244634866714478]
-            if self._wait_for_clickable_element(walmart_home):
-                self._click_element(walmart_home)
-            time.sleep(2.8)
+            if is_walmart_plus == 0:
+                walmart_home = [0.015906335785984993, 0.08713185787200928, 0.05957440286874771, 0.13244634866714478]
+                if self._wait_for_clickable_element(walmart_home):
+                    self._click_element(walmart_home)
+                time.sleep(2.8)
 
-        return is_walmart_plus
+            return is_walmart_plus
+        except Exception as e:
+            logger.error(f"check_is_walmart_plus error ---- {str(e)}")
 
     def find_walmart(self):
         # 处理截图
