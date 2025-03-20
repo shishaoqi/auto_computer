@@ -174,6 +174,7 @@ def process(account_info, action:str = "", start_browser:bool=False):
             pass
 
     # 视觉模型确认是否开通会员成功
+    time.sleep(5)
     re = call_action_api(action="join_walmart_plus_result")
     is_join = 0
     if isinstance(re, dict):
@@ -346,11 +347,6 @@ if __name__ == '__main__':
                 elif isinstance(res, dict) and res.get("status") == "continue":
                     logger.info("process failed, retried %s times: ---- Ads: %s", i+1, account_info['ads_id'])
                     start_browser = True
-                    
-                    # 发送关闭浏览器请求
-                    if i == 2:
-                        status = Status.STATUS_MEMBERSHIP_CREATE_UNKNOW_ERROR
-                        pass
                 else:
                     logger.info("------------- process failed %s:  Ads: %s", i+1, account_info['ads_id'])
                     # 置空，让其重新开始
@@ -359,6 +355,9 @@ if __name__ == '__main__':
 
             # Post the result to the server
             result = post_member_operate_res(account_info, status)
+            # 发送关闭浏览器请求
+            status = Status.STATUS_MEMBERSHIP_CREATE_UNKNOW_ERROR
+            call_api(account_info, "close_browser") # 关闭 Ads 浏览器
             
             # Mark this item as consumed by removing it from unconsumed_items
             if account_info in unconsumed_items:
