@@ -123,12 +123,14 @@ def start_browser():
                 1. 代理成功标志：蓝色区域显示有效网络IP地址
                 2. 代理失败标志：页面显示"代理失败"或蓝色区域包含"---.---.---.---"
 
-                仅返回以下JSON格式之一：
+                注意：您的响应应遵循以下格式：
                 {"agent": "success"} - 代理成功
-                {"agent": "fail"} - 代理失败'''
+                {"agent": "fail"} - 代理失败
+                请勿包含任何其他信息。'''
                 
                 res = action_handler.upload_multiple_images(image_paths, prompt)
                 if not res:
+                    logger.error(f'res --- {res}')
                     return None
                 json_str = res['result']
                 data = json.loads(json_str)
