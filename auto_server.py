@@ -263,7 +263,7 @@ def post_member_operate_res(account_info, status: int=0):
         try:
             response = requests.post(url, json=data_form)
             if response.status_code == 200:
-                logger.info("POST request successful: %s", response.json())
+                logger.info("post_member_operate_res POST request successful: %s", response.json())
                 return response.json()  # Return the successful response
             else:
                 logger.info("POST request failed: %d", response.status_code)
@@ -344,8 +344,13 @@ if __name__ == '__main__':
                         start_browser = False
                         break
                 elif isinstance(res, dict) and res.get("status") == "continue":
-                    logger.info("process failed, retried %s times:  Ads: %s", i+1, account_info['ads_id'])
+                    logger.info("process failed, retried %s times: ---- Ads: %s", i+1, account_info['ads_id'])
                     start_browser = True
+                    
+                    # 发送关闭浏览器请求
+                    if i == 2:
+                        status = Status.STATUS_MEMBERSHIP_CREATE_UNKNOW_ERROR
+                        pass
                 else:
                     logger.info("------------- process failed %s:  Ads: %s", i+1, account_info['ads_id'])
                     # 置空，让其重新开始
