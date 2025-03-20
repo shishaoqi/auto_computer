@@ -507,7 +507,7 @@ class Action:
                 if not self._wait_for_clickable_element(bbox, 5):
                     # raise Exception("'I agree to the terms' 不可点击")
                     if i == 0:
-                        self._scroll_page_down(40)
+                        self._scroll_page_down(30)
                     continue
                 self._click_element(bbox)
 
