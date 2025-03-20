@@ -119,8 +119,13 @@ def start_browser():
                 time.sleep(3.5)
                 img = screenshot_processor.screenshot()
                 image_paths = [img]
-                prompt = '''这是一张浏览器界面的截图，请判断页面显示的代理状态是不是成功的。以下是判断代理成功的方法：页面蓝色区域有没有显示网络 IP，有说明代理成功，没有这么显示则说明代理失败。 以下是判断代理失败的依据：代理失败可依据是页面中显示"代理失败"；另外，如果页面页面蓝色区域显示的内容有包含 "---.---.---.---"，判断为代理失败。
-                注意：您的响应要遵循以下格式：代理成功返回 {"agent": "success"}，代理失败返回 {"agent": "fail"}。请勿包含任何其他信息。'''
+                prompt = '''分析这张浏览器截图，判断代理状态：
+                1. 代理成功标志：蓝色区域显示有效网络IP地址
+                2. 代理失败标志：页面显示"代理失败"或蓝色区域包含"---.---.---.---"
+
+                仅返回以下JSON格式之一：
+                {"agent": "success"} - 代理成功
+                {"agent": "fail"} - 代理失败'''
                 
                 res = action_handler.upload_multiple_images(image_paths, prompt)
                 if not res:
