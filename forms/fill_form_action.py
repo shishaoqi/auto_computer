@@ -17,6 +17,7 @@ class Fill_action:
                 self.mouse_controller.move_to(bbox)
                 current_cursor = self.mouse_controller.get_cursor_type()
                 if current_cursor != 'OCR_IBEAM':
+                    time.slpeep(0.4)
                     continue
                 else:
                     break

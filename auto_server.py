@@ -73,6 +73,8 @@ def process(account_info, action:str = "", start_browser:bool=False):
             
     # 检测是否已经开启 Walmart+
     res = call_action_api(action="check_is_walmart_plus", account_info=account_info)
+    logger.info("Executing action: check_is_walmart_plus")
+    logger.info(f"check_is_walmart_plus 结果为 {res}")
     if isinstance(res, dict) and res.get('res') == 1:
         return {"status": "success", "action": ""}
     
@@ -168,6 +170,7 @@ def process(account_info, action:str = "", start_browser:bool=False):
             # 找不到添加卡的链接
             if res.get('message') == "bbox找不到或不可点击: action=after_create_address_enter_wallet --- after_create_address_enter_wallet card_bbox 不可点击":
                 logger.info('找不到卡')
+            return {"status": "fail", "action": "after_create_address_enter_wallet"}
 
         action = "start_fress_30_day_trial"
     
@@ -176,6 +179,7 @@ def process(account_info, action:str = "", start_browser:bool=False):
         if (isinstance(res, dict) and res.get('res') != 1):
             return {"status": "fail", "action": "start_fress_30_day_trial"}
         elif (isinstance(res, dict) and res.get('code') == 0):
+            logger.info(f"start_fress_30_day_trial 返回 {res}")
             pass
 
     # 视觉模型确认是否开通会员成功
@@ -187,6 +191,8 @@ def process(account_info, action:str = "", start_browser:bool=False):
         logger.info(f'join walmart+ -------- : {is_join}')
         if is_join != "success":
             return {'code': -604, 'message': '最后开通 Walmart+ 失败', 'status': 'error', 'action': ''}
+    else:
+        logger.error(f"join_walmart_plus_result 异常 -- {re}")
     
     # Calculate and log total execution time
     execution_time = time.time() - start_time
@@ -322,46 +328,45 @@ if __name__ == '__main__':
         for account_info in list_to_process:
             logger.info(f'执行开通Walmart+, walmart 帐户信息 ------ {account_info}') # walmart 帐户信息
             
-            res = {"status": "fail", "action": ""}
+            re = {"status": "fail", "action": ""}
             start_browser = True
             for i in range(3):  # Retry up to 3 times
-                status = 0 #给 PHP 服务记录的状态
-                next_action = res.get("action", "") if res is not None else ""
+                st = 0 #给 PHP 服务记录的状态
+                next_action = re.get("action", "") if re is not None else ""
 
                 # fill_address_form 动作前失败的动作都重新从 click_account_btn 开始
                 if next_action in actions_sequence:
                     next_action = "click_account_btn"
 
-                res = process(account_info, next_action, start_browser)
-                logger.info(f'process return res ====== {res}')
-                if isinstance(res, dict) and res.get("status") == "success":
-                    status = Status.STATUS_SUCCEED
+                re = process(account_info, next_action, start_browser)
+                logger.info(f'process return res ====== {re}')
+                if isinstance(re, dict) and re.get("status") == "success":
+                    st = Status.STATUS_SUCCEED
                     break  # Exit the loop if successful
-                elif isinstance(res, dict) and res.get("status") == "error":
-                    if res.get("code") == -601:
-                        status = Status.STATUS_AGENT_FAIL
+                elif isinstance(re, dict) and re.get("status") == "error":
+                    if re.get("code") == -601:
+                        st = Status.STATUS_AGENT_FAIL
                         start_browser = True
-                    elif res.get("code") == -603:
-                        status = Status.STATUS_LOGOUT
+                    elif re.get("code") == -603:
+                        st = Status.STATUS_LOGOUT
                         start_browser = False
                         break
-                    elif res.get("code") == -604:
-                        status = Status.STATUS_MEMBERSHIP_CREATE_UNKNOW_ERROR
+                    elif re.get("code") == -604:
+                        st = Status.STATUS_MEMBERSHIP_CREATE_UNKNOW_ERROR
                         start_browser = False
                         break
-                elif isinstance(res, dict) and res.get("status") == "continue":
+                elif isinstance(re, dict) and re.get("status") == "continue":
                     logger.info("process failed, retried %s times: ---- Ads: %s", i+1, account_info['ads_id'])
                     start_browser = True
                 else: # status == fail
                     logger.info("------------- process failed %s:  Ads: %s", i+1, account_info['ads_id'])
                     # 置空，让其重新开始
-                    res['action'] = ""
+                    re['action'] = ""
                     start_browser = True
 
             # Post the result to the server
-            result = post_member_operate_res(account_info, status)
+            result = post_member_operate_res(account_info, st)
             # 发送关闭浏览器请求
-            status = Status.STATUS_MEMBERSHIP_CREATE_UNKNOW_ERROR
             call_api(account_info, "close_browser") # 关闭 Ads 浏览器
             
             # Mark this item as consumed by removing it from unconsumed_items

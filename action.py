@@ -476,6 +476,8 @@ class Action:
         fw.fill()
 
         time.sleep(8)
+        # TODO 检测创建新卡成功
+        
         self.mouse_controller.scroll_up(900)
         return 1
     
