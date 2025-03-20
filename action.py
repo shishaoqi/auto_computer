@@ -134,7 +134,7 @@ class Action:
         Args:
             scroll_amount (int): 滚动的像素量，正数表示向上滚动，默认300像素
         """
-        self.mouse_controller.scroll(0, scroll_amount)
+        self.mouse_controller.scroll_up(0, scroll_amount)
 
     def _scroll_page_down(self, scroll_amount: int = 300):
         """
@@ -143,7 +143,7 @@ class Action:
         Args:
             scroll_amount (int): 滚动的像素量，正数表示向下滚动，默认300像素
         """
-        self.mouse_controller.scroll(0, -scroll_amount)  # 使用负值表示向下滚动
+        self.mouse_controller.scroll_down(0, scroll_amount)  # 使用负值表示向下滚动
 
     def _scroll_down_page(self, scroll_times: int = 1, scroll_amount: int = 300, delay: float = 0.5):
         """
@@ -506,7 +506,7 @@ class Action:
                 bbox = [0.35335153341293335, 0.7572852373123169, 0.3656124472618103, 0.7804934978485107]
                 if not self._wait_for_clickable_element(bbox, 5):
                     # raise Exception("'I agree to the terms' 不可点击")
-                    if i == 1:
+                    if i == 0:
                         self._scroll_page_down(50)
                     continue
                 self._click_element(bbox)
