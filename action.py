@@ -515,7 +515,7 @@ class Action:
             for i in range(2):
                 # I agree to the terms
                 bbox = [0.35335153341293335, 0.7572852373123169, 0.3656124472618103, 0.7804934978485107]
-                if not self._wait_for_clickable_element(bbox, 5):
+                if not self._wait_for_clickable_element(bbox, 3):
                     # raise Exception("'I agree to the terms' 不可点击")
                     if i == 0:
                         self._scroll_page_down(30)
@@ -557,12 +557,11 @@ class Action:
         """Check if Walmart+ subscription was successfully activated"""
         prompt = '''这是一张浏览器界面的截图，请查看图片内容判断是否成功开通 Walmart+。
         判断依据：
-            1. 如果页面中有 "You're now part of Walmart+"，则表示开通成功，
-            2. 没有找到 "You're now part of Walmart+"，就是开通失败，失败的情况又可以分为 右侧弹窗报异常与其它情况（未知）。
+            1. 如果页面中有 You're now part of Walmart+，则表示开通成功，
+            2. 没有找到 You're now part of Walmart+，就是开通失败。
         注意：您的响应应遵循以下格式：
             - 成功开通返回: {"resut": "success", "msg": ""}, 
-            - 弹窗报开通失败原因返回: {"resut": "window_error", "msg": "描述弹窗情况"}, 
-            - 其它情况（未知）: {"resut": "other", "msg": "描述情况"}。json 中的 msg 指的是把发生情况描述出来。
+            - 开通失败返回: {"resut": "fail", "msg": "描述页面情况"}, 
         请勿包含任何其他信息。'''
         
         for i in range(3):
