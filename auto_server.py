@@ -68,6 +68,8 @@ def process(account_info, action:str = "", start_browser:bool=False):
             if msg == "代理失败":
                 post_member_operate_res(account_info, Status.STATUS_AGENT_FAIL)
                 return {'code': -601, 'message': '代理失败', 'status': 'error', 'action': ''}
+        elif result.get("status") == "fail":
+            return {"status": "fail", "action": ""}
             
     # 检测是否已经开启 Walmart+
     res = call_action_api(action="check_is_walmart_plus")
@@ -347,7 +349,7 @@ if __name__ == '__main__':
                 elif isinstance(res, dict) and res.get("status") == "continue":
                     logger.info("process failed, retried %s times: ---- Ads: %s", i+1, account_info['ads_id'])
                     start_browser = True
-                else:
+                else: # status == fail
                     logger.info("------------- process failed %s:  Ads: %s", i+1, account_info['ads_id'])
                     # 置空，让其重新开始
                     res['action'] = ""
