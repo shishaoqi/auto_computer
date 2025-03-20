@@ -185,13 +185,14 @@ class Action:
             注意：您的响应应遵循以下格式：已开通 Walmart+ 返回 {"is_walmart_plus": 1}；未开通 Walmart+ 返回 {"is_walmart_plus": 0}。请勿包含任何其他信息。'''
             
             is_walmart_plus = self._process_screenshot_with_prompt(prompt, "is_walmart_plus")
+            is_walmart_plus = int(is_walmart_plus)
             logger.info(f"is_walmart_plus ------- {is_walmart_plus}")
-            if isinstance(is_walmart_plus, int) and is_walmart_plus == 1:
+            if is_walmart_plus == 1:
                 b = Browser()
                 b.close_browser(account_info['ads_id'])
                 break
         
-        if not isinstance(is_walmart_plus, int) or is_walmart_plus == 0:
+        if is_walmart_plus == 0:
             walmart_home = [0.015906335785984993, 0.08713185787200928, 0.05957440286874771, 0.13244634866714478]
             if self._wait_for_clickable_element(walmart_home):
                 self._click_element(walmart_home)
