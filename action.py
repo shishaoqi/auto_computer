@@ -194,9 +194,10 @@ class Action:
                     continue
                 is_walmart_plus = int(result)
                 logger.info(f"is_walmart_plus ------- {is_walmart_plus}")
+                logger.info(f'account_info == {account_info}')
                 if is_walmart_plus == 1:
-                    # b = Browser()
-                    # b.close_browser(account_info['ads_id'])
+                    b = Browser()
+                    b.close_browser(account_info['ads_id'])
                     break
             
             if is_walmart_plus == 0:

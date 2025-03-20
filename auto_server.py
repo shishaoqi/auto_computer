@@ -72,7 +72,7 @@ def process(account_info, action:str = "", start_browser:bool=False):
             return {"status": "fail", "action": ""}
             
     # 检测是否已经开启 Walmart+
-    res = call_action_api(action="check_is_walmart_plus")
+    res = call_action_api(action="check_is_walmart_plus", account_info=account_info)
     if isinstance(res, dict) and res.get('res') == 1:
         return {"status": "success", "action": ""}
     
