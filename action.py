@@ -185,6 +185,7 @@ class Action:
             注意：您的响应应遵循以下格式：已开通 Walmart+ 返回 {"is_walmart_plus": 1}；未开通 Walmart+ 返回 {"is_walmart_plus": 0}。请勿包含任何其他信息。'''
             
             is_walmart_plus = self._process_screenshot_with_prompt(prompt, "is_walmart_plus")
+            logger.info(f"is_walmart_plus ------- {is_walmart_plus}")
             if isinstance(is_walmart_plus, int) and is_walmart_plus == 1:
                 b = Browser()
                 b.close_browser(account_info['ads_id'])
