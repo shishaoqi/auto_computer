@@ -466,6 +466,8 @@ class Action:
             if use_suggested_addr_cursor == 'OCR_HAND' and entered_addr_cursor == 'OCR_HAND':
                 self.mouse_controller.click(entered_addr)
 
+            return -1
+
         return 1
 
     def fill_wallet_form(self, account_info):

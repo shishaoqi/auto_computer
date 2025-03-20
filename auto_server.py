@@ -145,6 +145,9 @@ def process(account_info, action:str = "", start_browser:bool=False):
             res = call_action_api(action="fill_address_form", account_info=account_info)
             # 检查 res 是否为字典，并检查 'res' 键的值
             if (isinstance(res, dict) and res.get('res') != 1):
+                if res.get('res') == -1: # 创建失败
+                    return {"status": "fail", "action": "fill_address_form"}
+
                 return {"status": "fail", "action": "fill_address_form"}
             elif (isinstance(res, dict) and res.get('code') == 0):
                 logger.error('fill_address_form error')
