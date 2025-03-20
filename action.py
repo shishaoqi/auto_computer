@@ -539,10 +539,14 @@ class Action:
             self._click_element(bbox)
 
             # I agree to the terms
-            bbox =  [0.35320946912765503, 0.7014710903167725, 0.36595773696899414, 0.724168062210083]
-            if not self._wait_for_clickable_element(bbox, 5):
-                raise Exception("'I agree to the terms' 不可点击")
-            self._click_element(bbox)
+            for i in range(2):
+                bbox =  [0.35320946912765503, 0.7014710903167725, 0.36595773696899414, 0.724168062210083]
+                if not self._wait_for_clickable_element(bbox, 3):
+                    # raise Exception("'I agree to the terms' 不可点击")
+                    if i == 0:
+                        self._scroll_page_down(30)
+                    continue
+                self._click_element(bbox)
 
             # Rejoin Walmart+
             bbox = [0.564965546131134, 0.7476170063018799, 0.6348819732666016, 0.7828387022018433]
