@@ -313,8 +313,8 @@ class Action:
         while True:
             # 处理找不到添加卡的链接
             # 判断是否已添加卡
-            prompt = '''这是一张浏览器界面的截图。首先，判断页面是不是加载完整，如果未加载完整，则直接返回 {"number": -1}。接着，在页面中查找 "Payment methods"后面的括号里的哪个数字，该数字表示有 n 张卡。
-            注意：您的响应应遵循以下格式：{"number": n}, n 是表示数字。例如：{"number": 5}，其中 5 表示紧接于 "Payment methods" 后面的括号里的是 5。没有找到 "Payment methods"，而是找到 "Add a payment method"，则返回 {"number": 0}。请勿包含任何其他信息。'''
+            prompt = '''这是一张浏览器界面的截图。在页面中找出 "Payment methods"后面的括号里的那个数字。
+            注意：您的响应应遵循以下格式：{"number": n}, n 是数字。例如：{"number": 5}，其中 5 表示紧接于 "Payment methods" 后面的括号里的是 5。没有找到 "Payment methods"，而是找到 "Add a payment method"，则返回 {"number": 0}。如果页面未加载完整，返回 {"number": -1}。请勿包含任何其他信息。'''
 
             number = self._process_screenshot_with_prompt(prompt, "number")
             logger.info(f'当前帐户已经绑定{number}张卡')
