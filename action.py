@@ -181,7 +181,7 @@ class Action:
         time.sleep(4)
         for i in range(2):
             time.sleep(4.5)
-            prompt = '''请通过这图浏览器截图判断当前用户是否已开通 Walmart+。判断方法： 如果页面内容中包含 "Your Walmart+ benefits" 或 "Manage membership",那么就可以判断为已开通 Walmart+。其它情况，统统可归类为未开通 Walmart+。
+            prompt = '''请通过这图浏览器截图判断当前用户是否已开通 Walmart+。判断方法： 如果页面中有 "Your Walmart+ benefits",就可以判断为已开通 Walmart+。其它情况，统统可归类为未开通 Walmart+。
             注意：您的响应应遵循以下格式：已开通 Walmart+ 返回 {"is_walmart_plus": 1}；未开通 Walmart+ 返回 {"is_walmart_plus": 0}。请勿包含任何其他信息。'''
             
             is_walmart_plus = self._process_screenshot_with_prompt(prompt, "is_walmart_plus")
